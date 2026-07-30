@@ -23,7 +23,7 @@ export default function Letters() {
     <div>
       <Section tone="page" py="var(--space-9)">
         <Eyebrow>Letters</Eyebrow>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "var(--space-9)", alignItems: "end", marginTop: "var(--space-4)" }}>
+        <div className="rg-page-head" style={{ marginTop: "var(--space-4)" }}>
           <div>
             <h1 style={{ fontSize: "var(--size-display-3)" }}>
               Structured breakdowns,
@@ -33,7 +33,7 @@ export default function Letters() {
             <Rule length={64} />
             <p style={{ marginTop: "var(--space-5)", maxWidth: "46ch" }}>Insights, frameworks, stories and the occasional contrarian read. Newest first.</p>
           </div>
-          <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", maxWidth: "380px", justifyContent: "flex-end" }}>
+          <div className="rg-letters-tags">
             {types.map((t) => (
               <Tag key={t} selected={type === t} onClick={() => setType(t)}>
                 {t}
@@ -46,7 +46,7 @@ export default function Letters() {
         <div style={{ display: "grid", gap: "1px", background: "var(--border-hairline)" }}>
           {POSTS.filter((p) => type === "All" || p[0] === type).map(([kind, title, dek, month]) => (
             <Card key={title} variant="flat" interactive padding="var(--space-6)" style={{ background: "var(--surface-card)" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "150px 1fr auto", gap: "var(--space-6)", alignItems: "center" }}>
+              <div className="rg-letter-row">
                 <div>
                   <Eyebrow tone="accent">{kind}</Eyebrow>
                   <div style={{ fontSize: "var(--size-caption)", color: "var(--text-muted)", marginTop: "6px" }}>{month}</div>

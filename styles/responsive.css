@@ -1,0 +1,148 @@
+/* Layout-level responsive rules. Grid templates can't respond to breakpoints
+   as inline styles, so any section whose column count needs to change below
+   1024px (tablet) or 640px (phone) gets its grid moved here and referenced
+   by className instead of an inline `gridTemplateColumns`. Colors, radii,
+   fonts etc. stay on the component via tokens/inline style as elsewhere. */
+
+/* ---------- site chrome ---------- */
+
+.nav-toggle{display:none}
+.nav-mobile-panel{display:none}
+
+@media (max-width:767px){
+  .nav-links{display:none!important}
+  .nav-toggle{display:inline-flex!important}
+  .nav-mobile-panel.is-open{display:grid}
+}
+
+.rg-footer{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:var(--space-8)}
+@media (max-width:1024px){
+  .rg-footer{grid-template-columns:1fr;gap:var(--space-7)}
+}
+
+/* ---------- home ---------- */
+
+.rg-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-9);align-items:center}
+@media (max-width:1024px){
+  .rg-hero{grid-template-columns:1fr;text-align:left}
+}
+
+.rg-model{display:grid;grid-template-columns:auto 1fr;gap:var(--space-9);align-items:start}
+@media (max-width:1024px){
+  .rg-model{grid-template-columns:1fr;max-width:none}
+}
+
+.rg-model-row{display:grid;grid-template-columns:56px 1fr;gap:var(--space-5);align-items:baseline}
+@media (max-width:640px){
+  .rg-model-row{grid-template-columns:36px 1fr}
+}
+
+.rg-model-body{display:grid;grid-template-columns:200px 1fr;gap:var(--space-5);align-items:baseline}
+@media (max-width:1024px){
+  .rg-model-body{grid-template-columns:1fr;row-gap:var(--space-1)}
+}
+
+.rg-pillars{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-6)}
+@media (max-width:1024px){
+  .rg-pillars{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:640px){
+  .rg-pillars{grid-template-columns:1fr}
+}
+
+.rg-voice{display:grid;grid-template-columns:1fr auto;gap:var(--space-9);align-items:center}
+@media (max-width:1024px){
+  .rg-voice{grid-template-columns:1fr}
+}
+
+.rg-who{display:grid;grid-template-columns:.8fr 1.2fr;gap:var(--space-9);align-items:center}
+@media (max-width:1024px){
+  .rg-who{grid-template-columns:1fr}
+}
+
+.rg-community{display:grid;grid-template-columns:1fr auto;gap:var(--space-7);align-items:center}
+@media (max-width:1024px){
+  .rg-community{grid-template-columns:1fr;justify-items:start}
+}
+
+.rg-videos{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-6)}
+@media (max-width:1024px){
+  .rg-videos{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .rg-videos{grid-template-columns:1fr}
+}
+
+.rg-letter{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-9);align-items:center}
+@media (max-width:1024px){
+  .rg-letter{grid-template-columns:1fr}
+}
+
+/* ---------- sessions ---------- */
+
+.rg-sess-hero{display:grid;grid-template-columns:1.3fr .7fr;gap:var(--space-9);align-items:end}
+@media (max-width:1024px){
+  .rg-sess-hero{grid-template-columns:1fr;align-items:start}
+}
+
+.rg-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-5)}
+@media (max-width:1024px){
+  .rg-tiers{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .rg-tiers{grid-template-columns:1fr}
+}
+
+.rg-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-7)}
+@media (max-width:1024px){
+  .rg-panels{grid-template-columns:1fr}
+}
+
+.rg-quote-cta{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-9);align-items:center}
+@media (max-width:1024px){
+  .rg-quote-cta{grid-template-columns:1fr}
+}
+
+/* ---------- products ---------- */
+
+.rg-page-head{display:grid;grid-template-columns:1fr auto;gap:var(--space-9);align-items:end}
+@media (max-width:1024px){
+  .rg-page-head{grid-template-columns:1fr;align-items:start}
+}
+
+.rg-catalogue{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-5)}
+@media (max-width:1024px){
+  .rg-catalogue{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .rg-catalogue{grid-template-columns:1fr}
+}
+
+/* ---------- letters ---------- */
+
+.rg-letters-tags{display:flex;gap:var(--space-2);flex-wrap:wrap;max-width:380px;justify-content:flex-end}
+@media (max-width:1024px){
+  .rg-letters-tags{max-width:none;justify-content:flex-start}
+}
+
+.rg-letter-row{display:grid;grid-template-columns:150px 1fr auto;gap:var(--space-6);align-items:center}
+@media (max-width:640px){
+  .rg-letter-row{grid-template-columns:1fr;align-items:start;row-gap:var(--space-3)}
+}
+
+/* ---------- booking ---------- */
+
+.rg-book-main{display:grid;grid-template-columns:1.4fr .6fr;gap:var(--space-9);align-items:start}
+@media (max-width:1024px){
+  .rg-book-main{grid-template-columns:1fr}
+}
+
+.rg-book-types{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+@media (max-width:480px){
+  .rg-book-types{grid-template-columns:1fr}
+}
+
+.rg-book-fields{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-5)}
+@media (max-width:640px){
+  .rg-book-fields{grid-template-columns:1fr}
+}

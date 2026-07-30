@@ -25,7 +25,7 @@ export function Tabs({ items = [], value, defaultValue, onChange, tone = "ink", 
     onChange?.(v);
   };
   return (
-    <div role="tablist" style={{ display: "flex", gap: "var(--space-6)", borderBottom: "1px solid " + (dark ? "var(--border-on-brand)" : "var(--border-hairline)"), ...style }}>
+    <div role="tablist" style={{ display: "flex", flexWrap: "wrap", rowGap: "var(--space-2)", gap: "var(--space-6)", borderBottom: "1px solid " + (dark ? "var(--border-on-brand)" : "var(--border-hairline)"), ...style }}>
       {items.map((it) => {
         const v = typeof it === "string" ? it : it.value;
         const label = typeof it === "string" ? it : it.label;

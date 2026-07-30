@@ -26,7 +26,7 @@ export function Toast({ children, status = "info", onDismiss, style }: ToastProp
         color: "var(--gi-cream)",
         padding: "16px 18px",
         boxShadow: "var(--shadow-3)",
-        maxWidth: "420px",
+        maxWidth: "min(420px, calc(100vw - 40px))",
         borderLeft: "2px solid " + ACCENT[status],
         animation: "giRise var(--duration-base) var(--ease-gentle)",
         ...style,

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Footer } from "@/components/site/Footer";
@@ -22,6 +22,11 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "gentleinspirer — Gerald I. Egeonu",
   description: "Growth is designed, not desired. Structured growth systems, leadership development and disciplined execution with Gerald I. Egeonu, founder of The Growth Circle.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

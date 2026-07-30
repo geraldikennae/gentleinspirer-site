@@ -37,14 +37,14 @@ function Tiers() {
   const [cur, setCur] = useState<Currency>("USD");
   return (
     <Section tone="card" py="var(--space-8)">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "var(--space-6)" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "end", marginBottom: "var(--space-6)" }}>
         <div>
           <Eyebrow>Three ways in</Eyebrow>
           <h2 style={{ margin: "var(--space-3) 0 0" }}>Start free, go deeper when it&rsquo;s useful</h2>
         </div>
         <CurrencySwitch currency={cur} onChange={setCur} />
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "var(--space-5)" }}>
+      <div className="rg-tiers">
         <TierCard
           eyebrow="Community · Bi-weekly · Free"
           title="Community session"
@@ -53,7 +53,7 @@ function Tiers() {
           action="Get the reminder"
           externalHref={SOCIALS.whatsapp.url}
           footnote={
-            <span style={{ display: "inline-flex", gap: "8px" }}>
+            <span style={{ display: "inline-flex", flexWrap: "wrap", gap: "8px" }}>
               <PlatformBadge platform="youtube" live />
               <PlatformBadge platform="instagram" live />
             </span>
@@ -84,14 +84,14 @@ export default function SessionPage() {
       <section style={{ background: "var(--surface-page)", padding: "var(--space-10) var(--gutter-page-lg) var(--space-8)" }}>
         <div style={{ maxWidth: "var(--container-max)", margin: "0 auto" }}>
           <Eyebrow>Growth System Model · Stage 01</Eyebrow>
-          <div style={{ display: "grid", gridTemplateColumns: "1.3fr .7fr", gap: "var(--space-9)", alignItems: "end", marginTop: "var(--space-4)" }}>
+          <div className="rg-sess-hero" style={{ marginTop: "var(--space-4)" }}>
             <div>
               <h1 style={{ fontSize: "var(--size-display-2)", letterSpacing: ".05em" }}>Clarity Session</h1>
               <Rule length={64} />
               <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)", fontSize: "var(--size-body-lg)" }}>
                 Clarity precedes movement. One hour to define the outcome, locate the constraint, and set the first increment — for a decision that has been running without structure.
               </p>
-              <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-5)" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginTop: "var(--space-5)" }}>
                 <Badge tone="outline">60 min</Badge>
                 <Badge tone="outline">1:1</Badge>
                 <Badge tone="gold">Stage 01 of 05</Badge>
@@ -117,7 +117,7 @@ export default function SessionPage() {
       <Tiers />
       <Section tone="page">
         <Tabs items={Object.keys(PANELS)} value={tab} onChange={setTab} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "var(--space-7)", marginTop: "var(--space-7)" }}>
+        <div className="rg-panels" style={{ marginTop: "var(--space-7)" }}>
           {PANELS[tab].map(([t, d]) => (
             <div key={t}>
               <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".04em" }}>{t}</div>
@@ -130,7 +130,7 @@ export default function SessionPage() {
         </div>
       </Section>
       <Section tone="card">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-9)", alignItems: "center" }}>
+        <div className="rg-quote-cta">
           <Quote attribution="M., founder">I came in with a spreadsheet and left with a system.</Quote>
           <div style={{ display: "grid", gap: "var(--space-4)", justifyItems: "start" }}>
             <Eyebrow>Not ready to book?</Eyebrow>

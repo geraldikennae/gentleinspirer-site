@@ -36,7 +36,7 @@ const TYPES: Record<SessionType, { label: string; eyebrow: string; len: string; 
 function Steps({ step }: { step: number }) {
   const labels = ["Session type", "Choose a time", "Your details", "Held"];
   return (
-    <div style={{ display: "flex", gap: "var(--space-5)", alignItems: "center" }}>
+    <div style={{ display: "flex", flexWrap: "wrap", rowGap: "var(--space-3)", gap: "var(--space-5)", alignItems: "center" }}>
       {labels.map((l, i) => (
         <Fragment key={l}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", color: i <= step ? "var(--text-heading)" : "var(--text-muted)" }}>
@@ -123,7 +123,7 @@ export default function Booking() {
 
   return (
     <Section tone="page" py="var(--space-9)">
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr .6fr", gap: "var(--space-9)", alignItems: "start" }}>
+      <div className="rg-book-main">
         <div>
           <Eyebrow>Booking</Eyebrow>
           <h1 style={{ fontSize: "var(--size-display-3)", margin: "var(--space-3) 0 var(--space-6)" }}>Book stage one</h1>
@@ -134,7 +134,7 @@ export default function Booking() {
 
           {step === 0 && (
             <div style={{ display: "grid", gap: "var(--space-5)" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+              <div className="rg-book-types">
                 {(Object.entries(TYPES) as [SessionType, (typeof TYPES)[SessionType]][]).map(([k, t]) => {
                   const on = type === k;
                   return (
@@ -158,8 +158,8 @@ export default function Booking() {
                   );
                 })}
               </div>
-              <div style={{ border: "1px solid var(--border-hairline)", padding: "var(--space-4) var(--space-5)", display: "flex", gap: "var(--space-4)", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <div style={{ border: "1px solid var(--border-hairline)", padding: "var(--space-4) var(--space-5)", display: "flex", flexWrap: "wrap", gap: "var(--space-4)", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "center" }}>
                   <PlatformBadge platform="youtube" live />
                   <PlatformBadge platform="instagram" live />
                   <span style={{ fontSize: "var(--size-body-sm)", color: "var(--text-body)" }}>Or join the free bi-weekly community session — no booking at all.</span>
@@ -178,7 +178,7 @@ export default function Booking() {
             <div style={{ display: "grid", gap: "var(--space-6)" }}>
               <div>
                 <Eyebrow tone="muted">March</Eyebrow>
-                <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-3)" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginTop: "var(--space-3)" }}>
                   {DAYS.map(([d, n]) => (
                     <button
                       key={n}
@@ -224,7 +224,7 @@ export default function Booking() {
               ) : (
                 <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>First conversations are 20 minutes.</div>
               )}
-              <div style={{ display: "flex", gap: "var(--space-3)" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)" }}>
                 <Button variant="ghost" onClick={() => setStep(0)}>
                   Back
                 </Button>
@@ -237,7 +237,7 @@ export default function Booking() {
 
           {step === 2 && (
             <div style={{ display: "grid", gap: "var(--space-5)", maxWidth: "560px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-5)" }}>
+              <div className="rg-book-fields">
                 <Field label="Your name" htmlFor="bn" error={err.name}>
                   <Input id="bn" value={name} invalid={!!err.name} onChange={(e) => setName(e.target.value)} placeholder="Ada" />
                 </Field>
@@ -252,7 +252,7 @@ export default function Booking() {
                 <Textarea id="bq" rows={4} />
               </Field>
               <Checkbox label="Send me the pre-session brief beforehand." defaultChecked />
-              <div style={{ display: "flex", gap: "var(--space-3)" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)" }}>
                 <Button variant="ghost" onClick={() => setStep(1)}>
                   Back
                 </Button>

@@ -24,7 +24,7 @@ export default function Products() {
     <div>
       <Section tone="page" py="var(--space-9)">
         <Eyebrow>Digital products</Eyebrow>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "var(--space-9)", alignItems: "end", marginTop: "var(--space-4)" }}>
+        <div className="rg-page-head" style={{ marginTop: "var(--space-4)" }}>
           <div>
             <h1 style={{ fontSize: "var(--size-display-3)" }}>
               Tools that hold structure
@@ -38,16 +38,16 @@ export default function Products() {
         </div>
       </Section>
       <Section tone="card" py="var(--space-8)">
-        <div style={{ display: "flex", gap: "10px", marginBottom: "var(--space-6)" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "var(--space-6)" }}>
           <Badge tone="gold">Catalogue in progress</Badge>
           <span style={{ fontSize: "var(--size-caption)", color: "var(--text-muted)", alignSelf: "center" }}>Names, covers and prices below are placeholders awaiting the real products.</span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "var(--space-5)" }}>
+        <div className="rg-catalogue">
           {CATALOGUE.map(([format, title, blurb]) => (
             <ProductCard key={title} format={format} title={title} blurb={blurb} amounts={{}} currency={cur} action="Notify me" />
           ))}
         </div>
-        <div style={{ marginTop: "var(--space-7)", display: "flex", gap: "var(--space-4)", alignItems: "center" }}>
+        <div style={{ marginTop: "var(--space-7)", display: "flex", flexWrap: "wrap", gap: "var(--space-4)", alignItems: "center" }}>
           <Button variant="secondary" externalHref={SOCIALS.youtube.url}>
             Free teachings first
           </Button>

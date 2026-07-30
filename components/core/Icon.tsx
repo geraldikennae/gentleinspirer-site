@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { ArrowRight, Check, ChevronDown, CircleAlert, Info, Play, Sparkles, TriangleAlert, X, type LucideIcon } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, CircleAlert, Info, Menu, Play, Sparkles, TriangleAlert, X, type LucideIcon } from "lucide-react";
 
 const ICONS: Record<string, LucideIcon> = {
   "arrow-right": ArrowRight,
@@ -11,6 +11,7 @@ const ICONS: Record<string, LucideIcon> = {
   "circle-alert": CircleAlert,
   play: Play,
   sparkles: Sparkles,
+  menu: Menu,
 };
 
 export interface IconProps {

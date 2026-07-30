@@ -41,3 +41,29 @@
 --measure-prose:64ch;
 --measure-narrow:44ch;
 }
+
+/* tablet — display sizes scale down so headlines don't outrun the 768–1024px
+   canvas; body/eyebrow/caption sizes are left alone, they already read fine */
+@media (max-width:1024px){
+:root{
+--size-display-1:52px;
+--size-display-2:42px;
+--size-display-3:32px;
+--size-heading-1:28px;
+--size-heading-2:22px;
+--size-heading-3:19px;
+}
+}
+
+/* phone */
+@media (max-width:640px){
+:root{
+--size-display-1:38px;
+--size-display-2:32px;
+--size-display-3:27px;
+--size-heading-1:24px;
+--size-heading-2:20px;
+--size-heading-3:18px;
+--size-body-lg:16px;
+}
+}

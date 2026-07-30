@@ -54,7 +54,7 @@ export function Dialog({ open = false, title, eyebrow, children, footer, onClose
         )}
         <Rule />
         <div style={{ marginTop: "var(--space-5)", fontSize: "var(--size-body-sm)", color: "var(--text-body)" }}>{children}</div>
-        {footer && <div style={{ marginTop: "var(--space-6)", display: "flex", gap: "var(--space-3)", justifyContent: "flex-end" }}>{footer}</div>}
+        {footer && <div style={{ marginTop: "var(--space-6)", display: "flex", flexWrap: "wrap", gap: "var(--space-3)", justifyContent: "flex-end" }}>{footer}</div>}
       </div>
     </div>
   );

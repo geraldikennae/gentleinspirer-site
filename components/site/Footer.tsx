@@ -8,7 +8,7 @@ import { LINKS } from "./links";
 export function Footer() {
   return (
     <footer style={{ background: "var(--surface-brand-deep)", color: "var(--text-on-brand)", padding: "var(--space-9) var(--gutter-page-lg) var(--space-6)" }}>
-      <div style={{ maxWidth: "var(--container-max)", margin: "0 auto", display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr", gap: "var(--space-8)" }}>
+      <div className="rg-footer" style={{ maxWidth: "var(--container-max)", margin: "0 auto" }}>
         <div>
           <Logo variant="stacked" tone="gold" height={96} />
           <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", letterSpacing: ".2em", fontSize: "16px", color: "var(--gi-gold)", marginTop: "var(--space-5)" }}>you. on purpose</div>
@@ -40,6 +40,8 @@ export function Footer() {
           paddingTop: "var(--space-5)",
           borderTop: "1px solid var(--border-on-brand)",
           display: "flex",
+          flexWrap: "wrap",
+          gap: "var(--space-3)",
           justifyContent: "space-between",
           fontSize: "var(--size-caption)",
           color: "rgba(255,248,240,.5)",

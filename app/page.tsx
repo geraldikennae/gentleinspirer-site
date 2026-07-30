@@ -17,14 +17,11 @@ function Hero() {
   return (
     <section style={{ background: "var(--surface-brand)", color: "var(--text-on-brand)", position: "relative", overflow: "hidden" }}>
       <div
+        className="rg-hero"
         style={{
           maxWidth: "var(--container-max)",
           margin: "0 auto",
           padding: "var(--space-11) var(--gutter-page-lg) var(--space-10)",
-          display: "grid",
-          gridTemplateColumns: "1.15fr .85fr",
-          gap: "var(--space-9)",
-          alignItems: "center",
         }}
       >
         <div>
@@ -38,7 +35,7 @@ function Hero() {
           <p style={{ color: "var(--text-on-brand-muted)", fontSize: "var(--size-body-lg)", maxWidth: "48ch", margin: "var(--space-5) 0 var(--space-7)" }}>
             I help individuals and organisations move from ambition to structured progress — through systems, leadership development and disciplined execution.
           </p>
-          <div style={{ display: "flex", gap: "var(--space-4)", alignItems: "center" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", alignItems: "center" }}>
             <Button variant="gold" size="lg" href="/book">
               Book a clarity session
             </Button>
@@ -70,7 +67,7 @@ const MODEL: [string, string][] = [
 function Model() {
   return (
     <Section tone="page">
-      <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "var(--space-9)", alignItems: "start" }}>
+      <div className="rg-model">
         <div style={{ maxWidth: "32ch" }}>
           <Eyebrow>The Growth System Model</Eyebrow>
           <h2 style={{ margin: "var(--space-4) 0 var(--space-4)" }}>Five stages, in order</h2>
@@ -85,10 +82,12 @@ function Model() {
         <div style={{ display: "grid", gap: "1px", background: "var(--border-hairline)" }}>
           {MODEL.map(([t, d], i) => (
             <Card key={t} variant="flat" padding="var(--space-5) var(--space-6)" style={{ background: "var(--surface-card)" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "56px 200px 1fr", gap: "var(--space-5)", alignItems: "baseline" }}>
+              <div className="rg-model-row">
                 <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-2)", color: "var(--gi-gold-deep)" }}>0{i + 1}</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".04em" }}>{t}</div>
-                <p style={{ fontSize: "var(--size-body-sm)", color: "var(--text-body)", margin: 0 }}>{d}</p>
+                <div className="rg-model-body">
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".04em" }}>{t}</div>
+                  <p style={{ fontSize: "var(--size-body-sm)", color: "var(--text-body)", margin: 0 }}>{d}</p>
+                </div>
               </div>
             </Card>
           ))}
@@ -111,7 +110,7 @@ function Pillars() {
     <Section tone="card">
       <Eyebrow>What I work on</Eyebrow>
       <h2 style={{ margin: "var(--space-4) 0 var(--space-7)", maxWidth: "24ch" }}>Five pillars</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "var(--space-6)" }}>
+      <div className="rg-pillars">
         {PILLARS.map(([t, d]) => (
           <div key={t}>
             <Rule length={28} />
@@ -127,7 +126,7 @@ function Pillars() {
 function Voice() {
   return (
     <Section tone="ink" py="var(--section-y-lg)">
-      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "var(--space-9)", alignItems: "center" }}>
+      <div className="rg-voice">
         <Quote tone="cream" attribution="R., emerging leader">
           I stopped guessing at my next quarter.
         </Quote>
@@ -140,7 +139,7 @@ function Voice() {
 function Who() {
   return (
     <Section tone="card">
-      <div style={{ display: "grid", gridTemplateColumns: ".8fr 1.2fr", gap: "var(--space-9)", alignItems: "center" }}>
+      <div className="rg-who">
         <Image
           src="/photography/gerald-portrait.jpeg"
           alt="Gerald I. Egeonu"
@@ -167,9 +166,9 @@ function Who() {
 function Community() {
   return (
     <Section tone="page" py="var(--space-8)">
-      <div style={{ border: "1px solid var(--border-hairline)", background: "var(--surface-card)", padding: "var(--space-6) var(--space-7)", display: "grid", gridTemplateColumns: "1fr auto", gap: "var(--space-7)", alignItems: "center" }}>
+      <div className="rg-community" style={{ border: "1px solid var(--border-hairline)", background: "var(--surface-card)", padding: "var(--space-6) var(--space-7)" }}>
         <div style={{ display: "grid", gap: "var(--space-3)", justifyItems: "start" }}>
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
             <PlatformBadge platform="youtube" live />
             <PlatformBadge platform="instagram" live />
           </div>
@@ -192,7 +191,7 @@ function Community() {
 function Teachings() {
   return (
     <Section tone="card">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "var(--space-6)" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "end", marginBottom: "var(--space-6)" }}>
         <div>
           <Eyebrow>Free teachings</Eyebrow>
           <h2 style={{ margin: "var(--space-3) 0 0" }}>Watch before you book</h2>
@@ -201,7 +200,7 @@ function Teachings() {
           The channel
         </Button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "var(--space-6)" }}>
+      <div className="rg-videos">
         <VideoCard title="Growth is designed, not desired" />
         <VideoCard title="Clarity precedes movement" />
         <VideoCard title="Consistency over intensity" />
@@ -214,7 +213,7 @@ function Teachings() {
 function Letter() {
   return (
     <Section tone="gold" py="var(--space-9)">
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-9)", alignItems: "center" }}>
+      <div className="rg-letter">
         <div>
           <Eyebrow tone="ink">Three times a week</Eyebrow>
           <h2 style={{ color: "var(--gi-white)", margin: "var(--space-3) 0 var(--space-3)" }}>One insight, one framework</h2>
