@@ -1,0 +1,11 @@
+:root{
+/* the brand is editorial and squared-off: sharp is the default */
+--radius-none:0px;
+--radius-sm:2px;
+--radius-md:4px;
+--radius-lg:8px;
+--radius-pill:999px;
+--radius-control:2px;   /* buttons, inputs */
+--radius-card:0px;      /* cards are square, defined by hairline or shadow */
+--radius-media:0px;
+}

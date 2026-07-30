@@ -1,0 +1,16 @@
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--surface-page)}
+body{margin:0;background:var(--surface-page);color:var(--text-body);font-family:var(--font-body);font-size:var(--size-body);font-weight:var(--weight-body-light);line-height:var(--leading-body);letter-spacing:var(--tracking-body);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--text-heading);font-weight:var(--weight-display-light);line-height:var(--leading-heading);margin:0}
+h1{font-size:var(--size-display-2);line-height:var(--leading-display);letter-spacing:var(--tracking-display)}
+h2{font-size:var(--size-display-3)}
+h3{font-size:var(--size-heading-2)}
+p{margin:0 0 1em}
+a{color:var(--text-link);text-decoration:none;border-bottom:1px solid var(--border-accent);padding-bottom:1px;transition:var(--transition-control)}
+a:hover{color:var(--text-link-hover);border-bottom-color:var(--gi-gold-deep)}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+::selection{background:var(--gi-gold-pale);color:var(--gi-ink)}
+
+@keyframes giFade{from{opacity:0}to{opacity:1}}
+@keyframes giRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}

@@ -1,0 +1,55 @@
+:root{
+/* --- base palette --- */
+--gi-blue:#000080;           /* royal blue — primary brand field, sampled from the logo boards */
+--gi-blue-deep:#00005E;      /* pressed / deeper field */
+--gi-ink:#1A1A1A;            /* primary ink / authority black */
+--gi-ink-deep:#0D0D0D;       /* deepest ground */
+--gi-gold:#D4AF37;           /* accent, metallic gold */
+--gi-gold-deep:#C79532;      /* gold field / hover */
+--gi-gold-pale:#EBD9A0;      /* gold at rest on dark */
+--gi-cream:#FFF8F0;          /* warm paper */
+--gi-white:#FFFFFF;
+--gi-black:#000000;
+
+/* --- neutrals: true greys (structure) --- */
+--gi-neutral-50:#F7F7F8;
+--gi-neutral-100:#EDEDEF;
+--gi-neutral-200:#DEDEE1;
+--gi-neutral-300:#C3C3C6;
+--gi-neutral-500:#8A8A8F;
+--gi-neutral-700:#4A4A4F;
+
+/* --- semantic: text --- */
+--text-heading:var(--gi-ink);
+--text-body:#3A3A3C;
+--text-muted:var(--gi-neutral-500);
+--text-accent:var(--gi-gold-deep);
+--text-on-brand:var(--gi-cream);
+--text-on-brand-muted:rgba(255,248,240,.72);
+--text-on-gold:var(--gi-white);
+--text-link:var(--gi-blue);
+--text-link-hover:var(--gi-gold-deep);
+
+/* --- semantic: surfaces --- */
+--surface-page:var(--gi-cream);
+--surface-card:var(--gi-white);
+--surface-sunken:var(--gi-neutral-50);
+--surface-brand:var(--gi-blue);
+--surface-brand-deep:var(--gi-ink-deep);
+--surface-accent:var(--gi-gold);
+--surface-ink:var(--gi-ink);
+--surface-overlay:rgba(13,13,13,.62);
+
+/* --- semantic: lines --- */
+--border-hairline:rgba(26,26,26,.14);
+--border-strong:var(--gi-ink);
+--border-accent:var(--gi-gold);
+--border-on-brand:rgba(255,248,240,.28);
+--focus-ring:var(--gi-gold);
+
+/* --- semantic: status (derived, no status colours were supplied) --- */
+--status-success:#3F6B4F;
+--status-warning:var(--gi-gold-deep);
+--status-danger:#8C2F2F;
+--status-info:var(--gi-blue);
+}

@@ -1,0 +1,43 @@
+:root{
+/* font families are self-hosted via next/font (see app/layout.tsx); these
+   variables point at the CSS custom properties next/font emits */
+--font-display:var(--font-cormorant),Garamond,"Times New Roman",serif;
+--font-body:var(--font-montserrat),"Helvetica Neue",Arial,sans-serif;
+
+--weight-display-light:300;
+--weight-display-regular:400;
+--weight-display-medium:500;
+--weight-body-thin:200;
+--weight-body-light:300;
+--weight-body-regular:400;
+--weight-body-medium:500;
+
+/* display / editorial serif */
+--size-display-1:72px;
+--size-display-2:56px;
+--size-display-3:40px;
+--size-heading-1:32px;
+--size-heading-2:24px;
+--size-heading-3:20px;
+/* body / interface sans */
+--size-body-lg:18px;
+--size-body:16px;
+--size-body-sm:14px;
+--size-caption:12px;
+--size-eyebrow:11px;
+
+--leading-display:1.12;
+--leading-heading:1.24;
+--leading-body:1.68;
+--leading-tight:1.4;
+
+/* tracking is the brand's loudest typographic signal */
+--tracking-display:0.06em;
+--tracking-lockup:0.34em;
+--tracking-eyebrow:0.28em;
+--tracking-caps:0.18em;
+--tracking-body:0.01em;
+
+--measure-prose:64ch;
+--measure-narrow:44ch;
+}
