@@ -76,6 +76,55 @@ function Tiers({ settings, content }: { settings: SiteSettingsData; content: Ses
   );
 }
 
+function WhySection({ content }: { content: SessionsContentData }) {
+  const { whySection: w } = content;
+  return (
+    <Section tone="page" py="var(--space-9)">
+      <div style={{ maxWidth: "var(--measure-prose)", margin: "0 auto" }}>
+        <p style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-1)", lineHeight: "var(--leading-heading)", color: "var(--text-heading)", margin: 0 }}>{w.leadIn}</p>
+        <Rule length={64} />
+        <div style={{ display: "grid", gap: "var(--space-4)", marginTop: "var(--space-5)" }}>
+          <p style={{ margin: 0 }}>{w.paragraph1}</p>
+          <p style={{ margin: 0 }}>{w.paragraph2}</p>
+          <p style={{ margin: 0 }}>{w.paragraph3}</p>
+        </div>
+
+        <div style={{ marginTop: "var(--space-8)" }}>
+          <Eyebrow>{w.whoItsForHeading}</Eyebrow>
+          <p style={{ marginTop: "var(--space-4)" }}>{w.whoItsForText}</p>
+        </div>
+
+        <div style={{ marginTop: "var(--space-8)" }}>
+          <Eyebrow>{w.howItWorksHeading}</Eyebrow>
+          <ol style={{ margin: "var(--space-4) 0 0", padding: 0, listStyle: "none", display: "grid", gap: "var(--space-4)" }}>
+            {w.howItWorksSteps.map((step, i) => (
+              <li key={i} style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: "var(--space-4)" }}>
+                <span style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--gi-gold-deep)" }}>{i + 1}</span>
+                <p style={{ margin: 0 }}>{step}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="rg-why-ctas" style={{ marginTop: "var(--space-9)", display: "grid", gap: "var(--space-6)" }}>
+          <div style={{ display: "grid", gap: "var(--space-3)", justifyItems: "start" }}>
+            <Eyebrow>{w.bookCtaLabel}</Eyebrow>
+            <Button variant="primary" href="/book">
+              {w.bookCtaButtonLabel}
+            </Button>
+          </div>
+          <div style={{ display: "grid", gap: "var(--space-3)", justifyItems: "start" }}>
+            <Eyebrow>{w.communityCtaLabel}</Eyebrow>
+            <Button variant="secondary" href="/calendar">
+              {w.communityCtaButtonLabel}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
 export function SessionsPageBody({ settings, content, nextOpening }: { settings: SiteSettingsData; content: SessionsContentData; nextOpening: string | null }) {
   const [tab, setTab] = useState("The session");
   const firstTier = settings.paidTiers[0];
@@ -126,6 +175,7 @@ export function SessionsPageBody({ settings, content, nextOpening }: { settings:
           </div>
         </div>
       </section>
+      <WhySection content={content} />
       <Tiers settings={settings} content={content} />
       <Section tone="page">
         <Tabs items={Object.keys(panels)} value={tab} onChange={setTab} />
