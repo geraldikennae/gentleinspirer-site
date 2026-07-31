@@ -666,6 +666,28 @@ export interface SessionsContent {
   id: number;
   heroIntro?: string | null;
   /**
+   * Shown right below the hero, before pricing -- explains why Clarity Sessions exist before someone books the paid 1:1 or joins a free community session.
+   */
+  whySection: {
+    leadIn: string;
+    paragraph1: string;
+    paragraph2: string;
+    paragraph3: string;
+    whoItsForHeading: string;
+    whoItsForText: string;
+    howItWorksHeading: string;
+    howItWorksSteps?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    bookCtaLabel: string;
+    bookCtaButtonLabel: string;
+    communityCtaLabel: string;
+    communityCtaButtonLabel: string;
+  };
+  /**
    * The first point always shows the live session length; these two follow it.
    */
   extraSessionPoints?:
@@ -939,6 +961,27 @@ export interface HomeContentSelect<T extends boolean = true> {
  */
 export interface SessionsContentSelect<T extends boolean = true> {
   heroIntro?: T;
+  whySection?:
+    | T
+    | {
+        leadIn?: T;
+        paragraph1?: T;
+        paragraph2?: T;
+        paragraph3?: T;
+        whoItsForHeading?: T;
+        whoItsForText?: T;
+        howItWorksHeading?: T;
+        howItWorksSteps?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        bookCtaLabel?: T;
+        bookCtaButtonLabel?: T;
+        communityCtaLabel?: T;
+        communityCtaButtonLabel?: T;
+      };
   extraSessionPoints?:
     | T
     | {

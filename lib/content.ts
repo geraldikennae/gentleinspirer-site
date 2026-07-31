@@ -85,6 +85,12 @@ const FALLBACK_COMMUNITY_BULLETS = ["Live on YouTube or Instagram", "Group clari
 const FALLBACK_INTRO_BULLETS = ["Define whether stage one fits", "No preparation needed"];
 const FALLBACK_PAID_BULLETS = ["Written Clarity brief the same day", "Two-week review question"];
 
+const FALLBACK_HOW_IT_WORKS_STEPS = [
+  "Book your session using the calendar below.",
+  "Arrive with the situation, not the solution. You don't need to have it figured out.",
+  "Leave with a framework, a way of seeing your own situation that you carry forward, long after the session ends.",
+];
+
 export interface SessionsTierCard {
   eyebrow: string;
   title?: string;
@@ -93,8 +99,24 @@ export interface SessionsTierCard {
   footnote?: string;
 }
 
+export interface WhySectionData {
+  leadIn: string;
+  paragraph1: string;
+  paragraph2: string;
+  paragraph3: string;
+  whoItsForHeading: string;
+  whoItsForText: string;
+  howItWorksHeading: string;
+  howItWorksSteps: string[];
+  bookCtaLabel: string;
+  bookCtaButtonLabel: string;
+  communityCtaLabel: string;
+  communityCtaButtonLabel: string;
+}
+
 export interface SessionsContentData {
   heroIntro: string;
+  whySection: WhySectionData;
   extraSessionPoints: TitleDescription[];
   howItRuns: TitleDescription[];
   afterwards: TitleDescription[];
@@ -109,6 +131,20 @@ export async function getSessionsContent(): Promise<SessionsContentData> {
   const c = await payload.findGlobal({ slug: "sessions-content" });
   return {
     heroIntro: c.heroIntro ?? "",
+    whySection: {
+      leadIn: c.whySection?.leadIn ?? "Clarity Sessions don't hand you the way out. They hand you the framework to find it yourself.",
+      paragraph1: c.whySection?.paragraph1 ?? "",
+      paragraph2: c.whySection?.paragraph2 ?? "",
+      paragraph3: c.whySection?.paragraph3 ?? "",
+      whoItsForHeading: c.whySection?.whoItsForHeading ?? "Who It's For",
+      whoItsForText: c.whySection?.whoItsForText ?? "",
+      howItWorksHeading: c.whySection?.howItWorksHeading ?? "How It Works",
+      howItWorksSteps: c.whySection?.howItWorksSteps?.length ? c.whySection.howItWorksSteps.map((s) => s.text) : FALLBACK_HOW_IT_WORKS_STEPS,
+      bookCtaLabel: c.whySection?.bookCtaLabel ?? "Ready to go deeper?",
+      bookCtaButtonLabel: c.whySection?.bookCtaButtonLabel ?? "Book a Clarity Session",
+      communityCtaLabel: c.whySection?.communityCtaLabel ?? "Want to experience it first?",
+      communityCtaButtonLabel: c.whySection?.communityCtaButtonLabel ?? "Join the Community for Free Sessions",
+    },
     extraSessionPoints: (c.extraSessionPoints ?? []).map((p) => ({ title: p.title, description: p.description })),
     howItRuns: (c.howItRuns ?? []).map((p) => ({ title: p.title, description: p.description })),
     afterwards: (c.afterwards ?? []).map((p) => ({ title: p.title, description: p.description })),
