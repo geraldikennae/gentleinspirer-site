@@ -18,6 +18,16 @@ import { migrations } from "./migrations";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// The plugin itself throws synchronously (crashing every /api/* route, not
+// just uploads) if the token doesn't match its expected format, so it's
+// validated here first and skipped with a log line instead — same
+// degrade-gracefully behavior as every other integration on this site.
+const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+const blobTokenValid = Boolean(blobToken && /^vercel_blob_rw_[a-z\d]+_[a-z\d]+$/i.test(blobToken));
+if (blobToken && !blobTokenValid) {
+  console.error("BLOB_READ_WRITE_TOKEN is set but doesn't match the expected format — uploads will fall back to local disk storage, which doesn't persist on Vercel.");
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -55,14 +65,14 @@ export default buildConfig({
   plugins: [
     // Vercel's filesystem is read-only/ephemeral — Payload's default local-disk
     // upload storage silently fails to persist files there. Route uploads to
-    // Vercel Blob whenever a token is present (added automatically once a Blob
-    // store is attached to the project); local dev keeps using disk storage.
-    ...(process.env.BLOB_READ_WRITE_TOKEN
+    // Vercel Blob whenever a valid token is present (added automatically once
+    // a Blob store is attached to the project); local dev keeps using disk.
+    ...(blobTokenValid
       ? [
           vercelBlobStorage({
             enabled: true,
             collections: { media: true },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
+            token: blobToken,
           }),
         ]
       : []),
