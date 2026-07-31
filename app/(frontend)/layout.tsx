@@ -20,7 +20,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "gentleinspirer — Gerald I. Egeonu",
+  title: "gentleinspirer.com — Clarity precedes movement",
   description: "Growth is designed, not desired. Structured growth systems, leadership development and disciplined execution with Gerald I. Egeonu, founder of The Growth Circle.",
   icons: {
     icon: [
