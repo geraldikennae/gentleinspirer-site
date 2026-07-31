@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/core/Icon";
 
-const QUOTES: [string, string][] = [
+const FALLBACK_QUOTES: [string, string][] = [
   ["Growth is designed,", "not desired."],
   ["Clarity precedes", "movement."],
   ["Consistency beats", "intensity."],
@@ -17,11 +17,12 @@ const INTERVAL_MS = 6500;
 const FADE_MS = 320;
 const EASE = "cubic-bezier(.22,.61,.36,1)";
 
-function normalize(i: number): number {
-  return ((i % QUOTES.length) + QUOTES.length) % QUOTES.length;
+function normalize(i: number, length: number): number {
+  return ((i % length) + length) % length;
 }
 
-export function HeroQuoteSlider() {
+export function HeroQuoteSlider({ quotes }: { quotes?: { line1: string; line2: string }[] }) {
+  const QUOTES: [string, string][] = quotes && quotes.length > 0 ? quotes.map((q) => [q.line1, q.line2]) : FALLBACK_QUOTES;
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -41,7 +42,7 @@ export function HeroQuoteSlider() {
 
   const goTo = useCallback(
     (target: number) => {
-      const next = normalize(target);
+      const next = normalize(target, QUOTES.length);
       if (fadeTimeoutRef.current) window.clearTimeout(fadeTimeoutRef.current);
       if (reducedMotion) {
         setIndex(next);
@@ -53,7 +54,7 @@ export function HeroQuoteSlider() {
         setVisible(true);
       }, FADE_MS);
     },
-    [reducedMotion],
+    [reducedMotion, QUOTES.length],
   );
 
   // Re-armed on every index change, whether from auto-advance or a manual

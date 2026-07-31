@@ -15,19 +15,7 @@ import { CurrencySwitch, type Amounts, type Currency } from "@/components/commer
 import { PlatformBadge } from "@/components/social/PlatformBadge";
 import { SOCIALS } from "@/components/social/socials";
 import type { SiteSettingsData } from "@/lib/settings";
-
-const PANELS: Record<string, [string, string][]> = {
-  "How it runs": [
-    ["First ten minutes", "We name the outcome. Most people arrive with tactics and no defined outcome."],
-    ["The middle", "We find the constraint — usually structural, rarely motivational."],
-    ["Last ten minutes", "One increment, defined tightly enough to be observable next week."],
-  ],
-  Afterwards: [
-    ["Same day", "The Clarity brief arrives: outcome, constraint, first increment."],
-    ["Two weeks on", "One review question by email. Consistency over intensity."],
-    ["Stage two", "Move on to Structure when the increment is holding — not before."],
-  ],
-};
+import type { SessionsContentData } from "@/lib/content";
 
 function Tiers({ settings }: { settings: SiteSettingsData }) {
   const [cur, setCur] = useState<Currency>("USD");
@@ -87,7 +75,7 @@ function Tiers({ settings }: { settings: SiteSettingsData }) {
   );
 }
 
-export function SessionsPageBody({ settings }: { settings: SiteSettingsData }) {
+export function SessionsPageBody({ settings, content, nextOpening }: { settings: SiteSettingsData; content: SessionsContentData; nextOpening: string | null }) {
   const [tab, setTab] = useState("The session");
   const firstTier = settings.paidTiers[0];
   const durationBadge = firstTier ? `${firstTier.minutes} min` : "Duration TBC";
@@ -96,10 +84,10 @@ export function SessionsPageBody({ settings }: { settings: SiteSettingsData }) {
   const panels: Record<string, [string, string][]> = {
     "The session": [
       [firstTier ? `${firstTier.minutes} minutes` : "One session", "One structured conversation, video or phone. No slides to sit through."],
-      ["One decision", "We define the outcome first, then work backwards to the constraint."],
-      ["A written system", "Your stage-one Clarity brief, in writing, the same day."],
+      ...content.extraSessionPoints.map((p): [string, string] => [p.title, p.description]),
     ],
-    ...PANELS,
+    "How it runs": content.howItRuns.map((p): [string, string] => [p.title, p.description]),
+    Afterwards: content.afterwards.map((p): [string, string] => [p.title, p.description]),
   };
 
   return (
@@ -111,9 +99,7 @@ export function SessionsPageBody({ settings }: { settings: SiteSettingsData }) {
             <div>
               <h1 style={{ fontSize: "var(--size-display-2)", letterSpacing: ".05em" }}>Clarity Session</h1>
               <Rule length={64} />
-              <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)", fontSize: "var(--size-body-lg)" }}>
-                Clarity precedes movement. One hour to define the outcome, locate the constraint, and set the first increment — for a decision that has been running without structure.
-              </p>
+              <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)", fontSize: "var(--size-body-lg)" }}>{content.heroIntro}</p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginTop: "var(--space-5)" }}>
                 <Badge tone="outline">{durationBadge}</Badge>
                 <Badge tone="outline">1:1</Badge>
@@ -129,10 +115,8 @@ export function SessionsPageBody({ settings }: { settings: SiteSettingsData }) {
             </div>
             <Card tone="brand" variant="flat" padding="var(--space-6)">
               <Eyebrow tone="cream">Next opening</Eyebrow>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "28px", color: "var(--gi-cream)", margin: "var(--space-3) 0 var(--space-4)" }}>
-                Thu 14 March
-                <br />
-                10:00 WAT
+              <div style={{ fontFamily: "var(--font-display)", fontSize: nextOpening ? "28px" : "18px", color: "var(--gi-cream)", margin: "var(--space-3) 0 var(--space-4)" }}>
+                {nextOpening ?? "Pick a time that works on the booking page"}
               </div>
               <Button variant="gold" block href="/book">
                 Take this time
@@ -158,7 +142,7 @@ export function SessionsPageBody({ settings }: { settings: SiteSettingsData }) {
       </Section>
       <Section tone="card">
         <div className="rg-quote-cta">
-          <Quote attribution="M., founder">I came in with a spreadsheet and left with a system.</Quote>
+          <Quote attribution={content.testimonial.attribution}>{content.testimonial.quote}</Quote>
           <div style={{ display: "grid", gap: "var(--space-4)", justifyItems: "start" }}>
             <Eyebrow>Not ready to book?</Eyebrow>
             <p style={{ margin: 0, maxWidth: "40ch" }}>Read a framework breakdown first. Same structure, same voice as the session.</p>

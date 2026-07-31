@@ -1,5 +1,6 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import path from "path";
 import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
@@ -10,6 +11,8 @@ import { Media } from "./collections/Media";
 import { Letters } from "./collections/Letters";
 import { Products } from "./collections/Products";
 import { SiteSettings } from "./globals/SiteSettings";
+import { HomeContent } from "./globals/HomeContent";
+import { SessionsContent } from "./globals/SessionsContent";
 import { migrations } from "./migrations";
 
 const filename = fileURLToPath(import.meta.url);
@@ -26,7 +29,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Letters, Products],
-  globals: [SiteSettings],
+  globals: [SiteSettings, HomeContent, SessionsContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
@@ -49,5 +52,19 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [
+    // Vercel's filesystem is read-only/ephemeral — Payload's default local-disk
+    // upload storage silently fails to persist files there. Route uploads to
+    // Vercel Blob whenever a token is present (added automatically once a Blob
+    // store is attached to the project); local dev keeps using disk storage.
+    ...(process.env.BLOB_READ_WRITE_TOKEN
+      ? [
+          vercelBlobStorage({
+            enabled: true,
+            collections: { media: true },
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+          }),
+        ]
+      : []),
+  ],
 });

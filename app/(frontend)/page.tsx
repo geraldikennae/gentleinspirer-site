@@ -13,8 +13,9 @@ import { SOCIALS } from "@/components/social/socials";
 import { VideoCard } from "@/components/media/VideoCard";
 import { LetterSignupForm } from "@/components/site/LetterSignupForm";
 import { HeroQuoteSlider } from "@/components/site/HeroQuoteSlider";
+import { getHomeContent, type HomeContentData } from "@/lib/content";
 
-function Hero() {
+function Hero({ content }: { content: HomeContentData }) {
   return (
     <section style={{ background: "var(--surface-brand)", color: "var(--text-on-brand)", position: "relative", overflow: "hidden" }}>
       <div
@@ -27,10 +28,10 @@ function Hero() {
       >
         <div>
           <Eyebrow tone="cream">Growth strategist · Founder, The Growth Circle</Eyebrow>
-          <HeroQuoteSlider />
+          <HeroQuoteSlider quotes={content.heroQuotes} />
           <Rule length={64} tone="gold" />
           <p style={{ color: "var(--text-on-brand-muted)", fontSize: "var(--size-body-lg)", maxWidth: "48ch", margin: "var(--space-5) 0 var(--space-7)" }}>
-            I help individuals and organisations move from ambition to structured progress — through systems, leadership development and disciplined execution.
+            {content.heroSubhead}
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", alignItems: "center" }}>
             <Button variant="gold" size="lg" href="/book">
@@ -53,37 +54,28 @@ function Hero() {
   );
 }
 
-const MODEL: [string, string][] = [
-  ["Clarity", "Name the outcome before naming the tactics. Direction first."],
-  ["Structure", "Turn the intention into a system that does not depend on mood."],
-  ["Execution", "Move in defined increments. Progress becomes observable."],
-  ["Discipline", "Consistency over intensity. The system survives a bad week."],
-  ["Evolution", "Review, adjust, compound. Growth becomes repeatable."],
-];
-
-function Model() {
+function Model({ content }: { content: HomeContentData }) {
+  const { heading, intro, stages } = content.model;
   return (
     <Section tone="page">
       <div className="rg-model">
         <div style={{ maxWidth: "32ch" }}>
           <Eyebrow>The Growth System Model</Eyebrow>
-          <h2 style={{ margin: "var(--space-4) 0 var(--space-4)" }}>Five stages, in order</h2>
+          <h2 style={{ margin: "var(--space-4) 0 var(--space-4)" }}>{heading}</h2>
           <Rule />
-          <p style={{ marginTop: "var(--space-5)", color: "var(--text-body)" }}>
-            Clarity precedes movement. Every engagement — a session, a programme, an organisational review — runs on the same five stages.
-          </p>
+          <p style={{ marginTop: "var(--space-5)", color: "var(--text-body)" }}>{intro}</p>
           <Button variant="ghost" href="/sessions">
             Start at stage one <Icon name="arrow-right" size={14} />
           </Button>
         </div>
         <div style={{ display: "grid", gap: "1px", background: "var(--border-hairline)" }}>
-          {MODEL.map(([t, d], i) => (
-            <Card key={t} variant="flat" padding="var(--space-5) var(--space-6)" style={{ background: "var(--surface-card)" }}>
+          {stages.map((s, i) => (
+            <Card key={s.title} variant="flat" padding="var(--space-5) var(--space-6)" style={{ background: "var(--surface-card)" }}>
               <div className="rg-model-row">
                 <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-2)", color: "var(--gi-gold-deep)" }}>0{i + 1}</div>
                 <div className="rg-model-body">
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".04em" }}>{t}</div>
-                  <p style={{ fontSize: "var(--size-body-sm)", color: "var(--text-body)", margin: 0 }}>{d}</p>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".04em" }}>{s.title}</div>
+                  <p style={{ fontSize: "var(--size-body-sm)", color: "var(--text-body)", margin: 0 }}>{s.description}</p>
                 </div>
               </div>
             </Card>
@@ -94,25 +86,18 @@ function Model() {
   );
 }
 
-const PILLARS: [string, string][] = [
-  ["Purpose & Direction", "Clarity precedes movement."],
-  ["Structured Growth Systems", "Growth is a function of systems, not motivation."],
-  ["Leadership Development", "Building leaders, not followers."],
-  ["Execution Discipline", "Consistency over intensity."],
-  ["Legacy Thinking", "Long-term impact over short-term wins."],
-];
-
-function Pillars() {
+function Pillars({ content }: { content: HomeContentData }) {
+  const { heading, items } = content.pillars;
   return (
     <Section tone="card">
       <Eyebrow>What I work on</Eyebrow>
-      <h2 style={{ margin: "var(--space-4) 0 var(--space-7)", maxWidth: "24ch" }}>Five pillars</h2>
+      <h2 style={{ margin: "var(--space-4) 0 var(--space-7)", maxWidth: "24ch" }}>{heading}</h2>
       <div className="rg-pillars">
-        {PILLARS.map(([t, d]) => (
-          <div key={t}>
+        {items.map((p) => (
+          <div key={p.title}>
             <Rule length={28} />
-            <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".03em", margin: "var(--space-4) 0 var(--space-3)" }}>{t}</div>
-            <p style={{ fontSize: "var(--size-body-sm)", margin: 0 }}>{d}</p>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".03em", margin: "var(--space-4) 0 var(--space-3)" }}>{p.title}</div>
+            <p style={{ fontSize: "var(--size-body-sm)", margin: 0 }}>{p.description}</p>
           </div>
         ))}
       </div>
@@ -120,12 +105,12 @@ function Pillars() {
   );
 }
 
-function Voice() {
+function Voice({ content }: { content: HomeContentData }) {
   return (
     <Section tone="ink" py="var(--section-y-lg)">
       <div className="rg-voice">
-        <Quote tone="cream" attribution="R., emerging leader">
-          I stopped guessing at my next quarter.
+        <Quote tone="cream" attribution={content.testimonial.attribution}>
+          {content.testimonial.quote}
         </Quote>
         <Image src="/logo/mark-cream.png" alt="" width={58} height={120} style={{ height: "120px", width: "auto", opacity: 0.18 }} />
       </div>
@@ -133,7 +118,7 @@ function Voice() {
   );
 }
 
-function Who() {
+function Who({ content }: { content: HomeContentData }) {
   return (
     <Section tone="card">
       <div className="rg-who">
@@ -148,19 +133,15 @@ function Who() {
           <Eyebrow>About</Eyebrow>
           <h2 style={{ margin: "var(--space-4) 0 var(--space-4)" }}>Gerald I. Egeonu</h2>
           <Rule />
-          <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)" }}>
-            A multidisciplinary growth strategist and founder of The Growth Circle, a platform developing individuals and organisations through structured growth systems, leadership development and purpose-driven execution.
-          </p>
-          <p style={{ maxWidth: "var(--measure-prose)" }}>
-            With a background spanning engineering, project management and business operations, I bring technical precision to the way growth is designed and delivered — helping people move from ambition to structured progress, and from progress to legacy.
-          </p>
+          <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)" }}>{content.about.paragraph1}</p>
+          <p style={{ maxWidth: "var(--measure-prose)" }}>{content.about.paragraph2}</p>
         </div>
       </div>
     </Section>
   );
 }
 
-function Community() {
+function Community({ content }: { content: HomeContentData }) {
   return (
     <Section tone="page" py="var(--space-8)">
       <div className="rg-community" style={{ border: "1px solid var(--border-hairline)", background: "var(--surface-card)", padding: "var(--space-6) var(--space-7)" }}>
@@ -169,8 +150,8 @@ function Community() {
             <PlatformBadge platform="youtube" live />
             <PlatformBadge platform="instagram" live />
           </div>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-1)", color: "var(--text-heading)", letterSpacing: ".03em" }}>Free community clarity sessions, every other week</div>
-          <p style={{ margin: 0, maxWidth: "62ch", fontSize: "var(--size-body-sm)" }}>Group clarity work, live. No booking, no fee — the WhatsApp community gets the schedule and the reminders.</p>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-1)", color: "var(--text-heading)", letterSpacing: ".03em" }}>{content.community.heading}</div>
+          <p style={{ margin: 0, maxWidth: "62ch", fontSize: "var(--size-body-sm)" }}>{content.community.text}</p>
         </div>
         <div style={{ display: "grid", gap: "var(--space-3)" }}>
           <Button variant="primary" externalHref={SOCIALS.whatsapp.url}>
@@ -207,14 +188,14 @@ function Teachings() {
   );
 }
 
-function Letter() {
+function Letter({ content }: { content: HomeContentData }) {
   return (
     <Section tone="gold" py="var(--space-9)">
       <div className="rg-letter">
         <div>
           <Eyebrow tone="ink">Three times a week</Eyebrow>
-          <h2 style={{ color: "var(--gi-white)", margin: "var(--space-3) 0 var(--space-3)" }}>One insight, one framework</h2>
-          <p style={{ color: "rgba(255,255,255,.86)", maxWidth: "42ch", margin: 0 }}>Structured breakdowns on growth, leadership and execution. No offers.</p>
+          <h2 style={{ color: "var(--gi-white)", margin: "var(--space-3) 0 var(--space-3)" }}>{content.letter.heading}</h2>
+          <p style={{ color: "rgba(255,255,255,.86)", maxWidth: "42ch", margin: 0 }}>{content.letter.text}</p>
         </div>
         <LetterSignupForm />
       </div>
@@ -222,17 +203,23 @@ function Letter() {
   );
 }
 
-export default function Home() {
+// Reading from Payload at request time, same as every other content-backed
+// page on the site (sessions, book, letters, products) — force-dynamic
+// avoids coupling the build step itself to database availability.
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const content = await getHomeContent();
   return (
     <div>
-      <Hero />
-      <Community />
-      <Model />
-      <Pillars />
+      <Hero content={content} />
+      <Community content={content} />
+      <Model content={content} />
+      <Pillars content={content} />
       <Teachings />
-      <Voice />
-      <Who />
-      <Letter />
+      <Voice content={content} />
+      <Who content={content} />
+      <Letter content={content} />
     </div>
   );
 }

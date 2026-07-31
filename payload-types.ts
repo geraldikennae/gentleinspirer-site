@@ -93,9 +93,13 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'site-settings': SiteSetting;
+    'home-content': HomeContent;
+    'sessions-content': SessionsContent;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'home-content': HomeContentSelect<false> | HomeContentSelect<true>;
+    'sessions-content': SessionsContentSelect<false> | SessionsContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -446,6 +450,101 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-content".
+ */
+export interface HomeContent {
+  id: number;
+  /**
+   * Rotates automatically on the homepage hero. Each row is one quote, split across two lines.
+   */
+  heroQuotes?:
+    | {
+        line1: string;
+        line2: string;
+        id?: string | null;
+      }[]
+    | null;
+  heroSubhead?: string | null;
+  model?: {
+    heading?: string | null;
+    intro?: string | null;
+    stages?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  pillars?: {
+    heading?: string | null;
+    items?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  testimonial?: {
+    quote?: string | null;
+    attribution?: string | null;
+  };
+  about?: {
+    paragraph1?: string | null;
+    paragraph2?: string | null;
+  };
+  community?: {
+    heading?: string | null;
+    text?: string | null;
+  };
+  letter?: {
+    heading?: string | null;
+    text?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sessions-content".
+ */
+export interface SessionsContent {
+  id: number;
+  heroIntro?: string | null;
+  /**
+   * The first point always shows the live session length; these two follow it.
+   */
+  extraSessionPoints?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  howItRuns?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  afterwards?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  testimonial?: {
+    quote?: string | null;
+    attribution?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -462,6 +561,109 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         priceUSD?: T;
         priceGBP?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-content_select".
+ */
+export interface HomeContentSelect<T extends boolean = true> {
+  heroQuotes?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        id?: T;
+      };
+  heroSubhead?: T;
+  model?:
+    | T
+    | {
+        heading?: T;
+        intro?: T;
+        stages?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  pillars?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  testimonial?:
+    | T
+    | {
+        quote?: T;
+        attribution?: T;
+      };
+  about?:
+    | T
+    | {
+        paragraph1?: T;
+        paragraph2?: T;
+      };
+  community?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+      };
+  letter?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sessions-content_select".
+ */
+export interface SessionsContentSelect<T extends boolean = true> {
+  heroIntro?: T;
+  extraSessionPoints?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  howItRuns?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  afterwards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  testimonial?:
+    | T
+    | {
+        quote?: T;
+        attribution?: T;
       };
   updatedAt?: T;
   createdAt?: T;
