@@ -5,6 +5,7 @@ import * as migration_20260731_155955_add_about_photos from './20260731_155955_a
 import * as migration_20260731_165552_add_home_teachings from './20260731_165552_add_home_teachings';
 import * as migration_20260731_172404_add_subscribers from './20260731_172404_add_subscribers';
 import * as migration_20260731_191727_add_content_globals_and_calendar_suggestions from './20260731_191727_add_content_globals_and_calendar_suggestions';
+import * as migration_20260731_193518_add_suggestion_status from './20260731_193518_add_suggestion_status';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20260731_191727_add_content_globals_and_calendar_suggestions.up,
     down: migration_20260731_191727_add_content_globals_and_calendar_suggestions.down,
-    name: '20260731_191727_add_content_globals_and_calendar_suggestions'
+    name: '20260731_191727_add_content_globals_and_calendar_suggestions',
+  },
+  {
+    up: migration_20260731_193518_add_suggestion_status.up,
+    down: migration_20260731_193518_add_suggestion_status.down,
+    name: '20260731_193518_add_suggestion_status'
   },
 ];

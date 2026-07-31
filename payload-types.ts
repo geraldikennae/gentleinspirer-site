@@ -276,7 +276,7 @@ export interface UpcomingSession {
   createdAt: string;
 }
 /**
- * Submitted via the "suggest a topic" form on /calendar. Not meant to be added to by hand.
+ * Submitted via the "suggest a topic" form on /calendar. New entries can't be added by visitors directly (only through that form) -- but you can freely edit the text, set a status, and leave yourself notes here.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "topic-suggestions".
@@ -286,6 +286,11 @@ export interface TopicSuggestion {
   suggestion: string;
   name?: string | null;
   email?: string | null;
+  status: 'New' | 'Considering' | 'Planned' | 'Done';
+  /**
+   * Not shown publicly -- your own notes on this suggestion.
+   */
+  adminNotes?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -482,6 +487,8 @@ export interface TopicSuggestionsSelect<T extends boolean = true> {
   suggestion?: T;
   name?: T;
   email?: T;
+  status?: T;
+  adminNotes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

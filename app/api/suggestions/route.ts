@@ -15,6 +15,7 @@ export async function POST(request: Request) {
         suggestion: body.suggestion.trim(),
         name: typeof body.name === "string" && body.name.trim() ? body.name.trim() : undefined,
         email: typeof body.email === "string" && body.email.includes("@") ? body.email.trim().toLowerCase() : undefined,
+        status: "New",
       },
     });
     return NextResponse.json({ status: "ok" });

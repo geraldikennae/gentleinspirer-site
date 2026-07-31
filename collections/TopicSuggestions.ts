@@ -5,12 +5,13 @@ export const TopicSuggestions: CollectionConfig = {
   labels: { singular: "Topic Suggestion", plural: "Topic Suggestions" },
   admin: {
     useAsTitle: "suggestion",
-    defaultColumns: ["suggestion", "email", "createdAt"],
-    description: "Submitted via the \"suggest a topic\" form on /calendar. Not meant to be added to by hand.",
+    defaultColumns: ["suggestion", "status", "email", "createdAt"],
+    description: "Submitted via the \"suggest a topic\" form on /calendar. New entries can't be added by visitors directly (only through that form) -- but you can freely edit the text, set a status, and leave yourself notes here.",
   },
   access: {
-    // Only ever written to via the local API from the suggestions route
-    // (which bypasses this by default), not the public REST endpoint.
+    // New entries only ever come from the local API via the suggestions
+    // route (which bypasses this by default), not the public REST endpoint
+    // -- but everything is fully editable from /admin once submitted.
     read: ({ req }) => Boolean(req.user),
     create: () => false,
     update: ({ req }) => Boolean(req.user),
@@ -30,6 +31,20 @@ export const TopicSuggestions: CollectionConfig = {
     {
       name: "email",
       type: "email",
+    },
+    {
+      name: "status",
+      type: "select",
+      options: ["New", "Considering", "Planned", "Done"],
+      defaultValue: "New",
+      required: true,
+      admin: { position: "sidebar" },
+    },
+    {
+      name: "adminNotes",
+      label: "Notes",
+      type: "textarea",
+      admin: { position: "sidebar", description: "Not shown publicly -- your own notes on this suggestion." },
     },
   ],
 };
