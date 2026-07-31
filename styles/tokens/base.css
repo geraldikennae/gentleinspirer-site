@@ -1,4 +1,5 @@
 *,*::before,*::after{box-sizing:border-box}
+img,picture,svg{max-width:100%;height:auto;display:block}
 html{background:var(--surface-page)}
 body{margin:0;background:var(--surface-page);color:var(--text-body);font-family:var(--font-body);font-size:var(--size-body);font-weight:var(--weight-body-light);line-height:var(--leading-body);letter-spacing:var(--tracking-body);-webkit-font-smoothing:antialiased;text-wrap:pretty}
 h1,h2,h3,h4{font-family:var(--font-display);color:var(--text-heading);font-weight:var(--weight-display-light);line-height:var(--leading-heading);margin:0}

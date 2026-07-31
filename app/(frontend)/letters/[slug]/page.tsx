@@ -25,15 +25,17 @@ export default async function LetterPage({ params }: { params: Promise<{ slug: s
 
   return (
     <Section tone="page" py="var(--space-9)">
-      <Button variant="ghost" href="/letters" style={{ marginBottom: "var(--space-6)" }}>
-        ← All letters
-      </Button>
-      <Eyebrow>{letter.kind}</Eyebrow>
-      <h1 style={{ fontSize: "var(--size-display-3)", margin: "var(--space-3) 0 var(--space-4)", maxWidth: "var(--measure-prose)" }}>{letter.title}</h1>
-      <Rule length={64} />
-      <div style={{ marginTop: "var(--space-4)", fontSize: "var(--size-caption)", color: "var(--text-muted)", letterSpacing: "var(--tracking-caps)", textTransform: "uppercase" }}>{dateLabel(letter.publishedAt)}</div>
-      <div style={{ marginTop: "var(--space-7)", maxWidth: "var(--measure-prose)", fontSize: "var(--size-body)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
-        <RichText data={letter.body} />
+      <div style={{ maxWidth: "var(--measure-prose)", margin: "0 auto" }}>
+        <Button variant="ghost" href="/letters" style={{ marginBottom: "var(--space-6)" }}>
+          ← All letters
+        </Button>
+        <Eyebrow>{letter.kind}</Eyebrow>
+        <h1 style={{ fontSize: "var(--size-display-3)", margin: "var(--space-3) 0 var(--space-4)" }}>{letter.title}</h1>
+        <Rule length={64} />
+        <div style={{ marginTop: "var(--space-4)", fontSize: "var(--size-caption)", color: "var(--text-muted)", letterSpacing: "var(--tracking-caps)", textTransform: "uppercase" }}>{dateLabel(letter.publishedAt)}</div>
+        <div className="rg-letter-detail" style={{ marginTop: "var(--space-7)", fontSize: "var(--size-body)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
+          <RichText data={letter.body} />
+        </div>
       </div>
     </Section>
   );

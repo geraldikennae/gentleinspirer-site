@@ -130,6 +130,9 @@
   .rg-letter-row{grid-template-columns:1fr;align-items:start;row-gap:var(--space-3)}
 }
 
+.rg-letter-detail img{margin:var(--space-6) auto;border:1px solid var(--border-hairline)}
+.rg-letter-detail img:first-child{margin-top:0}
+
 /* ---------- booking ---------- */
 
 .rg-book-main{display:grid;grid-template-columns:1.4fr .6fr;gap:var(--space-9);align-items:start}
