@@ -17,6 +17,26 @@ const FALLBACK_TEACHINGS = [
   { title: "Consistency over intensity", videoId: "" },
 ];
 
+// Admin can paste a bare video ID or any common YouTube URL shape
+// (youtu.be/ID, youtube.com/watch?v=ID, youtube.com/embed/ID, /shorts/ID) --
+// this pulls out just the 11-character ID either way.
+function extractYoutubeId(input: string): string {
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+  if (/^[\w-]{11}$/.test(trimmed)) return trimmed;
+  try {
+    const url = new URL(trimmed);
+    if (url.hostname === "youtu.be") return url.pathname.slice(1);
+    const vParam = url.searchParams.get("v");
+    if (vParam) return vParam;
+    const match = url.pathname.match(/\/(?:embed|shorts)\/([\w-]{11})/);
+    if (match) return match[1];
+  } catch {
+    // not a URL -- fall through and return the raw input below
+  }
+  return trimmed;
+}
+
 export interface HomeContentData {
   heroQuotes: { line1: string; line2: string }[];
   heroSubhead: string;
@@ -53,7 +73,7 @@ export const getHomeContent = cache(async function getHomeContent(): Promise<Hom
       paragraph2: c.about?.paragraph2 ?? "",
       photos: (c.about?.photos ?? []).map((p) => (typeof p.photo === "object" ? p.photo?.url : null)).filter((url): url is string => Boolean(url)),
     },
-    teachings: c.teachings?.videos?.length ? c.teachings.videos.map((v) => ({ title: v.title, videoId: v.videoId ?? "" })) : FALLBACK_TEACHINGS,
+    teachings: c.teachings?.videos?.length ? c.teachings.videos.map((v) => ({ title: v.title, videoId: extractYoutubeId(v.videoId ?? "") })) : FALLBACK_TEACHINGS,
     community: { heading: c.community?.heading ?? "", text: c.community?.text ?? "" },
     letter: { heading: c.letter?.heading ?? "", text: c.letter?.text ?? "" },
   };

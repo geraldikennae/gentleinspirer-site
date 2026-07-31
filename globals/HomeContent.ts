@@ -122,7 +122,7 @@ export const HomeContent: GlobalConfig = {
           type: "array",
           minRows: 1,
           admin: {
-            description: "Paste the YouTube video ID -- the part after \"v=\" in the video's URL (e.g. dQw4w9WgXcQ from youtube.com/watch?v=dQw4w9WgXcQ). Leave blank to show a placeholder that links to the channel instead.",
+            description: "Paste the full YouTube link (youtu.be/... or youtube.com/watch?v=...) or just the video ID -- either works. Leave blank to show a placeholder that links to the channel instead.",
           },
           defaultValue: [
             { title: "Growth is designed, not desired", videoId: "" },
@@ -131,7 +131,7 @@ export const HomeContent: GlobalConfig = {
           ],
           fields: [
             { name: "title", type: "text", required: true },
-            { name: "videoId", label: "YouTube video ID", type: "text" },
+            { name: "videoId", label: "YouTube link or video ID", type: "text" },
           ],
         },
       ],
