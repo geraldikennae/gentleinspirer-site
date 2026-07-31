@@ -20,14 +20,21 @@ export function LetterSignupForm() {
     setErr(null);
     setPending(true);
     try {
-      await fetch("/api/letters/subscribe", {
+      const res = await fetch("/api/letters/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setErr(data?.error || "Something went wrong. Please try again.");
+        return;
+      }
+      setSent(true);
+    } catch {
+      setErr("Something went wrong. Please try again.");
     } finally {
       setPending(false);
-      setSent(true);
     }
   };
 

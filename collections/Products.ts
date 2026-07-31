@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { notifyNewProduct } from "@/lib/subscriberNotifications";
 
 export const Products: CollectionConfig = {
   slug: "products",
@@ -9,6 +10,17 @@ export const Products: CollectionConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        // Only for a genuinely new product, not later edits (price changes,
+        // blurb tweaks, etc.) to one that's already up.
+        if (operation === "create") {
+          await notifyNewProduct(req.payload, { title: doc.title, blurb: doc.blurb }).catch((err) => console.error("notifyNewProduct failed:", err));
+        }
+      },
+    ],
   },
   fields: [
     {

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { notifyNewLetter } from "@/lib/subscriberNotifications";
 
 export const Letters: CollectionConfig = {
   slug: "letters",
@@ -12,6 +13,17 @@ export const Letters: CollectionConfig = {
   },
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, previousDoc, req }) => {
+        // Only on the draft -> published transition, not on every
+        // subsequent edit of an already-published letter.
+        if (doc._status === "published" && previousDoc?._status !== "published") {
+          await notifyNewLetter(req.payload, { title: doc.title, dek: doc.dek, slug: doc.slug }).catch((err) => console.error("notifyNewLetter failed:", err));
+        }
+      },
+    ],
   },
   fields: [
     {

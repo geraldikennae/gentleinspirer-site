@@ -14,7 +14,9 @@ Payload CMS admin backend for managing content and pricing.
 | `/book` | Four-step booking flow (session type → time → details → held) |
 | `/letters` | Letters archive, filterable by type (from CMS) |
 | `/letters/[slug]` | A single letter/blog post |
+| `/letters/unsubscribed` | Confirmation page after clicking an unsubscribe link |
 | `/book/confirmed` | Post-payment landing page for the paid booking flow |
+| `/products/confirmed` | Post-payment landing page for a product purchase |
 | `/admin` | Payload admin — manage letters, products, pricing and page copy |
 
 ## Admin backend (Payload CMS)
@@ -42,6 +44,9 @@ to `/admin` prompts you to create the first admin user (email + password).
 - **Sessions Page** (`globals/SessionsContent.ts`) — the hero intro
   paragraph, all three tabs' content ("The session" / "How it runs" /
   "Afterwards"), and the testimonial quote.
+- **Subscribers** (`collections/Subscribers.ts`) — everyone who signed up
+  for the letters. Not meant to be added to by hand; managed entirely by the
+  subscribe/unsubscribe flow. Read access is admin-only (holds emails).
 - **Users** / **Media** — auth and file uploads. Uploads go to Vercel Blob
   in production (see "Media uploads" below) and local disk in dev.
 
@@ -115,13 +120,23 @@ given integration isn't configured (see `.env.example` for the keys):
 - The sessions page's "Next opening" card shows the real next available
   Cal.com slot, or a generic fallback if Cal.com isn't configured.
 
-**Still stubbed:**
+**Letter sign-up and subscriber notifications** are also fully wired:
 
-- **Letter sign-up** (`app/api/letters/subscribe/route.ts`) — validates the
-  email and reports success without storing it or sending anything. Wiring
-  this up needs a decision on where addresses live (a Resend Audience, a
-  new Payload collection, or a third-party newsletter tool) — ask if you
-  want this built out.
+- Subscribing (`app/api/letters/subscribe/route.ts`) stores the address in
+  the **Subscribers** collection and sends a welcome email via Resend.
+  Re-subscribing an already-subscribed (or previously unsubscribed) address
+  is safe — no duplicates, just reactivates it.
+- Every subscriber email includes an unsubscribe link
+  (`/api/letters/unsubscribe?token=...`) that flips their status without
+  deleting the record, landing on `/letters/unsubscribed`.
+- Publishing a **Letter** (draft → published, not on later edits) or
+  creating a new **Product** automatically emails every active subscriber —
+  see the `hooks.afterChange` in `collections/Letters.ts` and
+  `collections/Products.ts`, and `lib/subscriberNotifications.ts`. Sends run
+  in a loop from within the save request, which is fine at the scale of a
+  personal newsletter but would need a queue for a large list.
+- `SITE_URL` (`.env.example`) controls the links built into these emails —
+  defaults to the production domain already.
 
 ## Development
 

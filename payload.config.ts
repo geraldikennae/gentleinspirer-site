@@ -10,6 +10,7 @@ import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Letters } from "./collections/Letters";
 import { Products } from "./collections/Products";
+import { Subscribers } from "./collections/Subscribers";
 import { SiteSettings } from "./globals/SiteSettings";
 import { HomeContent } from "./globals/HomeContent";
 import { SessionsContent } from "./globals/SessionsContent";
@@ -43,7 +44,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Users, Media, Letters, Products],
+  collections: [Users, Media, Letters, Products, Subscribers],
   globals: [SiteSettings, HomeContent, SessionsContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

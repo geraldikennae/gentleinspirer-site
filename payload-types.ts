@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     letters: Letter;
     products: Product;
+    subscribers: Subscriber;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     letters: LettersSelect<false> | LettersSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -232,6 +234,20 @@ export interface Product {
   createdAt: string;
 }
 /**
+ * People who signed up for the letters. Emailed automatically on a new letter or product, and once on sign-up. Managed by the site — not meant to be added to by hand.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers".
+ */
+export interface Subscriber {
+  id: number;
+  email: string;
+  status: 'active' | 'unsubscribed';
+  unsubscribeToken: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -270,6 +286,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'subscribers';
+        value: number | Subscriber;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -380,6 +400,17 @@ export interface ProductsSelect<T extends boolean = true> {
   file?: T;
   priceUSD?: T;
   priceGBP?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers_select".
+ */
+export interface SubscribersSelect<T extends boolean = true> {
+  email?: T;
+  status?: T;
+  unsubscribeToken?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -510,7 +541,7 @@ export interface HomeContent {
   };
   teachings?: {
     /**
-     * Paste the YouTube video ID -- the part after "v=" in the video's URL (e.g. dQw4w9WgXcQ from youtube.com/watch?v=dQw4w9WgXcQ). Leave blank to show a placeholder that links to the channel instead.
+     * Paste the full YouTube link (youtu.be/... or youtube.com/watch?v=...) or just the video ID -- either works. Leave blank to show a placeholder that links to the channel instead.
      */
     videos?:
       | {
