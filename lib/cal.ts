@@ -61,6 +61,9 @@ export async function getAvailableSlots(slug: string, days = 14): Promise<Record
     username: CAL_USERNAME,
     start: start.toISOString(),
     end: end.toISOString(),
+    // The site's copy says "Times · WAT" — group/return slots in that zone
+    // rather than UTC, so date buckets line up with what's displayed.
+    timeZone: "Africa/Lagos",
   });
   const json = await calFetch(`/slots?${params.toString()}`, "2024-09-04");
   const raw: Record<string, { start: string }[]> = json?.data ?? {};

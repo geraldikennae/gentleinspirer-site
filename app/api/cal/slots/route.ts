@@ -13,6 +13,7 @@ export async function GET(request: Request) {
     const slots = await getAvailableSlots(CAL_SLUGS[type]);
     return NextResponse.json({ configured: true, slots });
   } catch (err) {
-    return NextResponse.json({ configured: true, slots: {}, error: err instanceof Error ? err.message : "Unknown error" }, { status: 502 });
+    console.error("Cal.com slots fetch failed:", err);
+    return NextResponse.json({ configured: true, slots: {}, error: "We couldn't load live times just now." }, { status: 502 });
   }
 }

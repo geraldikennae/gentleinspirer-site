@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState, type CSSProperties } from "react";
+import { Fragment, useEffect, useState, type CSSProperties } from "react";
 import { Section } from "@/components/site/Section";
 import { Eyebrow } from "@/components/brand/Eyebrow";
 import { Rule } from "@/components/brand/Rule";
@@ -19,19 +19,26 @@ import { PlatformBadge } from "@/components/social/PlatformBadge";
 import { SOCIALS } from "@/components/social/socials";
 import type { SiteSettingsData } from "@/lib/settings";
 
-const DAYS: [string, string][] = [
-  ["Tue", "11"],
-  ["Wed", "12"],
-  ["Thu", "14"],
-  ["Fri", "15"],
-  ["Mon", "18"],
-];
-const TIMES = ["09:00", "10:00", "13:30", "16:00"];
-
 type SessionType = "intro" | "paid";
 
 function priceLabel(priceUSD: number | null): string {
   return priceUSD == null ? "Price TBC" : `$${priceUSD.toLocaleString()}`;
+}
+
+function dateButtonLabel(dateStr: string): { weekday: string; day: string } {
+  const d = new Date(dateStr + "T12:00:00Z"); // noon UTC avoids DST/date-boundary edge cases for display-only formatting
+  return {
+    weekday: new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "Africa/Lagos" }).format(d),
+    day: new Intl.DateTimeFormat("en-US", { day: "numeric", timeZone: "Africa/Lagos" }).format(d),
+  };
+}
+
+function timeLabel(iso: string): string {
+  return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Africa/Lagos" }).format(new Date(iso));
+}
+
+function fullSlotLabel(iso: string): string {
+  return new Intl.DateTimeFormat("en-US", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Lagos", timeZoneName: "short" }).format(new Date(iso));
 }
 
 function Steps({ step }: { step: number }) {
@@ -82,8 +89,6 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
 
   const [step, setStep] = useState(0);
   const [type, setType] = useState<SessionType | null>(null);
-  const [day, setDay] = useState("14");
-  const [time, setTime] = useState<string | null>(null);
   const [tierIndex, setTierIndex] = useState(0);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -91,6 +96,51 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
   const [confirm, setConfirm] = useState(false);
   const [toast, setToast] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [heldLabel, setHeldLabel] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  // Real availability from Cal.com, fetched once a session type is chosen.
+  const [slotsByDate, setSlotsByDate] = useState<Record<string, string[]> | null>(null);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotsConfigured, setSlotsConfigured] = useState(true);
+  const [slotsError, setSlotsError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!type) return;
+    let cancelled = false;
+    // Resetting loading/selection state before an async fetch on a changed
+    // dependency is the standard data-fetching-effect shape; the eventual
+    // setState calls all happen inside the fetch's async callbacks.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSlotsLoading(true);
+    setSlotsError(null);
+    setSelectedDate(null);
+    setSelectedSlot(null);
+    fetch(`/api/cal/slots?type=${type}`)
+      .then((r) => r.json())
+      .then((data: { configured: boolean; slots: Record<string, string[]>; error?: string }) => {
+        if (cancelled) return;
+        setSlotsConfigured(data.configured);
+        setSlotsByDate(data.slots || {});
+        if (data.error) setSlotsError(data.error);
+        const dates = Object.keys(data.slots || {}).sort();
+        if (dates.length) setSelectedDate(dates[0]);
+      })
+      .catch(() => {
+        if (!cancelled) setSlotsError("Couldn't load availability. Try again shortly.");
+      })
+      .finally(() => {
+        if (!cancelled) setSlotsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [type]);
+
+  const availableDates = Object.keys(slotsByDate ?? {}).sort();
+  const timesForSelectedDate = selectedDate ? (slotsByDate?.[selectedDate] ?? []) : [];
 
   const selectedTier = paidTiers[tierIndex];
   const lengthMinutes = type === "intro" ? introMinutes : selectedTier?.minutes;
@@ -105,25 +155,42 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
   };
 
   const finish = async () => {
+    if (!selectedSlot || !type) return;
     setSubmitting(true);
+    setCheckoutError(null);
     try {
-      await fetch("/api/booking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, day, time, length: lengthMinutes, name, email }),
-      });
-      if (type === "paid") {
-        await fetch("/api/checkout", {
+      if (type === "paid" && slotsConfigured) {
+        const res = await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ provider: "stripe", currency: "USD", amount: selectedTier?.priceUSD ?? null }),
+          body: JSON.stringify({ name, email, start: selectedSlot, minutes: lengthMinutes, currency: "USD", amount: selectedTier?.priceUSD ?? null }),
         });
+        const data = await res.json();
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+          return; // leaving the app — Stripe handles the rest
+        }
+        if (data.error) {
+          setCheckoutError(data.error);
+          setSubmitting(false);
+          return;
+        }
+        // Stripe not configured — fall through to the same-page confirmation
+        // below so the flow still demonstrates end to end.
       }
-    } finally {
-      setSubmitting(false);
+
+      const res = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, start: selectedSlot, name, email, minutes: lengthMinutes }),
+      });
+      const data = await res.json();
+      setHeldLabel(data.whenLabel ?? fullSlotLabel(selectedSlot));
       setConfirm(false);
       setStep(3);
       setToast(true);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -136,6 +203,19 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
     background: on ? "var(--gi-ink)" : "var(--surface-card)",
     border: "1px solid " + (on ? "var(--gi-ink)" : "var(--border-hairline)"),
     borderRadius: "var(--radius-control)",
+    transition: "var(--transition-control)",
+  });
+
+  const dateButtonStyle = (on: boolean): CSSProperties => ({
+    width: "72px",
+    padding: "14px 0",
+    cursor: "pointer",
+    textAlign: "center",
+    fontFamily: "var(--font-body)",
+    borderRadius: "var(--radius-control)",
+    background: on ? "var(--gi-ink)" : "transparent",
+    color: on ? "var(--gi-cream)" : "var(--text-body)",
+    border: "1px solid " + (on ? "var(--gi-ink)" : "var(--border-hairline)"),
     transition: "var(--transition-control)",
   });
 
@@ -185,45 +265,51 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
 
           {step === 1 && (
             <div style={{ display: "grid", gap: "var(--space-6)" }}>
-              <div>
-                <Eyebrow tone="muted">March</Eyebrow>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginTop: "var(--space-3)" }}>
-                  {DAYS.map(([d, n]) => (
-                    <button
-                      key={n}
-                      onClick={() => {
-                        setDay(n);
-                        setTime(null);
-                      }}
-                      style={{
-                        width: "72px",
-                        padding: "14px 0",
-                        cursor: "pointer",
-                        textAlign: "center",
-                        fontFamily: "var(--font-body)",
-                        borderRadius: "var(--radius-control)",
-                        background: day === n ? "var(--gi-ink)" : "transparent",
-                        color: day === n ? "var(--gi-cream)" : "var(--text-body)",
-                        border: "1px solid " + (day === n ? "var(--gi-ink)" : "var(--border-hairline)"),
-                        transition: "var(--transition-control)",
-                      }}
-                    >
-                      <div style={{ fontSize: "10px", letterSpacing: "var(--tracking-caps)", textTransform: "uppercase", opacity: 0.7 }}>{d}</div>
-                      <div style={{ fontFamily: "var(--font-display)", fontSize: "22px", marginTop: "4px" }}>{n}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Eyebrow tone="muted">Times · WAT</Eyebrow>
-                <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-3)", flexWrap: "wrap" }}>
-                  {TIMES.map((t) => (
-                    <Tag key={t} selected={time === t} onClick={() => setTime(t)}>
-                      {t}
-                    </Tag>
-                  ))}
-                </div>
-              </div>
+              {slotsLoading && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>Loading availability…</div>}
+
+              {!slotsLoading && !slotsConfigured && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>Live scheduling isn&rsquo;t connected yet — check back soon, or message via WhatsApp above.</div>}
+
+              {!slotsLoading && slotsConfigured && slotsError && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--status-danger)" }}>{slotsError}</div>}
+
+              {!slotsLoading && slotsConfigured && !slotsError && availableDates.length === 0 && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>No openings in the next two weeks — check back soon.</div>}
+
+              {!slotsLoading && availableDates.length > 0 && (
+                <>
+                  <div>
+                    <Eyebrow tone="muted">Day</Eyebrow>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginTop: "var(--space-3)" }}>
+                      {availableDates.map((d) => {
+                        const { weekday, day } = dateButtonLabel(d);
+                        return (
+                          <button
+                            key={d}
+                            onClick={() => {
+                              setSelectedDate(d);
+                              setSelectedSlot(null);
+                            }}
+                            style={dateButtonStyle(selectedDate === d)}
+                          >
+                            <div style={{ fontSize: "10px", letterSpacing: "var(--tracking-caps)", textTransform: "uppercase", opacity: 0.7 }}>{weekday}</div>
+                            <div style={{ fontFamily: "var(--font-display)", fontSize: "22px", marginTop: "4px" }}>{day}</div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <Eyebrow tone="muted">Times · WAT</Eyebrow>
+                    <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-3)", flexWrap: "wrap" }}>
+                      {timesForSelectedDate.length === 0 && <span style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>No times that day.</span>}
+                      {timesForSelectedDate.map((iso) => (
+                        <Tag key={iso} selected={selectedSlot === iso} onClick={() => setSelectedSlot(iso)}>
+                          {timeLabel(iso)}
+                        </Tag>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
               {type === "paid" ? (
                 hasPaidTiers ? (
                   <div style={{ display: "grid", gap: "var(--space-3)" }}>
@@ -242,7 +328,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
                 <Button variant="ghost" onClick={() => setStep(0)}>
                   Back
                 </Button>
-                <Button variant="primary" disabled={!time} onClick={() => setStep(2)}>
+                <Button variant="primary" disabled={!selectedSlot} onClick={() => setStep(2)}>
                   Continue
                 </Button>
               </div>
@@ -275,6 +361,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
                 </Button>
               </div>
               {type === "paid" && <div style={{ fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Payment is taken at confirmation via Stripe.</div>}
+              {checkoutError && <div style={{ fontSize: "var(--size-caption)", color: "var(--status-danger)" }}>{checkoutError}</div>}
             </div>
           )}
 
@@ -283,14 +370,15 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
               <h2 style={{ margin: 0 }}>Held for you</h2>
               <Rule />
               <p style={{ maxWidth: "46ch", margin: 0 }}>
-                {type ? TYPES[type].label : ""} — Thursday {day} March, {time} WAT · {lengthMinutes} minutes. A confirmation is in your inbox, with the pre-session brief.
+                {type ? TYPES[type].label : ""} — {heldLabel} · {lengthMinutes} minutes. A confirmation is in your inbox, with the pre-session brief.
               </p>
               <Button
                 variant="secondary"
                 onClick={() => {
                   setStep(0);
                   setType(null);
-                  setTime(null);
+                  setSelectedSlot(null);
+                  setSelectedDate(null);
                 }}
               >
                 Book another
@@ -307,8 +395,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
             {(
               [
                 ["Type", type ? TYPES[type].eyebrow : "—"],
-                ["Day", "Thu " + day + " March"],
-                ["Time", time || "—"],
+                ["When", selectedSlot ? fullSlotLabel(selectedSlot) : "—"],
                 ["Length", lengthMinutes ? `${lengthMinutes} minutes` : "—"],
                 ["Where", "Video link by email"],
                 ["Stage", "01 · Clarity"],
@@ -317,7 +404,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
             ).map(([k, v]) => (
               <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: "var(--space-4)" }}>
                 <dt style={{ color: "var(--text-muted)", fontSize: "var(--size-caption)", letterSpacing: "var(--tracking-caps)", textTransform: "uppercase" }}>{k}</dt>
-                <dd style={{ margin: 0, color: "var(--text-heading)" }}>{v}</dd>
+                <dd style={{ margin: 0, color: "var(--text-heading)", textAlign: "right" }}>{v}</dd>
               </div>
             ))}
           </dl>
@@ -340,7 +427,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
           </>
         }
       >
-        {type ? TYPES[type].label : ""} — Thursday {day} March, {time} WAT · {lengthMinutes} minutes, for {name || "you"}.{type === "paid" && " Payment follows via Stripe."}
+        {type ? TYPES[type].label : ""} — {selectedSlot ? fullSlotLabel(selectedSlot) : ""} · {lengthMinutes} minutes, for {name || "you"}.{type === "paid" && " Payment follows via Stripe."}
       </Dialog>
 
       {toast && (
