@@ -14,38 +14,6 @@ export const SessionsContent: GlobalConfig = {
       defaultValue: "Clarity precedes movement. One hour to define the outcome, locate the constraint, and set the first increment — for a decision that has been running without structure.",
     },
     {
-      name: "whySection",
-      label: "\"Why Clarity Sessions\" section",
-      admin: {
-        description: "Shown right below the hero, before pricing -- explains why Clarity Sessions exist before someone books the paid 1:1 or joins a free community session.",
-      },
-      type: "group",
-      fields: [
-        { name: "leadIn", label: "Bold lead-in line", type: "textarea", required: true, defaultValue: "Clarity Sessions don't hand you the way out. They hand you the framework to find it yourself." },
-        { name: "paragraph1", type: "textarea", required: true, defaultValue: "Most people arrive at confusion believing they need someone to hand them a way out. What they actually need is the Structure to see the situation clearly enough to walk out themselves. Clarity Sessions exist to build that Structure: a repeatable framework for discernment, not a dependency on being told what to do." },
-        { name: "paragraph2", type: "textarea", required: true, defaultValue: "We do not spoon feed conclusions. We equip you with the tools of Understanding, the questions that reveal what is actually happening beneath the conflict or confusion, and the Alignment between what you know and what you have been avoiding. Clarity precedes movement, and movement that is not yours to own will not hold." },
-        { name: "paragraph3", type: "textarea", required: true, defaultValue: "This is the difference between relief and transformation. Relief is temporary; someone solved it for you. Transformation is permanent; you now carry the framework with you into every future confusion." },
-        { name: "whoItsForHeading", type: "text", required: true, defaultValue: "Who It's For" },
-        { name: "whoItsForText", type: "textarea", required: true, defaultValue: "You're standing inside a decision, a relationship, a business crossroad, or a season that no longer makes sense, and the people around you keep offering opinions instead of Structure. You're not looking for someone to solve it. You're looking to think clearly again." },
-        { name: "howItWorksHeading", type: "text", required: true, defaultValue: "How It Works" },
-        {
-          name: "howItWorksSteps",
-          type: "array",
-          minRows: 1,
-          defaultValue: [
-            { text: "Book your session using the calendar below." },
-            { text: "Arrive with the situation, not the solution. You don't need to have it figured out." },
-            { text: "Leave with a framework, a way of seeing your own situation that you carry forward, long after the session ends." },
-          ],
-          fields: [{ name: "text", type: "textarea", required: true }],
-        },
-        { name: "bookCtaLabel", label: "Book CTA eyebrow", type: "text", required: true, defaultValue: "Ready to go deeper?" },
-        { name: "bookCtaButtonLabel", type: "text", required: true, defaultValue: "Book a Clarity Session" },
-        { name: "communityCtaLabel", label: "Community CTA eyebrow", type: "text", required: true, defaultValue: "Want to experience it first?" },
-        { name: "communityCtaButtonLabel", type: "text", required: true, defaultValue: "Join the Community for Free Sessions" },
-      ],
-    },
-    {
       name: "extraSessionPoints",
       label: "\"The session\" tab — additional points",
       admin: {

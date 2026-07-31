@@ -103,11 +103,6 @@
   .rg-quote-cta{grid-template-columns:1fr}
 }
 
-.rg-why-ctas{grid-template-columns:1fr 1fr}
-@media (max-width:640px){
-  .rg-why-ctas{grid-template-columns:1fr}
-}
-
 /* ---------- products ---------- */
 
 .rg-page-head{display:grid;grid-template-columns:1fr auto;gap:var(--space-9);align-items:end}
