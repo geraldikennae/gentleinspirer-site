@@ -112,6 +112,31 @@ export const HomeContent: GlobalConfig = {
       ],
     },
     {
+      name: "teachings",
+      label: "Free teachings section",
+      type: "group",
+      fields: [
+        {
+          name: "videos",
+          label: "Videos",
+          type: "array",
+          minRows: 1,
+          admin: {
+            description: "Paste the YouTube video ID -- the part after \"v=\" in the video's URL (e.g. dQw4w9WgXcQ from youtube.com/watch?v=dQw4w9WgXcQ). Leave blank to show a placeholder that links to the channel instead.",
+          },
+          defaultValue: [
+            { title: "Growth is designed, not desired", videoId: "" },
+            { title: "Clarity precedes movement", videoId: "" },
+            { title: "Consistency over intensity", videoId: "" },
+          ],
+          fields: [
+            { name: "title", type: "text", required: true },
+            { name: "videoId", label: "YouTube video ID", type: "text" },
+          ],
+        },
+      ],
+    },
+    {
       name: "community",
       label: "Community section",
       type: "group",

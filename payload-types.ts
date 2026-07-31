@@ -508,6 +508,18 @@ export interface HomeContent {
         }[]
       | null;
   };
+  teachings?: {
+    /**
+     * Paste the YouTube video ID -- the part after "v=" in the video's URL (e.g. dQw4w9WgXcQ from youtube.com/watch?v=dQw4w9WgXcQ). Leave blank to show a placeholder that links to the channel instead.
+     */
+    videos?:
+      | {
+          title: string;
+          videoId?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   community?: {
     heading?: string | null;
     text?: string | null;
@@ -633,6 +645,17 @@ export interface HomeContentSelect<T extends boolean = true> {
           | T
           | {
               photo?: T;
+              id?: T;
+            };
+      };
+  teachings?:
+    | T
+    | {
+        videos?:
+          | T
+          | {
+              title?: T;
+              videoId?: T;
               id?: T;
             };
       };

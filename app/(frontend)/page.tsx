@@ -161,7 +161,8 @@ function Community({ content }: { content: HomeContentData }) {
   );
 }
 
-function Teachings() {
+function Teachings({ content }: { content: HomeContentData }) {
+  const hasMissingIds = content.teachings.some((t) => !t.videoId);
   return (
     <Section tone="card">
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "end", marginBottom: "var(--space-6)" }}>
@@ -174,11 +175,11 @@ function Teachings() {
         </Button>
       </div>
       <div className="rg-videos">
-        <VideoCard title="Growth is designed, not desired" />
-        <VideoCard title="Clarity precedes movement" />
-        <VideoCard title="Consistency over intensity" />
+        {content.teachings.map((t) => (
+          <VideoCard key={t.title} title={t.title} videoId={t.videoId || undefined} />
+        ))}
       </div>
-      <p style={{ margin: "var(--space-5) 0 0", fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Thumbnails appear once real video ids are supplied — these link to the channel.</p>
+      {hasMissingIds && <p style={{ margin: "var(--space-5) 0 0", fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Thumbnails appear once real video ids are supplied in /admin — these link to the channel until then.</p>}
     </Section>
   );
 }
@@ -211,7 +212,7 @@ export default async function Home() {
       <Community content={content} />
       <Model content={content} />
       <Pillars content={content} />
-      <Teachings />
+      <Teachings content={content} />
       <Voice content={content} />
       <Who content={content} />
       <Letter content={content} />
