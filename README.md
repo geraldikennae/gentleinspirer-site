@@ -48,6 +48,25 @@ free-tier hosted one like Neon/Supabase). Schema is pushed automatically in
 dev (`next dev`); run `npx payload generate:types` after changing a
 collection/global to refresh `payload-types.ts`.
 
+### Schema migrations (required for every deploy)
+
+Payload only auto-syncs the schema when `NODE_ENV !== 'production'`. On
+Vercel that's never true, so **without a migration, the tables never get
+created and every page 500s** — this bit us on the first deploy. The fix:
+`payload.config.ts` passes `prodMigrations` (from `migrations/index.ts`) to
+the Postgres adapter, which runs any pending migration automatically the
+first time the app connects in production. No separate deploy step needed.
+
+**Whenever you add or change a collection/global field**, generate a new
+migration and commit it:
+
+```bash
+npx payload migrate:create <short-description>
+```
+
+This writes a new file under `migrations/` and updates `migrations/index.ts`.
+Commit both — the next deploy applies it automatically on first request.
+
 ## What's real vs. stubbed
 
 Everything **visual and interactive** is real, and blog posts / products /
@@ -56,7 +75,10 @@ via `next/font`, icons are bundled npm packages (`lucide-react`,
 `react-icons/fa`) instead of runtime CDN fetches.
 
 Three integration points are still **stubbed** pending real credentials —
-see `.env.example`:
+see `.env.example`. Client helpers for Cal.com and Resend already exist
+(`lib/cal.ts`, `lib/email.ts`, `lib/booking.ts`) and degrade to a no-op when
+their env var isn't set, but aren't wired into the UI yet; Stripe's helper
+doesn't exist yet either:
 
 1. **Booking** (`app/api/booking/route.ts`) — validates and returns a fake
    confirmation. No email is actually sent. The day/time picker on `/book`

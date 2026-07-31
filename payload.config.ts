@@ -10,6 +10,7 @@ import { Media } from "./collections/Media";
 import { Letters } from "./collections/Letters";
 import { Products } from "./collections/Products";
 import { SiteSettings } from "./globals/SiteSettings";
+import { migrations } from "./migrations";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -32,6 +33,13 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
   db: postgresAdapter({
+    // Payload only auto-syncs the schema when NODE_ENV !== 'production' — on
+    // Vercel that's never true. `prodMigrations` is Payload's supported answer:
+    // it runs these migrations automatically the first time the adapter
+    // connects in production, so tables exist without a separate deploy step.
+    // Run `npx payload migrate:create <name>` after changing a collection or
+    // global, commit the new file under migrations/, and it picks it up.
+    prodMigrations: migrations,
     pool: {
       connectionString: process.env.DATABASE_URL || "",
       // Supabase (and most hosted Postgres) require SSL; the pooler in
