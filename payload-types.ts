@@ -260,7 +260,7 @@ export interface Subscriber {
   createdAt: string;
 }
 /**
- * Dates you're publishing on /calendar as upcoming Clarity Sessions -- independent of live Cal.com booking availability. Add as many as you like, for the quarter or the whole year; past dates stop showing automatically.
+ * Free community Clarity Sessions you're publishing on /calendar -- these are open, no-booking sessions (live on YouTube/Instagram/Zoom etc.), not the paid 1:1 Clarity Session booked via /book. Add as many as you like, for the quarter or the whole year; past dates stop showing automatically.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "upcoming-sessions".
@@ -269,7 +269,15 @@ export interface UpcomingSession {
   id: number;
   date: string;
   /**
-   * Optional note, e.g. "Group session" or "Applications open". Leave blank for a plain date.
+   * Where it happens, e.g. "YouTube Live", "Instagram Live", "Zoom".
+   */
+  venue: string;
+  /**
+   * URL to the stream/meeting for this specific date. Leave blank to fall back to the general community link.
+   */
+  venueLink?: string | null;
+  /**
+   * Optional note, e.g. this session's topic. Leave blank for a plain date.
    */
   label?: string | null;
   updatedAt: string;
@@ -475,6 +483,8 @@ export interface SubscribersSelect<T extends boolean = true> {
  */
 export interface UpcomingSessionsSelect<T extends boolean = true> {
   date?: T;
+  venue?: T;
+  venueLink?: T;
   label?: T;
   updatedAt?: T;
   createdAt?: T;
