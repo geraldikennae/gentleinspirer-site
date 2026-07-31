@@ -39,7 +39,7 @@ export function NavBar({ links, active, action, tone = "paper", style }: NavBarP
   const linkStyle = (on: boolean): CSSProperties => ({
     fontFamily: "var(--font-body)",
     fontSize: "var(--size-caption)",
-    fontWeight: "var(--weight-body-regular)",
+    fontWeight: "var(--weight-body-bold)",
     letterSpacing: "var(--tracking-caps)",
     textTransform: "uppercase",
     color: on ? (dark ? "var(--gi-gold)" : "var(--text-heading)") : dark ? "var(--text-on-brand-muted)" : "var(--text-muted)",
