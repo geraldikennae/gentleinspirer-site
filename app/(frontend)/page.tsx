@@ -12,6 +12,7 @@ import { PlatformBadge } from "@/components/social/PlatformBadge";
 import { SOCIALS } from "@/components/social/socials";
 import { VideoCard } from "@/components/media/VideoCard";
 import { LetterSignupForm } from "@/components/site/LetterSignupForm";
+import { HeroQuoteSlider } from "@/components/site/HeroQuoteSlider";
 
 function Hero() {
   return (
@@ -26,11 +27,7 @@ function Hero() {
       >
         <div>
           <Eyebrow tone="cream">Growth strategist · Founder, The Growth Circle</Eyebrow>
-          <h1 style={{ color: "var(--gi-cream)", fontSize: "var(--size-display-1)", letterSpacing: ".05em", margin: "var(--space-5) 0 var(--space-5)", fontWeight: "var(--weight-display-light)" }}>
-            Growth is designed,
-            <br />
-            not desired.
-          </h1>
+          <HeroQuoteSlider />
           <Rule length={64} tone="gold" />
           <p style={{ color: "var(--text-on-brand-muted)", fontSize: "var(--size-body-lg)", maxWidth: "48ch", margin: "var(--space-5) 0 var(--space-7)" }}>
             I help individuals and organisations move from ambition to structured progress — through systems, leadership development and disciplined execution.
