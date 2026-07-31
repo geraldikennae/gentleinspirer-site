@@ -12,11 +12,12 @@ export interface ProductCardProps {
   currency?: Currency;
   action?: string;
   onAction?: () => void;
+  actionDisabled?: boolean;
   cover?: string;
   style?: CSSProperties;
 }
 
-export function ProductCard({ format = "Ebook", title, blurb, amounts, currency = "USD", action = "Get it", onAction, cover, style }: ProductCardProps) {
+export function ProductCard({ format = "Ebook", title, blurb, amounts, currency = "USD", action = "Get it", onAction, actionDisabled = false, cover, style }: ProductCardProps) {
   return (
     <Card variant="hairline" interactive padding="0" style={{ display: "grid", ...style }}>
       {cover ? (
@@ -33,7 +34,7 @@ export function ProductCard({ format = "Ebook", title, blurb, amounts, currency 
         {blurb && <p style={{ margin: 0, fontSize: "var(--size-body-sm)", color: "var(--text-body)" }}>{blurb}</p>}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "var(--space-2)" }}>
           <Price amounts={amounts} currency={currency} size="sm" />
-          <Button size="sm" variant="primary" onClick={onAction}>
+          <Button size="sm" variant="primary" onClick={onAction} disabled={actionDisabled}>
             {action}
           </Button>
         </div>

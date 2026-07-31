@@ -21,6 +21,38 @@ export interface ProductSummary {
 
 export function ProductsGrid({ products }: { products: ProductSummary[] }) {
   const [cur, setCur] = useState<Currency>("USD");
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const buy = async (product: ProductSummary) => {
+    // Checkout runs on Stripe, USD/GBP only (see .env.example) — NGN has no
+    // price on any product and no payment method wired up for it.
+    if (cur === "NGN") {
+      setError("NGN checkout isn't available yet — switch to USD or GBP to buy.");
+      return;
+    }
+    setError(null);
+    setPendingId(product.id);
+    try {
+      const res = await fetch("/api/products/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id, currency: cur }),
+      });
+      const data = await res.json();
+      if (data.checkoutUrl) {
+        // eslint-disable-next-line react-hooks/immutability -- navigating away to Stripe Checkout, same pattern as BookingPageBody
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+      setError(data.message || data.error || "Checkout isn't available right now.");
+    } catch {
+      setError("Checkout isn't available right now. Please try again.");
+    } finally {
+      setPendingId(null);
+    }
+  };
+
   return (
     <>
       <Section tone="page" py="var(--space-9)">
@@ -46,10 +78,29 @@ export function ProductsGrid({ products }: { products: ProductSummary[] }) {
           </>
         ) : (
           <div className="rg-catalogue">
-            {products.map((p) => (
-              <ProductCard key={p.id} format={p.format} title={p.title} blurb={p.blurb} cover={p.cover} amounts={p.amounts} currency={cur} action="Notify me" />
-            ))}
+            {products.map((p) => {
+              const priceSet = p.amounts?.[cur] != null;
+              return (
+                <ProductCard
+                  key={p.id}
+                  format={p.format}
+                  title={p.title}
+                  blurb={p.blurb}
+                  cover={p.cover}
+                  amounts={p.amounts}
+                  currency={cur}
+                  action={pendingId === p.id ? "Redirecting…" : priceSet ? "Buy" : "Coming soon"}
+                  actionDisabled={!priceSet || pendingId !== null}
+                  onAction={() => buy(p)}
+                />
+              );
+            })}
           </div>
+        )}
+        {error && (
+          <p style={{ marginTop: "var(--space-5)", fontSize: "var(--size-body-sm)", color: "var(--status-danger)" }} role="alert">
+            {error}
+          </p>
         )}
         <div style={{ marginTop: "var(--space-7)", display: "flex", flexWrap: "wrap", gap: "var(--space-4)", alignItems: "center" }}>
           <Button variant="secondary" externalHref={SOCIALS.youtube.url}>

@@ -21,6 +21,17 @@ export async function sendBookingConfirmation(args: { to: string; name: string; 
   });
 }
 
+export async function sendProductDelivery(args: { to: string; title: string; downloadUrl: string }) {
+  if (!emailConfigured()) return;
+  const resend = getResend();
+  await resend.emails.send({
+    from: FROM,
+    to: args.to,
+    subject: `Your copy: ${args.title}`,
+    text: `Thanks for your purchase.\n\n${args.title}\n\nDownload: ${args.downloadUrl}\n\nIf the link expires, reply to this email and we'll re-send it.\n\n— Gerald`,
+  });
+}
+
 export async function sendLetterConfirmation(args: { to: string }) {
   if (!emailConfigured()) return;
   const resend = getResend();

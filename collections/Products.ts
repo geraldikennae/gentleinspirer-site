@@ -32,6 +32,23 @@ export const Products: CollectionConfig = {
       relationTo: "media",
     },
     {
+      name: "file",
+      label: "Deliverable file",
+      type: "upload",
+      relationTo: "media",
+      // Products' own read access is public (for the catalogue), but the
+      // deliverable itself must not be — otherwise its URL is discoverable
+      // via the public API before anyone pays. Restricted to logged-in admin
+      // sessions here; the post-purchase download link is built server-side
+      // via the local API, which bypasses field access by default.
+      access: {
+        read: ({ req }) => Boolean(req.user),
+      },
+      admin: {
+        description: "What the buyer receives after paying — sent as a download link by email once Stripe confirms payment.",
+      },
+    },
+    {
       name: "priceUSD",
       label: "Price (USD)",
       type: "number",

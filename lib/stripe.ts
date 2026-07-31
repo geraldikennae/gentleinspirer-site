@@ -14,7 +14,9 @@ export interface CreateCheckoutArgs {
   productName: string;
   successUrl: string;
   cancelUrl: string;
-  customerEmail: string;
+  // Omit to let Stripe's hosted Checkout page collect the email itself —
+  // used for product purchases, where we don't have it up front.
+  customerEmail?: string;
   metadata: Record<string, string>;
 }
 
@@ -32,9 +34,14 @@ export async function createCheckoutSession(args: CreateCheckoutArgs) {
         quantity: 1,
       },
     ],
-    customer_email: args.customerEmail,
+    ...(args.customerEmail ? { customer_email: args.customerEmail } : {}),
     success_url: args.successUrl,
     cancel_url: args.cancelUrl,
     metadata: args.metadata,
   });
+}
+
+export async function getCheckoutSession(sessionId: string) {
+  const stripe = getStripe();
+  return stripe.checkout.sessions.retrieve(sessionId);
 }

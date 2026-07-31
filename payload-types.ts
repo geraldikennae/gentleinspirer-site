@@ -217,6 +217,10 @@ export interface Product {
   blurb?: string | null;
   cover?: (number | null) | Media;
   /**
+   * What the buyer receives after paying — sent as a download link by email once Stripe confirms payment.
+   */
+  file?: (number | null) | Media;
+  /**
    * Leave blank to show as TBC. Checkout runs on Stripe.
    */
   priceUSD?: number | null;
@@ -373,6 +377,7 @@ export interface ProductsSelect<T extends boolean = true> {
   format?: T;
   blurb?: T;
   cover?: T;
+  file?: T;
   priceUSD?: T;
   priceGBP?: T;
   updatedAt?: T;
