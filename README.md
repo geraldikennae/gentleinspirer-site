@@ -14,7 +14,8 @@ Payload CMS admin backend for managing content and pricing.
 | `/book` | Four-step booking flow (session type → time → details → held) |
 | `/letters` | Letters archive, filterable by type (from CMS) |
 | `/letters/[slug]` | A single letter/blog post |
-| `/admin` | Payload admin — manage letters, products and pricing |
+| `/book/confirmed` | Post-payment landing page for the paid booking flow |
+| `/admin` | Payload admin — manage letters, products, pricing and page copy |
 
 ## Admin backend (Payload CMS)
 
@@ -34,8 +35,21 @@ to `/admin` prompts you to create the first admin user (email + password).
   array of paid Clarity Session duration/price tiers (add a row per
   bookable length). This is what drives the "fix prices" ask — change it
   here and `/sessions` and `/book` update immediately, no code changes.
-- **Users** / **Media** — auth and file uploads (from the Payload default
-  template).
+- **Home Page** (`globals/HomeContent.ts`) — hero quote slider text, hero
+  subhead, the Growth System Model (heading/intro/five stages), the five
+  pillars, the testimonial quote, the About bio (two paragraphs), and the
+  community/letter-signup section copy.
+- **Sessions Page** (`globals/SessionsContent.ts`) — the hero intro
+  paragraph, all three tabs' content ("The session" / "How it runs" /
+  "Afterwards"), and the testimonial quote.
+- **Users** / **Media** — auth and file uploads. Uploads go to Vercel Blob
+  in production (see "Media uploads" below) and local disk in dev.
+
+Nav labels, footer copy and social links aren't in the CMS — they change
+rarely enough that hardcoding them (in `components/site/links.ts` and
+`components/social/socials.ts`) seemed like the right tradeoff over adding
+more admin surface area. Say the word if you'd rather those were editable
+too.
 
 Frontend pages that read from the CMS are dynamic (`export const dynamic =
 "force-dynamic"`) so content changes show up without a redeploy.
@@ -67,31 +81,47 @@ npx payload migrate:create <short-description>
 This writes a new file under `migrations/` and updates `migrations/index.ts`.
 Commit both — the next deploy applies it automatically on first request.
 
+### Media uploads
+
+Vercel's filesystem is read-only/ephemeral, so Payload's default local-disk
+upload storage doesn't work in production — files would appear to upload
+successfully and then vanish. `payload.config.ts` routes uploads to
+**Vercel Blob** instead whenever `BLOB_READ_WRITE_TOKEN` is set. To enable
+it: Vercel dashboard → Storage tab → Create Database → Blob → connect it to
+this project. That sets the token automatically; nothing to paste into env
+vars by hand. Local dev doesn't need this — it just writes to `./media`.
+
 ## What's real vs. stubbed
 
-Everything **visual and interactive** is real, and blog posts / products /
-pricing are now genuinely CMS-driven (not hardcoded). Fonts are self-hosted
-via `next/font`, icons are bundled npm packages (`lucide-react`,
+Everything **visual and interactive** is real. Blog posts, products,
+pricing, and now the homepage/sessions page copy are all genuinely
+CMS-driven (not hardcoded) — see the admin backend section above. Fonts are
+self-hosted via `next/font`, icons are bundled npm packages (`lucide-react`,
 `react-icons/fa`) instead of runtime CDN fetches.
 
-Three integration points are still **stubbed** pending real credentials —
-see `.env.example`. Client helpers for Cal.com and Resend already exist
-(`lib/cal.ts`, `lib/email.ts`, `lib/booking.ts`) and degrade to a no-op when
-their env var isn't set, but aren't wired into the UI yet; Stripe's helper
-doesn't exist yet either:
+**Booking is fully wired to live services**, degrading gracefully when a
+given integration isn't configured (see `.env.example` for the keys):
 
-1. **Booking** (`app/api/booking/route.ts`) — validates and returns a fake
-   confirmation. No email is actually sent. The day/time picker on `/book`
-   is still hardcoded sample data — wiring this to Cal.com (`CAL_API_KEY`,
-   `CAL_EVENT_TYPE_INTRO`, `CAL_EVENT_TYPE_PAID`) is the next step for real
-   availability.
-2. **Checkout** (`app/api/checkout/route.ts`) — reports that Stripe isn't
-   configured. Needs `STRIPE_SECRET_KEY` and the actual Checkout Session
-   creation implemented. Paystack (NGN) isn't wired up at all — Stripe-only
-   for now, per a deliberate choice.
-3. **Letter sign-up** (`app/api/letters/subscribe/route.ts`) — validates the
-   email and reports success without storing it or sending anything. Needs
-   `RESEND_API_KEY` and the actual `emails.send` call.
+- **Cal.com** (`lib/cal.ts`) — `/book` fetches real availability and
+  creates a real booking. Falls back to a "not connected yet" message with
+  the Continue button disabled if `CAL_API_KEY` isn't set, or on API error.
+- **Stripe** (`lib/stripe.ts`) — the paid Clarity Session flow creates a
+  real Checkout Session and redirects there; the Cal.com booking + email
+  only happen after payment succeeds, on `/book/confirmed`. Falls back to
+  a stub response if `STRIPE_SECRET_KEY` isn't set. Paystack (NGN) isn't
+  wired up — Stripe-only, per a deliberate choice.
+- **Resend** (`lib/email.ts`) — sends the booking confirmation email on
+  both the free and paid flows. No-ops if `RESEND_API_KEY` isn't set.
+- The sessions page's "Next opening" card shows the real next available
+  Cal.com slot, or a generic fallback if Cal.com isn't configured.
+
+**Still stubbed:**
+
+- **Letter sign-up** (`app/api/letters/subscribe/route.ts`) — validates the
+  email and reports success without storing it or sending anything. Wiring
+  this up needs a decision on where addresses live (a Resend Audience, a
+  new Payload collection, or a third-party newsletter tool) — ask if you
+  want this built out.
 
 ## Development
 
