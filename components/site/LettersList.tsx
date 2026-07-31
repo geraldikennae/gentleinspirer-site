@@ -9,6 +9,7 @@ import { Button } from "@/components/core/Button";
 import { Card } from "@/components/core/Card";
 import { Tag } from "@/components/core/Tag";
 import { Icon } from "@/components/core/Icon";
+import type { LettersContentData } from "@/lib/content";
 
 export interface LetterSummary {
   slug: string;
@@ -20,7 +21,7 @@ export interface LetterSummary {
 
 const TYPES = ["All", "Insight", "Framework", "Story + lesson", "Contrarian"];
 
-export function LettersPageBody({ posts }: { posts: LetterSummary[] }) {
+export function LettersPageBody({ posts, content }: { posts: LetterSummary[]; content: LettersContentData }) {
   const [type, setType] = useState("All");
   const filtered = posts.filter((p) => type === "All" || p.kind === type);
   return (
@@ -29,13 +30,9 @@ export function LettersPageBody({ posts }: { posts: LetterSummary[] }) {
         <Eyebrow>Letters</Eyebrow>
         <div className="rg-page-head" style={{ marginTop: "var(--space-4)" }}>
           <div>
-            <h1 style={{ fontSize: "var(--size-display-3)" }}>
-              Structured breakdowns,
-              <br />
-              three times a week
-            </h1>
+            <h1 style={{ fontSize: "var(--size-display-3)" }}>{content.heading}</h1>
             <Rule length={64} />
-            <p style={{ marginTop: "var(--space-5)", maxWidth: "46ch" }}>Insights, frameworks, stories and the occasional contrarian read. Newest first.</p>
+            <p style={{ marginTop: "var(--space-5)", maxWidth: "46ch" }}>{content.subhead}</p>
           </div>
           <div className="rg-letters-tags">
             {TYPES.map((t) => (
@@ -48,7 +45,7 @@ export function LettersPageBody({ posts }: { posts: LetterSummary[] }) {
       </Section>
       <Section tone="card" py="var(--space-8)">
         {filtered.length === 0 ? (
-          <p style={{ color: "var(--text-muted)" }}>No letters in this category yet.</p>
+          <p style={{ color: "var(--text-muted)" }}>{content.emptyStateText}</p>
         ) : (
           <div style={{ display: "grid", gap: "1px", background: "var(--border-hairline)" }}>
             {filtered.map((post) => (
@@ -73,7 +70,7 @@ export function LettersPageBody({ posts }: { posts: LetterSummary[] }) {
           </div>
         )}
         <div style={{ marginTop: "var(--space-7)", display: "flex", justifyContent: "center" }}>
-          <Button variant="secondary">Earlier letters</Button>
+          <Button variant="secondary">{content.loadMoreLabel}</Button>
         </div>
       </Section>
     </>

@@ -8,6 +8,24 @@ export const SiteSettings: GlobalConfig = {
   },
   fields: [
     {
+      name: "contactEmail",
+      type: "email",
+      required: true,
+      defaultValue: "info@gentleinspirer.com",
+      admin: {
+        description: "Shown in the footer and used as the fallback contact address across the site (booking/order confirmation pages, etc.).",
+      },
+    },
+    {
+      name: "seo",
+      label: "Browser tab / search preview",
+      type: "group",
+      fields: [
+        { name: "title", type: "text", required: true, defaultValue: "gentleinspirer.com — Clarity precedes movement" },
+        { name: "description", type: "textarea", required: true, defaultValue: "Growth is designed, not desired. Structured growth systems, leadership development and disciplined execution with Gerald I. Egeonu, founder of The Growth Circle." },
+      ],
+    },
+    {
       name: "introSession",
       label: "Free intro session",
       type: "group",

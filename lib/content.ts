@@ -79,12 +79,29 @@ export const getHomeContent = cache(async function getHomeContent(): Promise<Hom
   };
 });
 
+// Same backfill gap as FALLBACK_TEACHINGS above -- these three tier cards'
+// bullet arrays were added to the already-existing sessions-content global.
+const FALLBACK_COMMUNITY_BULLETS = ["Live on YouTube or Instagram", "Group clarity work, open Q&A", "No booking — just show up"];
+const FALLBACK_INTRO_BULLETS = ["Define whether stage one fits", "No preparation needed"];
+const FALLBACK_PAID_BULLETS = ["Written Clarity brief the same day", "Two-week review question"];
+
+export interface SessionsTierCard {
+  eyebrow: string;
+  title?: string;
+  bullets: string[];
+  ctaLabel: string;
+  footnote?: string;
+}
+
 export interface SessionsContentData {
   heroIntro: string;
   extraSessionPoints: TitleDescription[];
   howItRuns: TitleDescription[];
   afterwards: TitleDescription[];
   testimonial: { quote: string; attribution: string };
+  nextOpeningCtaLabel: string;
+  tiers: { heading: string; community: SessionsTierCard; intro: SessionsTierCard; paid: SessionsTierCard };
+  bottomCta: { heading: string; text: string; ctaLabel: string };
 }
 
 export async function getSessionsContent(): Promise<SessionsContentData> {
@@ -96,5 +113,90 @@ export async function getSessionsContent(): Promise<SessionsContentData> {
     howItRuns: (c.howItRuns ?? []).map((p) => ({ title: p.title, description: p.description })),
     afterwards: (c.afterwards ?? []).map((p) => ({ title: p.title, description: p.description })),
     testimonial: { quote: c.testimonial?.quote ?? "", attribution: c.testimonial?.attribution ?? "" },
+    nextOpeningCtaLabel: c.nextOpeningCtaLabel ?? "Take this time",
+    tiers: {
+      heading: c.tiers?.heading ?? "Start free, go deeper when it's useful",
+      community: {
+        eyebrow: c.tiers?.community?.eyebrow ?? "Community · Bi-weekly · Free",
+        title: c.tiers?.community?.title ?? "Community session",
+        bullets: c.tiers?.community?.bullets?.length ? c.tiers.community.bullets.map((b) => b.text) : FALLBACK_COMMUNITY_BULLETS,
+        ctaLabel: c.tiers?.community?.ctaLabel ?? "Get the reminder",
+      },
+      intro: {
+        eyebrow: c.tiers?.intro?.eyebrow ?? "1:1 · Introductory · Free",
+        title: c.tiers?.intro?.title ?? "First conversation",
+        bullets: c.tiers?.intro?.bullets?.length ? c.tiers.intro.bullets.map((b) => b.text) : FALLBACK_INTRO_BULLETS,
+        ctaLabel: c.tiers?.intro?.ctaLabel ?? "Request a slot",
+      },
+      paid: {
+        eyebrow: c.tiers?.paid?.eyebrow ?? "1:1 · Paid",
+        bullets: c.tiers?.paid?.bullets?.length ? c.tiers.paid.bullets.map((b) => b.text) : FALLBACK_PAID_BULLETS,
+        ctaLabel: c.tiers?.paid?.ctaLabel ?? "Book a session",
+        footnote: c.tiers?.paid?.footnote ?? "Checkout runs on Stripe.",
+      },
+    },
+    bottomCta: {
+      heading: c.bottomCta?.heading ?? "Not ready to book?",
+      text: c.bottomCta?.text ?? "Read a framework breakdown first. Same structure, same voice as the session.",
+      ctaLabel: c.bottomCta?.ctaLabel ?? "Read the letters",
+    },
+  };
+}
+
+export interface LettersContentData {
+  heading: string;
+  subhead: string;
+  loadMoreLabel: string;
+  emptyStateText: string;
+}
+
+export async function getLettersContent(): Promise<LettersContentData> {
+  const payload = await getPayloadClient();
+  const c = await payload.findGlobal({ slug: "letters-content" });
+  return {
+    heading: c.heading ?? "Structured breakdowns, three times a week",
+    subhead: c.subhead ?? "Insights, frameworks, stories and the occasional contrarian read. Newest first.",
+    loadMoreLabel: c.loadMoreLabel ?? "Earlier letters",
+    emptyStateText: c.emptyStateText ?? "No letters in this category yet.",
+  };
+}
+
+export interface ProductsContentData {
+  heading: string;
+  subhead: string;
+  ctaLabel: string;
+  ctaCaption: string;
+}
+
+export async function getProductsContent(): Promise<ProductsContentData> {
+  const payload = await getPayloadClient();
+  const c = await payload.findGlobal({ slug: "products-content" });
+  return {
+    heading: c.heading ?? "Tools that hold structure when I'm not in the room",
+    subhead: c.subhead ?? "Ebooks, workbooks and courses built on the same five stages as the sessions. Pay in dollars or pounds — checkout runs on Stripe.",
+    ctaLabel: c.ctaLabel ?? "Free teachings first",
+    ctaCaption: c.ctaCaption ?? "Everything paid has a free counterpart on YouTube.",
+  };
+}
+
+export interface BookingContentData {
+  heading: string;
+  communityTeaser: { text: string; ctaLabel: string };
+  held: { heading: string; againLabel: string };
+}
+
+export async function getBookingContent(): Promise<BookingContentData> {
+  const payload = await getPayloadClient();
+  const c = await payload.findGlobal({ slug: "booking-content" });
+  return {
+    heading: c.heading ?? "Book stage one",
+    communityTeaser: {
+      text: c.communityTeaser?.text ?? "Or join the free bi-weekly community session — no booking at all.",
+      ctaLabel: c.communityTeaser?.ctaLabel ?? "Get the schedule",
+    },
+    held: {
+      heading: c.held?.heading ?? "Held for you",
+      againLabel: c.held?.againLabel ?? "Book another",
+    },
   };
 }

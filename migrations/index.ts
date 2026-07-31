@@ -4,6 +4,7 @@ import * as migration_20260731_145852_add_product_file_field from './20260731_14
 import * as migration_20260731_155955_add_about_photos from './20260731_155955_add_about_photos';
 import * as migration_20260731_165552_add_home_teachings from './20260731_165552_add_home_teachings';
 import * as migration_20260731_172404_add_subscribers from './20260731_172404_add_subscribers';
+import * as migration_20260731_191727_add_content_globals_and_calendar_suggestions from './20260731_191727_add_content_globals_and_calendar_suggestions';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20260731_172404_add_subscribers.up,
     down: migration_20260731_172404_add_subscribers.down,
-    name: '20260731_172404_add_subscribers'
+    name: '20260731_172404_add_subscribers',
+  },
+  {
+    up: migration_20260731_191727_add_content_globals_and_calendar_suggestions.up,
+    down: migration_20260731_191727_add_content_globals_and_calendar_suggestions.down,
+    name: '20260731_191727_add_content_globals_and_calendar_suggestions'
   },
 ];

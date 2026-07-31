@@ -17,9 +17,10 @@ import { SOCIALS } from "@/components/social/socials";
 import type { SiteSettingsData } from "@/lib/settings";
 import type { SessionsContentData } from "@/lib/content";
 
-function Tiers({ settings }: { settings: SiteSettingsData }) {
+function Tiers({ settings, content }: { settings: SiteSettingsData; content: SessionsContentData }) {
   const [cur, setCur] = useState<Currency>("USD");
   const { introMinutes, introDescription, paidTiers } = settings;
+  const { tiers } = content;
   const hasTiers = paidTiers.length > 0;
   const durationLabel = hasTiers ? paidTiers.map((t) => t.minutes).join(" or ") + " minutes" : "Duration TBC";
   const first = paidTiers[0];
@@ -31,17 +32,17 @@ function Tiers({ settings }: { settings: SiteSettingsData }) {
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "end", marginBottom: "var(--space-6)" }}>
         <div>
           <Eyebrow>Three ways in</Eyebrow>
-          <h2 style={{ margin: "var(--space-3) 0 0" }}>Start free, go deeper when it&rsquo;s useful</h2>
+          <h2 style={{ margin: "var(--space-3) 0 0" }}>{tiers.heading}</h2>
         </div>
         <CurrencySwitch currency={cur} onChange={setCur} />
       </div>
       <div className="rg-tiers">
         <TierCard
-          eyebrow="Community · Bi-weekly · Free"
-          title="Community session"
+          eyebrow={tiers.community.eyebrow}
+          title={tiers.community.title ?? "Community session"}
           amounts={null}
-          bullets={["Live on YouTube or Instagram", "Group clarity work, open Q&A", "No booking — just show up"]}
-          action="Get the reminder"
+          bullets={tiers.community.bullets}
+          action={tiers.community.ctaLabel}
           externalHref={SOCIALS.whatsapp.url}
           footnote={
             <span style={{ display: "inline-flex", flexWrap: "wrap", gap: "8px" }}>
@@ -51,24 +52,24 @@ function Tiers({ settings }: { settings: SiteSettingsData }) {
           }
         />
         <TierCard
-          eyebrow="1:1 · Introductory · Free"
-          title="First conversation"
+          eyebrow={tiers.intro.eyebrow}
+          title={tiers.intro.title ?? "First conversation"}
           amounts={null}
-          bullets={[`${introMinutes} ${introDescription}`, "Define whether stage one fits", "No preparation needed"]}
-          action="Request a slot"
+          bullets={[`${introMinutes} ${introDescription}`, ...tiers.intro.bullets]}
+          action={tiers.intro.ctaLabel}
           href="/book"
         />
         <TierCard
-          eyebrow="1:1 · Paid"
+          eyebrow={tiers.paid.eyebrow}
           title="Clarity Session"
           amounts={amounts}
           currency={cur}
           unit={unit}
           featured
-          bullets={[durationLabel, "Written Clarity brief the same day", "Two-week review question"]}
-          action="Book a session"
+          bullets={[durationLabel, ...tiers.paid.bullets]}
+          action={tiers.paid.ctaLabel}
           href="/book"
-          footnote="Checkout runs on Stripe."
+          footnote={tiers.paid.footnote}
         />
       </div>
     </Section>
@@ -119,13 +120,13 @@ export function SessionsPageBody({ settings, content, nextOpening }: { settings:
                 {nextOpening ?? "Pick a time that works on the booking page"}
               </div>
               <Button variant="gold" block href="/book">
-                Take this time
+                {content.nextOpeningCtaLabel}
               </Button>
             </Card>
           </div>
         </div>
       </section>
-      <Tiers settings={settings} />
+      <Tiers settings={settings} content={content} />
       <Section tone="page">
         <Tabs items={Object.keys(panels)} value={tab} onChange={setTab} />
         <div className="rg-panels" style={{ marginTop: "var(--space-7)" }}>
@@ -144,10 +145,10 @@ export function SessionsPageBody({ settings, content, nextOpening }: { settings:
         <div className="rg-quote-cta">
           <Quote attribution={content.testimonial.attribution}>{content.testimonial.quote}</Quote>
           <div style={{ display: "grid", gap: "var(--space-4)", justifyItems: "start" }}>
-            <Eyebrow>Not ready to book?</Eyebrow>
-            <p style={{ margin: 0, maxWidth: "40ch" }}>Read a framework breakdown first. Same structure, same voice as the session.</p>
+            <Eyebrow>{content.bottomCta.heading}</Eyebrow>
+            <p style={{ margin: 0, maxWidth: "40ch" }}>{content.bottomCta.text}</p>
             <Button variant="secondary" href="/letters">
-              Read the letters
+              {content.bottomCta.ctaLabel}
             </Button>
           </div>
         </div>

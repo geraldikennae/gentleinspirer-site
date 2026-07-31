@@ -1,6 +1,7 @@
 import { getCheckoutSession } from "@/lib/stripe";
 import { sendProductDelivery } from "@/lib/email";
 import { getPayloadClient } from "@/lib/payload";
+import { getSiteSettings } from "@/lib/settings";
 import { Section } from "@/components/site/Section";
 import { Eyebrow } from "@/components/brand/Eyebrow";
 import { Rule } from "@/components/brand/Rule";
@@ -29,16 +30,16 @@ function Fallback({ message }: { message: string }) {
 }
 
 export default async function ProductConfirmed({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const { session_id } = await searchParams;
+  const [{ session_id }, settings] = await Promise.all([searchParams, getSiteSettings()]);
   if (!session_id) {
-    return <Fallback message="We couldn't find your order. If you were just charged, contact info@gentleinspirer.com and we'll sort it out." />;
+    return <Fallback message={`We couldn't find your order. If you were just charged, contact ${settings.contactEmail} and we'll sort it out.`} />;
   }
 
   const session = await getCheckoutSession(session_id).catch(() => null);
   const productId = session?.metadata?.productId;
   const email = session?.customer_details?.email;
   if (!session || session.payment_status !== "paid" || !productId || !email) {
-    return <Fallback message="We couldn't confirm that payment. If you were just charged, contact info@gentleinspirer.com and we'll sort it out." />;
+    return <Fallback message={`We couldn't confirm that payment. If you were just charged, contact ${settings.contactEmail} and we'll sort it out.`} />;
   }
 
   const payload = await getPayloadClient();
@@ -73,7 +74,7 @@ export default async function ProductConfirmed({ searchParams }: { searchParams:
         </>
       ) : (
         <p style={{ marginTop: "var(--space-5)", maxWidth: "46ch" }}>
-          Payment received. The file isn&rsquo;t ready to send automatically yet — we&rsquo;ll email it to {email} shortly. If you don&rsquo;t hear from us within a day, contact info@gentleinspirer.com.
+          Payment received. The file isn&rsquo;t ready to send automatically yet — we&rsquo;ll email it to {email} shortly. If you don&rsquo;t hear from us within a day, contact {settings.contactEmail}.
         </p>
       )}
       <div style={{ marginTop: "var(--space-6)" }}>

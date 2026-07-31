@@ -9,6 +9,7 @@ import { Badge } from "@/components/core/Badge";
 import { ProductCard } from "@/components/commerce/ProductCard";
 import { CurrencySwitch, type Amounts, type Currency } from "@/components/commerce/Price";
 import { SOCIALS } from "@/components/social/socials";
+import type { ProductsContentData } from "@/lib/content";
 
 export interface ProductSummary {
   id: string;
@@ -19,7 +20,7 @@ export interface ProductSummary {
   amounts: Amounts;
 }
 
-export function ProductsGrid({ products }: { products: ProductSummary[] }) {
+export function ProductsGrid({ products, content }: { products: ProductSummary[]; content: ProductsContentData }) {
   const [cur, setCur] = useState<Currency>("USD");
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,13 +60,9 @@ export function ProductsGrid({ products }: { products: ProductSummary[] }) {
         <Eyebrow>Digital products</Eyebrow>
         <div className="rg-page-head" style={{ marginTop: "var(--space-4)" }}>
           <div>
-            <h1 style={{ fontSize: "var(--size-display-3)" }}>
-              Tools that hold structure
-              <br />
-              when I&rsquo;m not in the room
-            </h1>
+            <h1 style={{ fontSize: "var(--size-display-3)" }}>{content.heading}</h1>
             <Rule length={64} />
-            <p style={{ marginTop: "var(--space-5)", maxWidth: "48ch" }}>Ebooks, workbooks and courses built on the same five stages as the sessions. Pay in dollars or pounds — checkout runs on Stripe.</p>
+            <p style={{ marginTop: "var(--space-5)", maxWidth: "48ch" }}>{content.subhead}</p>
           </div>
           <CurrencySwitch currency={cur} onChange={setCur} />
         </div>
@@ -104,9 +101,9 @@ export function ProductsGrid({ products }: { products: ProductSummary[] }) {
         )}
         <div style={{ marginTop: "var(--space-7)", display: "flex", flexWrap: "wrap", gap: "var(--space-4)", alignItems: "center" }}>
           <Button variant="secondary" externalHref={SOCIALS.youtube.url}>
-            Free teachings first
+            {content.ctaLabel}
           </Button>
-          <span style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>Everything paid has a free counterpart on YouTube.</span>
+          <span style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>{content.ctaCaption}</span>
         </div>
       </Section>
     </>

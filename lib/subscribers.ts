@@ -1,9 +1,10 @@
 import crypto from "crypto";
 import { getPayloadClient } from "@/lib/payload";
-import { sendWelcomeEmail } from "@/lib/email";
+import { addResendContact, sendEmail, setResendContactUnsubscribed } from "@/lib/email";
+import { renderTemplate } from "@/lib/templates";
 import { unsubscribeUrl } from "@/lib/urls";
 
-/** Adds a new active subscriber (or re-activates one who'd unsubscribed) and sends the welcome email. Idempotent -- safe to call for an email that's already subscribed. */
+/** Adds a new active subscriber (or re-activates one who'd unsubscribed), sends the welcome email, and syncs the contact to Resend's Audience (if configured) so it can be targeted by a Broadcast sent from Resend's own dashboard. Idempotent -- safe to call for an email that's already subscribed. */
 export async function subscribe(email: string): Promise<void> {
   const payload = await getPayloadClient();
   const existing = await payload.find({ collection: "subscribers", where: { email: { equals: email } }, limit: 1 });
@@ -19,7 +20,15 @@ export async function subscribe(email: string): Promise<void> {
     await payload.create({ collection: "subscribers", data: { email, status: "active", unsubscribeToken: token } });
   }
 
-  await sendWelcomeEmail({ to: email, unsubscribeUrl: unsubscribeUrl(token) }).catch((err) => console.error("Welcome email failed:", err));
+  const templates = await payload.findGlobal({ slug: "email-templates" });
+  const vars = { unsubscribeUrl: unsubscribeUrl(token) };
+  await sendEmail({
+    to: email,
+    subject: renderTemplate(templates.welcome.subject, vars),
+    text: renderTemplate(templates.welcome.body, vars),
+  }).catch((err) => console.error("Welcome email failed:", err));
+
+  await addResendContact(email).catch((err) => console.error("Resend contact sync failed:", err));
 }
 
 export async function unsubscribeByToken(token: string): Promise<boolean> {
@@ -28,5 +37,6 @@ export async function unsubscribeByToken(token: string): Promise<boolean> {
   const doc = found.docs[0];
   if (!doc) return false;
   await payload.update({ collection: "subscribers", id: doc.id, data: { status: "unsubscribed" } });
+  await setResendContactUnsubscribed(doc.email, true).catch((err) => console.error("Resend contact sync failed:", err));
   return true;
 }

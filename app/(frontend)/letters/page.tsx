@@ -1,4 +1,5 @@
 import { getPayloadClient } from "@/lib/payload";
+import { getLettersContent } from "@/lib/content";
 import { LettersPageBody, type LetterSummary } from "@/components/site/LettersList";
 
 export const dynamic = "force-dynamic";
@@ -9,12 +10,15 @@ function monthLabel(dateStr: string): string {
 
 export default async function Letters() {
   const payload = await getPayloadClient();
-  const { docs } = await payload.find({
-    collection: "letters",
-    sort: "-publishedAt",
-    limit: 100,
-    depth: 0,
-  });
+  const [{ docs }, content] = await Promise.all([
+    payload.find({
+      collection: "letters",
+      sort: "-publishedAt",
+      limit: 100,
+      depth: 0,
+    }),
+    getLettersContent(),
+  ]);
 
   const posts: LetterSummary[] = docs.map((d) => ({
     slug: d.slug,
@@ -24,5 +28,5 @@ export default async function Letters() {
     month: monthLabel(d.publishedAt),
   }));
 
-  return <LettersPageBody posts={posts} />;
+  return <LettersPageBody posts={posts} content={content} />;
 }

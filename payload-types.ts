@@ -72,6 +72,8 @@ export interface Config {
     letters: Letter;
     products: Product;
     subscribers: Subscriber;
+    'upcoming-sessions': UpcomingSession;
+    'topic-suggestions': TopicSuggestion;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +86,8 @@ export interface Config {
     letters: LettersSelect<false> | LettersSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
+    'upcoming-sessions': UpcomingSessionsSelect<false> | UpcomingSessionsSelect<true>;
+    'topic-suggestions': TopicSuggestionsSelect<false> | TopicSuggestionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -97,11 +101,19 @@ export interface Config {
     'site-settings': SiteSetting;
     'home-content': HomeContent;
     'sessions-content': SessionsContent;
+    'letters-content': LettersContent;
+    'products-content': ProductsContent;
+    'booking-content': BookingContent;
+    'email-templates': EmailTemplate;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'home-content': HomeContentSelect<false> | HomeContentSelect<true>;
     'sessions-content': SessionsContentSelect<false> | SessionsContentSelect<true>;
+    'letters-content': LettersContentSelect<false> | LettersContentSelect<true>;
+    'products-content': ProductsContentSelect<false> | ProductsContentSelect<true>;
+    'booking-content': BookingContentSelect<false> | BookingContentSelect<true>;
+    'email-templates': EmailTemplatesSelect<false> | EmailTemplatesSelect<true>;
   };
   locale: null;
   widgets: {
@@ -248,6 +260,36 @@ export interface Subscriber {
   createdAt: string;
 }
 /**
+ * Dates you're publishing on /calendar as upcoming Clarity Sessions -- independent of live Cal.com booking availability. Add as many as you like, for the quarter or the whole year; past dates stop showing automatically.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "upcoming-sessions".
+ */
+export interface UpcomingSession {
+  id: number;
+  date: string;
+  /**
+   * Optional note, e.g. "Group session" or "Applications open". Leave blank for a plain date.
+   */
+  label?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Submitted via the "suggest a topic" form on /calendar. Not meant to be added to by hand.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topic-suggestions".
+ */
+export interface TopicSuggestion {
+  id: number;
+  suggestion: string;
+  name?: string | null;
+  email?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -290,6 +332,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'subscribers';
         value: number | Subscriber;
+      } | null)
+    | ({
+        relationTo: 'upcoming-sessions';
+        value: number | UpcomingSession;
+      } | null)
+    | ({
+        relationTo: 'topic-suggestions';
+        value: number | TopicSuggestion;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -416,6 +466,27 @@ export interface SubscribersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "upcoming-sessions_select".
+ */
+export interface UpcomingSessionsSelect<T extends boolean = true> {
+  date?: T;
+  label?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topic-suggestions_select".
+ */
+export interface TopicSuggestionsSelect<T extends boolean = true> {
+  suggestion?: T;
+  name?: T;
+  email?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -460,6 +531,14 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface SiteSetting {
   id: number;
+  /**
+   * Shown in the footer and used as the fallback contact address across the site (booking/order confirmation pages, etc.).
+   */
+  contactEmail: string;
+  seo: {
+    title: string;
+    description: string;
+  };
   introSession: {
     minutes: number;
     description?: string | null;
@@ -597,6 +676,130 @@ export interface SessionsContent {
     quote?: string | null;
     attribution?: string | null;
   };
+  nextOpeningCtaLabel: string;
+  tiers: {
+    heading: string;
+    community: {
+      eyebrow: string;
+      title: string;
+      bullets?:
+        | {
+            text: string;
+            id?: string | null;
+          }[]
+        | null;
+      ctaLabel: string;
+    };
+    intro: {
+      eyebrow: string;
+      title: string;
+      /**
+       * The intro session's length is inserted live before these — leave this to just the points that follow it.
+       */
+      bullets?:
+        | {
+            text: string;
+            id?: string | null;
+          }[]
+        | null;
+      ctaLabel: string;
+    };
+    paid: {
+      eyebrow: string;
+      /**
+       * The session length is inserted live before these — leave this to just the points that follow it.
+       */
+      bullets?:
+        | {
+            text: string;
+            id?: string | null;
+          }[]
+        | null;
+      ctaLabel: string;
+      footnote: string;
+    };
+  };
+  bottomCta: {
+    heading: string;
+    text: string;
+    ctaLabel: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "letters-content".
+ */
+export interface LettersContent {
+  id: number;
+  heading: string;
+  subhead: string;
+  loadMoreLabel: string;
+  emptyStateText: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products-content".
+ */
+export interface ProductsContent {
+  id: number;
+  heading: string;
+  subhead: string;
+  ctaLabel: string;
+  ctaCaption: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-content".
+ */
+export interface BookingContent {
+  id: number;
+  heading: string;
+  communityTeaser: {
+    text: string;
+    ctaLabel: string;
+  };
+  held: {
+    heading: string;
+    againLabel: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Automated emails sent to subscribers. Use {{ }} placeholders — each template lists which ones it supports.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-templates".
+ */
+export interface EmailTemplate {
+  id: number;
+  /**
+   * Placeholders: {{unsubscribeUrl}}
+   */
+  welcome: {
+    subject: string;
+    body: string;
+  };
+  /**
+   * Placeholders: {{title}}, {{dek}}, {{url}}, {{unsubscribeUrl}}
+   */
+  newLetter: {
+    subject: string;
+    body: string;
+  };
+  /**
+   * Placeholders: {{title}}, {{blurb}}, {{url}}, {{unsubscribeUrl}}
+   */
+  newProduct: {
+    subject: string;
+    body: string;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -605,6 +808,13 @@ export interface SessionsContent {
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  contactEmail?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   introSession?:
     | T
     | {
@@ -738,6 +948,133 @@ export interface SessionsContentSelect<T extends boolean = true> {
     | {
         quote?: T;
         attribution?: T;
+      };
+  nextOpeningCtaLabel?: T;
+  tiers?:
+    | T
+    | {
+        heading?: T;
+        community?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+              bullets?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+            };
+        intro?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+              bullets?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+            };
+        paid?:
+          | T
+          | {
+              eyebrow?: T;
+              bullets?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              ctaLabel?: T;
+              footnote?: T;
+            };
+      };
+  bottomCta?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+        ctaLabel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "letters-content_select".
+ */
+export interface LettersContentSelect<T extends boolean = true> {
+  heading?: T;
+  subhead?: T;
+  loadMoreLabel?: T;
+  emptyStateText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products-content_select".
+ */
+export interface ProductsContentSelect<T extends boolean = true> {
+  heading?: T;
+  subhead?: T;
+  ctaLabel?: T;
+  ctaCaption?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "booking-content_select".
+ */
+export interface BookingContentSelect<T extends boolean = true> {
+  heading?: T;
+  communityTeaser?:
+    | T
+    | {
+        text?: T;
+        ctaLabel?: T;
+      };
+  held?:
+    | T
+    | {
+        heading?: T;
+        againLabel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-templates_select".
+ */
+export interface EmailTemplatesSelect<T extends boolean = true> {
+  welcome?:
+    | T
+    | {
+        subject?: T;
+        body?: T;
+      };
+  newLetter?:
+    | T
+    | {
+        subject?: T;
+        body?: T;
+      };
+  newProduct?:
+    | T
+    | {
+        subject?: T;
+        body?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -15,6 +15,7 @@ Payload CMS admin backend for managing content and pricing.
 | `/letters` | Letters archive, filterable by type (from CMS) |
 | `/letters/[slug]` | A single letter/blog post |
 | `/letters/unsubscribed` | Confirmation page after clicking an unsubscribe link |
+| `/calendar` | Upcoming Clarity Session dates (admin-curated) + a "suggest a topic" form |
 | `/book/confirmed` | Post-payment landing page for the paid booking flow |
 | `/products/confirmed` | Post-payment landing page for a product purchase |
 | `/admin` | Payload admin — manage letters, products, pricing and page copy |
@@ -32,21 +33,39 @@ to `/admin` prompts you to create the first admin user (email + password).
   changes).
 - **Products** (`collections/Products.ts`) — the digital products catalogue.
   Title, format, blurb, cover image, USD/GBP price.
-- **Site Settings** (`globals/SiteSettings.ts`) — a single global for
-  session pricing: the free intro session's length/description, and an
-  array of paid Clarity Session duration/price tiers (add a row per
-  bookable length). This is what drives the "fix prices" ask — change it
-  here and `/sessions` and `/book` update immediately, no code changes.
+- **Site Settings** (`globals/SiteSettings.ts`) — session pricing (free
+  intro length/description, an array of paid Clarity Session
+  duration/price tiers), the site's contact email (single source of truth —
+  used in the footer and every booking/order confirmation page), and the
+  browser tab title / search-preview description.
 - **Home Page** (`globals/HomeContent.ts`) — hero quote slider text, hero
   subhead, the Growth System Model (heading/intro/five stages), the five
-  pillars, the testimonial quote, the About bio (two paragraphs), and the
+  pillars, the testimonial quote, the About bio + photo slideshow (upload
+  as many photos as you want, they cross-fade automatically), the free
+  teachings video cards (title + YouTube link/ID each), and the
   community/letter-signup section copy.
 - **Sessions Page** (`globals/SessionsContent.ts`) — the hero intro
-  paragraph, all three tabs' content ("The session" / "How it runs" /
-  "Afterwards"), and the testimonial quote.
+  paragraph, the "Three ways in" pricing section (heading + all three tier
+  cards' eyebrow/title/bullets/button text), the "Next opening" button
+  label, all three tabs' content, the testimonial quote, and the bottom CTA.
+- **Products Page** (`globals/ProductsContent.ts`) and **Letters Page**
+  (`globals/LettersContent.ts`) — each page's heading, subhead, and CTA/
+  empty-state copy.
+- **Booking Page** (`globals/BookingContent.ts`) — the heading, the
+  community-session teaser, and the "held" confirmation copy.
+- **Email Templates** (`globals/EmailTemplates.ts`) — the welcome email
+  (on sign-up) and the new-letter/new-product notification emails, with
+  `{{placeholders}}` for the dynamic bits (title, url, unsubscribe link,
+  etc — each field lists which ones it supports).
 - **Subscribers** (`collections/Subscribers.ts`) — everyone who signed up
   for the letters. Not meant to be added to by hand; managed entirely by the
   subscribe/unsubscribe flow. Read access is admin-only (holds emails).
+- **Upcoming Session Dates** (`collections/UpcomingSessions.ts`) — dates
+  you publish on `/calendar`, independent of live Cal.com availability.
+  Add as many as you want, for the quarter or the whole year; past dates
+  stop showing automatically.
+- **Topic Suggestions** (`collections/TopicSuggestions.ts`) — read-only
+  inbox of what people submit via the "suggest a topic" form on `/calendar`.
 - **Users** / **Media** — auth and file uploads. Uploads go to Vercel Blob
   in production (see "Media uploads" below) and local disk in dev.
 
@@ -135,8 +154,26 @@ given integration isn't configured (see `.env.example` for the keys):
   `collections/Products.ts`, and `lib/subscriberNotifications.ts`. Sends run
   in a loop from within the save request, which is fine at the scale of a
   personal newsletter but would need a queue for a large list.
+- All three of these emails' subject/body come from the **Email Templates**
+  global (`lib/templates.ts` does the `{{placeholder}}` substitution) —
+  editable from `/admin` without a code change.
+- If `RESEND_AUDIENCE_ID` is set, every subscribe/unsubscribe also syncs
+  the contact to that Resend Audience (`lib/email.ts`:
+  `addResendContact`/`setResendContactUnsubscribed`), so subscribers show
+  up in Resend itself and can be targeted by a Broadcast sent from Resend's
+  own dashboard, not just the automated emails this site sends. Create the
+  Audience in Resend (Audiences → Create Audience) and paste its ID in;
+  leave blank to skip this (subscribers still work either way, they just
+  won't appear in Resend).
 - `SITE_URL` (`.env.example`) controls the links built into these emails —
   defaults to the production domain already.
+
+**`/calendar`** publishes a schedule of upcoming Clarity Sessions (from the
+**Upcoming Session Dates** collection — independent of live Cal.com
+availability, so it works even for dates further out than Cal.com exposes)
+and a "suggest a topic" form that writes to **Topic Suggestions**, visible
+in `/admin`. Neither of these sends notifications automatically; they're
+there for you to check and act on.
 
 ## Development
 

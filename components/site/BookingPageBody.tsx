@@ -18,6 +18,7 @@ import { Tag } from "@/components/core/Tag";
 import { PlatformBadge } from "@/components/social/PlatformBadge";
 import { SOCIALS } from "@/components/social/socials";
 import type { SiteSettingsData } from "@/lib/settings";
+import type { BookingContentData } from "@/lib/content";
 
 type SessionType = "intro" | "paid";
 
@@ -73,8 +74,8 @@ function Steps({ step }: { step: number }) {
   );
 }
 
-export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
-  const { introMinutes, introDescription, paidTiers } = settings;
+export function BookingPageBody({ settings, content }: { settings: SiteSettingsData; content: BookingContentData }) {
+  const { introMinutes, introDescription, paidTiers, contactEmail } = settings;
   const hasPaidTiers = paidTiers.length > 0;
 
   const TYPES: Record<SessionType, { label: string; eyebrow: string; desc: string; fee: string }> = {
@@ -224,7 +225,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
       <div className="rg-book-main">
         <div>
           <Eyebrow>Booking</Eyebrow>
-          <h1 style={{ fontSize: "var(--size-display-3)", margin: "var(--space-3) 0 var(--space-6)" }}>Book stage one</h1>
+          <h1 style={{ fontSize: "var(--size-display-3)", margin: "var(--space-3) 0 var(--space-6)" }}>{content.heading}</h1>
           <Steps step={step} />
           <div style={{ margin: "var(--space-6) 0" }}>
             <Rule length="full" tone="hairline" />
@@ -251,10 +252,10 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "center" }}>
                   <PlatformBadge platform="youtube" live />
                   <PlatformBadge platform="instagram" live />
-                  <span style={{ fontSize: "var(--size-body-sm)", color: "var(--text-body)" }}>Or join the free bi-weekly community session — no booking at all.</span>
+                  <span style={{ fontSize: "var(--size-body-sm)", color: "var(--text-body)" }}>{content.communityTeaser.text}</span>
                 </div>
                 <Button variant="ghost" size="sm" externalHref={SOCIALS.whatsapp.url}>
-                  Get the schedule
+                  {content.communityTeaser.ctaLabel}
                 </Button>
               </div>
               <Button variant="primary" disabled={!type} onClick={() => setStep(1)} style={{ justifySelf: "start" }}>
@@ -367,7 +368,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
 
           {step === 3 && (
             <div style={{ display: "grid", gap: "var(--space-5)", justifyItems: "start" }}>
-              <h2 style={{ margin: 0 }}>Held for you</h2>
+              <h2 style={{ margin: 0 }}>{content.held.heading}</h2>
               <Rule />
               <p style={{ maxWidth: "46ch", margin: 0 }}>
                 {type ? TYPES[type].label : ""} — {heldLabel} · {lengthMinutes} minutes. A confirmation is in your inbox, with the pre-session brief.
@@ -381,7 +382,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
                   setSelectedDate(null);
                 }}
               >
-                Book another
+                {content.held.againLabel}
               </Button>
             </div>
           )}
@@ -433,7 +434,7 @@ export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
       {toast && (
         <div style={{ position: "fixed", bottom: "var(--space-6)", right: "var(--space-6)", zIndex: 80 }}>
           <Toast status="success" onDismiss={() => setToast(false)}>
-            Your session is held. Look for a note from info@gentleinspirer.com.
+            Your session is held. Look for a note from {contactEmail}.
           </Toast>
         </div>
       )}

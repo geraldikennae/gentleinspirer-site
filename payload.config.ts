@@ -11,9 +11,15 @@ import { Media } from "./collections/Media";
 import { Letters } from "./collections/Letters";
 import { Products } from "./collections/Products";
 import { Subscribers } from "./collections/Subscribers";
+import { UpcomingSessions } from "./collections/UpcomingSessions";
+import { TopicSuggestions } from "./collections/TopicSuggestions";
 import { SiteSettings } from "./globals/SiteSettings";
 import { HomeContent } from "./globals/HomeContent";
 import { SessionsContent } from "./globals/SessionsContent";
+import { LettersContent } from "./globals/LettersContent";
+import { ProductsContent } from "./globals/ProductsContent";
+import { BookingContent } from "./globals/BookingContent";
+import { EmailTemplates } from "./globals/EmailTemplates";
 import { migrations } from "./migrations";
 
 const filename = fileURLToPath(import.meta.url);
@@ -44,8 +50,8 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Users, Media, Letters, Products, Subscribers],
-  globals: [SiteSettings, HomeContent, SessionsContent],
+  collections: [Users, Media, Letters, Products, Subscribers, UpcomingSessions, TopicSuggestions],
+  globals: [SiteSettings, HomeContent, SessionsContent, LettersContent, ProductsContent, BookingContent, EmailTemplates],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
