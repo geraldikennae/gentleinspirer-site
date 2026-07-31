@@ -36,6 +36,11 @@ export default buildConfig({
     },
     meta: {
       titleSuffix: " — gentleinspirer admin",
+      icons: [
+        { url: "/favicon-16.png", rel: "icon", sizes: "16x16", type: "image/png" },
+        { url: "/favicon-32.png", rel: "icon", sizes: "32x32", type: "image/png" },
+        { url: "/favicon-48.png", rel: "icon", sizes: "48x48", type: "image/png" },
+      ],
     },
   },
   collections: [Users, Media, Letters, Products],
