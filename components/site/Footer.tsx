@@ -30,7 +30,7 @@ export function Footer() {
           <a href={SOCIALS.whatsapp.url} target="_blank" rel="noopener" style={{ color: "var(--text-on-brand-muted)", fontSize: "var(--size-body-sm)", border: "none" }}>
             Join the WhatsApp community
           </a>
-          <span style={{ color: "var(--text-on-brand-muted)", fontSize: "var(--size-body-sm)" }}>info@gentleinspire.com</span>
+          <span style={{ color: "var(--text-on-brand-muted)", fontSize: "var(--size-body-sm)" }}>info@gentleinspirer.com</span>
         </div>
       </div>
       <div

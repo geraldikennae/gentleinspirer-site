@@ -17,6 +17,7 @@ import { Toast } from "@/components/feedback/Toast";
 import { Tag } from "@/components/core/Tag";
 import { PlatformBadge } from "@/components/social/PlatformBadge";
 import { SOCIALS } from "@/components/social/socials";
+import type { SiteSettingsData } from "@/lib/settings";
 
 const DAYS: [string, string][] = [
   ["Tue", "11"],
@@ -28,10 +29,10 @@ const DAYS: [string, string][] = [
 const TIMES = ["09:00", "10:00", "13:30", "16:00"];
 
 type SessionType = "intro" | "paid";
-const TYPES: Record<SessionType, { label: string; eyebrow: string; len: string; desc: string; amounts: null | Record<string, never> }> = {
-  intro: { label: "First conversation", eyebrow: "1:1 · Free", len: "20", desc: "20 minutes to define whether stage one fits.", amounts: null },
-  paid: { label: "Clarity Session", eyebrow: "1:1 · Paid", len: "60", desc: "The full stage-one session, with the written brief.", amounts: {} },
-};
+
+function priceLabel(priceUSD: number | null): string {
+  return priceUSD == null ? "Price TBC" : `$${priceUSD.toLocaleString()}`;
+}
 
 function Steps({ step }: { step: number }) {
   const labels = ["Session type", "Choose a time", "Your details", "Held"];
@@ -65,18 +66,35 @@ function Steps({ step }: { step: number }) {
   );
 }
 
-export default function Booking() {
+export function BookingPageBody({ settings }: { settings: SiteSettingsData }) {
+  const { introMinutes, introDescription, paidTiers } = settings;
+  const hasPaidTiers = paidTiers.length > 0;
+
+  const TYPES: Record<SessionType, { label: string; eyebrow: string; desc: string; fee: string }> = {
+    intro: { label: "First conversation", eyebrow: "1:1 · Free", desc: `${introMinutes} ${introDescription}`, fee: "Free" },
+    paid: {
+      label: "Clarity Session",
+      eyebrow: "1:1 · Paid",
+      desc: "The full stage-one session, with the written brief.",
+      fee: hasPaidTiers && paidTiers.length > 1 ? `From ${priceLabel(paidTiers[0].priceUSD)}` : hasPaidTiers ? priceLabel(paidTiers[0].priceUSD) : "Fee TBC",
+    },
+  };
+
   const [step, setStep] = useState(0);
   const [type, setType] = useState<SessionType | null>(null);
   const [day, setDay] = useState("14");
   const [time, setTime] = useState<string | null>(null);
-  const [len, setLen] = useState("60");
+  const [tierIndex, setTierIndex] = useState(0);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [err, setErr] = useState<{ name?: string; email?: string }>({});
   const [confirm, setConfirm] = useState(false);
   const [toast, setToast] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const selectedTier = paidTiers[tierIndex];
+  const lengthMinutes = type === "intro" ? introMinutes : selectedTier?.minutes;
+  const feeSummary = type === "paid" ? priceLabel(selectedTier?.priceUSD ?? null) + " · Stripe" : "Free";
 
   const next = () => {
     const e: { name?: string; email?: string } = {};
@@ -92,13 +110,13 @@ export default function Booking() {
       await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, day, time, length: type === "intro" ? "20" : len, name, email }),
+        body: JSON.stringify({ type, day, time, length: lengthMinutes, name, email }),
       });
       if (type === "paid") {
         await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ provider: "stripe", currency: "USD" }),
+          body: JSON.stringify({ provider: "stripe", currency: "USD", amount: selectedTier?.priceUSD ?? null }),
         });
       }
     } finally {
@@ -138,22 +156,13 @@ export default function Booking() {
                 {(Object.entries(TYPES) as [SessionType, (typeof TYPES)[SessionType]][]).map(([k, t]) => {
                   const on = type === k;
                   return (
-                    <button
-                      key={k}
-                      onClick={() => {
-                        setType(k);
-                        setLen(t.len);
-                      }}
-                      style={typeCardStyle(on)}
-                    >
+                    <button key={k} onClick={() => setType(k)} style={typeCardStyle(on)}>
                       <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--size-eyebrow)", letterSpacing: "var(--tracking-eyebrow)", textTransform: "uppercase", color: on ? "var(--gi-gold)" : "var(--text-accent)" }}>
                         {t.eyebrow}
                       </span>
                       <span style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-2)", letterSpacing: ".03em", color: on ? "var(--gi-cream)" : "var(--text-heading)" }}>{t.label}</span>
                       <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--size-body-sm)", color: on ? "var(--text-on-brand-muted)" : "var(--text-body)" }}>{t.desc}</span>
-                      <span style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: k === "intro" ? "var(--gi-gold-deep)" : on ? "var(--gi-cream)" : "var(--text-heading)" }}>
-                        {k === "intro" ? "Free" : "Fee TBC"}
-                      </span>
+                      <span style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: k === "intro" ? "var(--gi-gold-deep)" : on ? "var(--gi-cream)" : "var(--text-heading)" }}>{t.fee}</span>
                     </button>
                   );
                 })}
@@ -216,13 +225,18 @@ export default function Booking() {
                 </div>
               </div>
               {type === "paid" ? (
-                <div style={{ display: "grid", gap: "var(--space-3)" }}>
-                  <Eyebrow tone="muted">Length</Eyebrow>
-                  <Radio name="len" value="60" checked={len === "60"} onChange={() => setLen("60")} label="60 minutes" description="One question, followed all the way down." />
-                  <Radio name="len" value="90" checked={len === "90"} onChange={() => setLen("90")} label="90 minutes" description="Room for two." />
-                </div>
+                hasPaidTiers ? (
+                  <div style={{ display: "grid", gap: "var(--space-3)" }}>
+                    <Eyebrow tone="muted">Length</Eyebrow>
+                    {paidTiers.map((tier, i) => (
+                      <Radio key={tier.minutes} name="tier" value={String(i)} checked={tierIndex === i} onChange={() => setTierIndex(i)} label={`${tier.minutes} minutes`} description={priceLabel(tier.priceUSD)} />
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>Session lengths not yet published.</div>
+                )
               ) : (
-                <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>First conversations are 20 minutes.</div>
+                <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>First conversations are {introMinutes} minutes.</div>
               )}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)" }}>
                 <Button variant="ghost" onClick={() => setStep(0)}>
@@ -260,7 +274,7 @@ export default function Booking() {
                   {type === "paid" ? "Continue to payment" : "Request this time"}
                 </Button>
               </div>
-              {type === "paid" && <div style={{ fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Payment is taken at confirmation via Paystack (₦) or Stripe ($ / £).</div>}
+              {type === "paid" && <div style={{ fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Payment is taken at confirmation via Stripe.</div>}
             </div>
           )}
 
@@ -269,7 +283,7 @@ export default function Booking() {
               <h2 style={{ margin: 0 }}>Held for you</h2>
               <Rule />
               <p style={{ maxWidth: "46ch", margin: 0 }}>
-                {type ? TYPES[type].label : ""} — Thursday {day} March, {time} WAT · {type === "intro" ? "20" : len} minutes. A confirmation is in your inbox, with the pre-session brief.
+                {type ? TYPES[type].label : ""} — Thursday {day} March, {time} WAT · {lengthMinutes} minutes. A confirmation is in your inbox, with the pre-session brief.
               </p>
               <Button
                 variant="secondary"
@@ -295,10 +309,10 @@ export default function Booking() {
                 ["Type", type ? TYPES[type].eyebrow : "—"],
                 ["Day", "Thu " + day + " March"],
                 ["Time", time || "—"],
-                ["Length", (type === "intro" ? "20" : len) + " minutes"],
+                ["Length", lengthMinutes ? `${lengthMinutes} minutes` : "—"],
                 ["Where", "Video link by email"],
                 ["Stage", "01 · Clarity"],
-                ["Fee", type === "paid" ? "TBC · Paystack / Stripe" : "Free"],
+                ["Fee", feeSummary],
               ] as [string, string][]
             ).map(([k, v]) => (
               <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: "var(--space-4)" }}>
@@ -307,9 +321,6 @@ export default function Booking() {
               </div>
             ))}
           </dl>
-          <div style={{ marginTop: "var(--space-5)", paddingTop: "var(--space-4)", borderTop: "1px solid var(--border-hairline)", fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>
-            Session fees not yet supplied — checkout copy is illustrative.
-          </div>
         </Card>
       </div>
 
@@ -329,13 +340,13 @@ export default function Booking() {
           </>
         }
       >
-        {type ? TYPES[type].label : ""} — Thursday {day} March, {time} WAT · {type === "intro" ? "20" : len} minutes, for {name || "you"}.{type === "paid" && " Payment follows via Paystack or Stripe."}
+        {type ? TYPES[type].label : ""} — Thursday {day} March, {time} WAT · {lengthMinutes} minutes, for {name || "you"}.{type === "paid" && " Payment follows via Stripe."}
       </Dialog>
 
       {toast && (
         <div style={{ position: "fixed", bottom: "var(--space-6)", right: "var(--space-6)", zIndex: 80 }}>
           <Toast status="success" onDismiss={() => setToast(false)}>
-            Your session is held. Look for a note from info@gentleinspire.com.
+            Your session is held. Look for a note from info@gentleinspirer.com.
           </Toast>
         </div>
       )}

@@ -11,16 +11,12 @@ import { Quote } from "@/components/core/Quote";
 import { Tabs } from "@/components/navigation/Tabs";
 import { Tooltip } from "@/components/feedback/Tooltip";
 import { TierCard } from "@/components/commerce/TierCard";
-import { CurrencySwitch, type Currency } from "@/components/commerce/Price";
+import { CurrencySwitch, type Amounts, type Currency } from "@/components/commerce/Price";
 import { PlatformBadge } from "@/components/social/PlatformBadge";
 import { SOCIALS } from "@/components/social/socials";
+import type { SiteSettingsData } from "@/lib/settings";
 
 const PANELS: Record<string, [string, string][]> = {
-  "The session": [
-    ["60 minutes", "One structured conversation, video or phone. No slides to sit through."],
-    ["One decision", "We define the outcome first, then work backwards to the constraint."],
-    ["A written system", "Your stage-one Clarity brief, in writing, the same day."],
-  ],
   "How it runs": [
     ["First ten minutes", "We name the outcome. Most people arrive with tactics and no defined outcome."],
     ["The middle", "We find the constraint — usually structural, rarely motivational."],
@@ -33,8 +29,15 @@ const PANELS: Record<string, [string, string][]> = {
   ],
 };
 
-function Tiers() {
+function Tiers({ settings }: { settings: SiteSettingsData }) {
   const [cur, setCur] = useState<Currency>("USD");
+  const { introMinutes, introDescription, paidTiers } = settings;
+  const hasTiers = paidTiers.length > 0;
+  const durationLabel = hasTiers ? paidTiers.map((t) => t.minutes).join(" or ") + " minutes" : "Duration TBC";
+  const first = paidTiers[0];
+  const amounts: Amounts = first ? { USD: first.priceUSD, GBP: first.priceGBP, NGN: null } : null;
+  const unit = hasTiers ? (paidTiers.length > 1 ? "per session · from" : "per session") : "per session · TBC";
+
   return (
     <Section tone="card" py="var(--space-8)">
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "end", marginBottom: "var(--space-6)" }}>
@@ -59,26 +62,46 @@ function Tiers() {
             </span>
           }
         />
-        <TierCard eyebrow="1:1 · Introductory · Free" title="First conversation" amounts={null} bullets={["20 minutes, one to one", "Define whether stage one fits", "No preparation needed"]} action="Request a slot" href="/book" />
+        <TierCard
+          eyebrow="1:1 · Introductory · Free"
+          title="First conversation"
+          amounts={null}
+          bullets={[`${introMinutes} ${introDescription}`, "Define whether stage one fits", "No preparation needed"]}
+          action="Request a slot"
+          href="/book"
+        />
         <TierCard
           eyebrow="1:1 · Paid"
           title="Clarity Session"
-          amounts={{ USD: null, GBP: null, NGN: null }}
+          amounts={amounts}
           currency={cur}
-          unit="per session · TBC"
+          unit={unit}
           featured
-          bullets={["60 or 90 minutes", "Written Clarity brief the same day", "Two-week review question"]}
+          bullets={[durationLabel, "Written Clarity brief the same day", "Two-week review question"]}
           action="Book a session"
           href="/book"
-          footnote="Paystack or Stripe at checkout. Pricing to be confirmed."
+          footnote="Checkout runs on Stripe."
         />
       </div>
     </Section>
   );
 }
 
-export default function SessionPage() {
+export function SessionsPageBody({ settings }: { settings: SiteSettingsData }) {
   const [tab, setTab] = useState("The session");
+  const firstTier = settings.paidTiers[0];
+  const durationBadge = firstTier ? `${firstTier.minutes} min` : "Duration TBC";
+  const feeBadge = firstTier?.priceUSD != null ? `$${firstTier.priceUSD.toLocaleString()}` : "Fee · TBC";
+
+  const panels: Record<string, [string, string][]> = {
+    "The session": [
+      [firstTier ? `${firstTier.minutes} minutes` : "One session", "One structured conversation, video or phone. No slides to sit through."],
+      ["One decision", "We define the outcome first, then work backwards to the constraint."],
+      ["A written system", "Your stage-one Clarity brief, in writing, the same day."],
+    ],
+    ...PANELS,
+  };
+
   return (
     <div>
       <section style={{ background: "var(--surface-page)", padding: "var(--space-10) var(--gutter-page-lg) var(--space-8)" }}>
@@ -92,12 +115,16 @@ export default function SessionPage() {
                 Clarity precedes movement. One hour to define the outcome, locate the constraint, and set the first increment — for a decision that has been running without structure.
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginTop: "var(--space-5)" }}>
-                <Badge tone="outline">60 min</Badge>
+                <Badge tone="outline">{durationBadge}</Badge>
                 <Badge tone="outline">1:1</Badge>
                 <Badge tone="gold">Stage 01 of 05</Badge>
-                <Tooltip label="Pricing not supplied">
-                  <Badge>Fee · TBC</Badge>
-                </Tooltip>
+                {firstTier?.priceUSD != null ? (
+                  <Badge tone="gold">{feeBadge}</Badge>
+                ) : (
+                  <Tooltip label="Pricing not supplied">
+                    <Badge>Fee · TBC</Badge>
+                  </Tooltip>
+                )}
               </div>
             </div>
             <Card tone="brand" variant="flat" padding="var(--space-6)">
@@ -114,11 +141,11 @@ export default function SessionPage() {
           </div>
         </div>
       </section>
-      <Tiers />
+      <Tiers settings={settings} />
       <Section tone="page">
-        <Tabs items={Object.keys(PANELS)} value={tab} onChange={setTab} />
+        <Tabs items={Object.keys(panels)} value={tab} onChange={setTab} />
         <div className="rg-panels" style={{ marginTop: "var(--space-7)" }}>
-          {PANELS[tab].map(([t, d]) => (
+          {panels[tab].map(([t, d]) => (
             <div key={t}>
               <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".04em" }}>{t}</div>
               <div style={{ margin: "var(--space-3) 0" }}>
