@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Footer } from "@/components/site/Footer";
+import { getHomeContent } from "@/lib/content";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -39,13 +40,19 @@ export const viewport: Viewport = {
   themeColor: "#000080",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Every page under this layout is already dynamic, so fetching here (used
+  // by both the hero slider on / and the footer quote everywhere) costs
+  // nothing extra in caching behavior.
+  const content = await getHomeContent().catch(() => null);
+  const footerQuotes = content?.heroQuotes.map((q) => `${q.line1} ${q.line2}`);
+
   return (
     <html lang="en" className={`${cormorant.variable} ${montserrat.variable}`}>
       <body>
         <SiteHeader />
         {children}
-        <Footer />
+        <Footer quotes={footerQuotes} />
       </body>
     </html>
   );

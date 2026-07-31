@@ -13,6 +13,7 @@ import { SOCIALS } from "@/components/social/socials";
 import { VideoCard } from "@/components/media/VideoCard";
 import { LetterSignupForm } from "@/components/site/LetterSignupForm";
 import { HeroQuoteSlider } from "@/components/site/HeroQuoteSlider";
+import { PhotoSlideshow } from "@/components/site/PhotoSlideshow";
 import { getHomeContent, type HomeContentData } from "@/lib/content";
 
 function Hero({ content }: { content: HomeContentData }) {
@@ -122,13 +123,7 @@ function Who({ content }: { content: HomeContentData }) {
   return (
     <Section tone="card">
       <div className="rg-who">
-        <Image
-          src="/photography/gerald-portrait.jpeg"
-          alt="Gerald I. Egeonu"
-          width={864}
-          height={1080}
-          style={{ width: "100%", height: "auto", aspectRatio: "4 / 5", objectFit: "cover", objectPosition: "center top", display: "block" }}
-        />
+        <PhotoSlideshow photos={content.about.photos} alt="Gerald I. Egeonu" fallbackSrc="/photography/gerald-portrait.jpeg" />
         <div>
           <Eyebrow>About</Eyebrow>
           <h2 style={{ margin: "var(--space-4) 0 var(--space-4)" }}>Gerald I. Egeonu</h2>

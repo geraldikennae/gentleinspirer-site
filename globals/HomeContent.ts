@@ -100,6 +100,15 @@ export const HomeContent: GlobalConfig = {
       fields: [
         { name: "paragraph1", type: "textarea", defaultValue: "A multidisciplinary growth strategist and founder of The Growth Circle, a platform developing individuals and organisations through structured growth systems, leadership development and purpose-driven execution." },
         { name: "paragraph2", type: "textarea", defaultValue: "With a background spanning engineering, project management and business operations, I bring technical precision to the way growth is designed and delivered — helping people move from ambition to structured progress, and from progress to legacy." },
+        {
+          name: "photos",
+          label: "Photos (slideshow)",
+          type: "array",
+          admin: {
+            description: "Add one or more photos — they rotate automatically. Falls back to a default photo if left empty.",
+          },
+          fields: [{ name: "photo", type: "upload", relationTo: "media", required: true }],
+        },
       ],
     },
     {

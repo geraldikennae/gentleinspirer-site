@@ -4,8 +4,9 @@ import { Eyebrow } from "../brand/Eyebrow";
 import { SocialLinks } from "../social/SocialLinks";
 import { SOCIALS } from "../social/socials";
 import { LINKS } from "./links";
+import { FooterQuoteRotator } from "./FooterQuoteRotator";
 
-export function Footer() {
+export function Footer({ quotes }: { quotes?: string[] }) {
   return (
     <footer style={{ background: "var(--surface-brand-deep)", color: "var(--text-on-brand)", padding: "var(--space-9) var(--gutter-page-lg) var(--space-6)" }}>
       <div className="rg-footer" style={{ maxWidth: "var(--container-max)", margin: "0 auto" }}>
@@ -47,8 +48,8 @@ export function Footer() {
           color: "rgba(255,248,240,.5)",
         }}
       >
-        <span>© Gerald I. Egeonu · The Growth Circle</span>
-        <span>Growth is designed, not desired.</span>
+        <span>gentleinspirer — Gerald I. Egeonu</span>
+        <FooterQuoteRotator quotes={quotes} />
       </div>
     </footer>
   );

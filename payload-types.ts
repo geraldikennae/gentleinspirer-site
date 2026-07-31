@@ -498,6 +498,15 @@ export interface HomeContent {
   about?: {
     paragraph1?: string | null;
     paragraph2?: string | null;
+    /**
+     * Add one or more photos — they rotate automatically. Falls back to a default photo if left empty.
+     */
+    photos?:
+      | {
+          photo: number | Media;
+          id?: string | null;
+        }[]
+      | null;
   };
   community?: {
     heading?: string | null;
@@ -620,6 +629,12 @@ export interface HomeContentSelect<T extends boolean = true> {
     | {
         paragraph1?: T;
         paragraph2?: T;
+        photos?:
+          | T
+          | {
+              photo?: T;
+              id?: T;
+            };
       };
   community?:
     | T
