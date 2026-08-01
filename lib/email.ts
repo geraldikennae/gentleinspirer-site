@@ -10,10 +10,10 @@ function getResend(): Resend {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
-export async function sendEmail(args: { to: string; subject: string; text: string }) {
+export async function sendEmail(args: { to: string; subject: string; text: string; html?: string }) {
   if (!emailConfigured()) return;
   const resend = getResend();
-  await resend.emails.send({ from: FROM, to: args.to, subject: args.subject, text: args.text });
+  await resend.emails.send({ from: FROM, to: args.to, subject: args.subject, text: args.text, ...(args.html ? { html: args.html } : {}) });
 }
 
 export async function sendBookingConfirmation(args: { to: string; name: string; sessionLabel: string; whenLabel: string; minutes: number }) {

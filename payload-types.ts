@@ -811,7 +811,7 @@ export interface BookingContent {
   createdAt?: string | null;
 }
 /**
- * Automated emails sent to subscribers. Use {{ }} placeholders — each template lists which ones it supports.
+ * Automated emails sent to subscribers, rendered inside the branded gentleinspirer email design (logo, gold rule, button, footer) -- these fields are just the words that drop into it. Use {{ }} placeholders -- each template lists which ones it supports. The sign-off, unsubscribe line and button styling are fixed and don't need to be typed here.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "email-templates".
@@ -819,25 +819,43 @@ export interface BookingContent {
 export interface EmailTemplate {
   id: number;
   /**
-   * Placeholders: {{unsubscribeUrl}}
+   * Placeholders: {{unsubscribeUrl}}. The button links to /letters.
    */
   welcome: {
     subject: string;
+    eyebrow: string;
+    headline: string;
+    /**
+     * One or more paragraphs. Leave a blank line between paragraphs.
+     */
     body: string;
+    ctaLabel: string;
   };
   /**
-   * Placeholders: {{title}}, {{dek}}, {{url}}, {{unsubscribeUrl}}
+   * Placeholders: {{title}}, {{dek}}, {{unsubscribeUrl}}. The button links to the letter itself.
    */
   newLetter: {
     subject: string;
+    eyebrow: string;
+    headline: string;
+    /**
+     * One or more paragraphs. Leave a blank line between paragraphs.
+     */
     body: string;
+    ctaLabel: string;
   };
   /**
-   * Placeholders: {{title}}, {{blurb}}, {{url}}, {{unsubscribeUrl}}
+   * Placeholders: {{title}}, {{blurb}}, {{unsubscribeUrl}}. The button links to /products.
    */
   newProduct: {
     subject: string;
+    eyebrow: string;
+    headline: string;
+    /**
+     * One or more paragraphs. Leave a blank line between paragraphs.
+     */
     body: string;
+    ctaLabel: string;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1122,19 +1140,28 @@ export interface EmailTemplatesSelect<T extends boolean = true> {
     | T
     | {
         subject?: T;
+        eyebrow?: T;
+        headline?: T;
         body?: T;
+        ctaLabel?: T;
       };
   newLetter?:
     | T
     | {
         subject?: T;
+        eyebrow?: T;
+        headline?: T;
         body?: T;
+        ctaLabel?: T;
       };
   newProduct?:
     | T
     | {
         subject?: T;
+        eyebrow?: T;
+        headline?: T;
         body?: T;
+        ctaLabel?: T;
       };
   updatedAt?: T;
   createdAt?: T;

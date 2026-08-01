@@ -1,6 +1,7 @@
 import type { Payload } from "payload";
 import { sendEmail } from "@/lib/email";
-import { renderTemplate } from "@/lib/templates";
+import { renderTemplate, splitParagraphs } from "@/lib/templates";
+import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
 import { siteUrl, unsubscribeUrl } from "@/lib/urls";
 
 // Called from Letters/Products collection hooks, which already have an
@@ -17,26 +18,52 @@ async function activeSubscribers(payload: Payload) {
 /** Best-effort -- logs and continues past individual send failures rather than throwing, since this runs inside a Payload afterChange hook. */
 export async function notifyNewLetter(payload: Payload, args: { title: string; dek: string; slug: string }): Promise<void> {
   const [subscribers, templates] = await Promise.all([activeSubscribers(payload), payload.findGlobal({ slug: "email-templates" })]);
+  const t = templates.newLetter;
   const url = `${siteUrl()}/letters/${args.slug}`;
   await Promise.allSettled(
     subscribers.map((s) => {
       const vars = { title: args.title, dek: args.dek, url, unsubscribeUrl: unsubscribeUrl(s.unsubscribeToken) };
-      return sendEmail({ to: s.email, subject: renderTemplate(templates.newLetter.subject, vars), text: renderTemplate(templates.newLetter.body, vars) }).catch((err: unknown) =>
-        console.error(`New-letter email to ${s.email} failed:`, err),
-      );
+      const content = {
+        preheader: renderTemplate(t.headline, vars),
+        eyebrow: renderTemplate(t.eyebrow, vars),
+        headline: renderTemplate(t.headline, vars),
+        paragraphs: splitParagraphs(renderTemplate(t.body, vars)),
+        ctaLabel: t.ctaLabel,
+        ctaUrl: url,
+        unsubscribeUrl: vars.unsubscribeUrl,
+      };
+      return sendEmail({
+        to: s.email,
+        subject: renderTemplate(t.subject, vars),
+        text: renderBrandedEmailText(content),
+        html: renderBrandedEmailHtml(content),
+      }).catch((err: unknown) => console.error(`New-letter email to ${s.email} failed:`, err));
     }),
   );
 }
 
 export async function notifyNewProduct(payload: Payload, args: { title: string; blurb: string }): Promise<void> {
   const [subscribers, templates] = await Promise.all([activeSubscribers(payload), payload.findGlobal({ slug: "email-templates" })]);
+  const t = templates.newProduct;
   const url = `${siteUrl()}/products`;
   await Promise.allSettled(
     subscribers.map((s) => {
       const vars = { title: args.title, blurb: args.blurb || "", url, unsubscribeUrl: unsubscribeUrl(s.unsubscribeToken) };
-      return sendEmail({ to: s.email, subject: renderTemplate(templates.newProduct.subject, vars), text: renderTemplate(templates.newProduct.body, vars) }).catch((err: unknown) =>
-        console.error(`New-product email to ${s.email} failed:`, err),
-      );
+      const content = {
+        preheader: renderTemplate(t.headline, vars),
+        eyebrow: renderTemplate(t.eyebrow, vars),
+        headline: renderTemplate(t.headline, vars),
+        paragraphs: splitParagraphs(renderTemplate(t.body, vars)),
+        ctaLabel: t.ctaLabel,
+        ctaUrl: url,
+        unsubscribeUrl: vars.unsubscribeUrl,
+      };
+      return sendEmail({
+        to: s.email,
+        subject: renderTemplate(t.subject, vars),
+        text: renderBrandedEmailText(content),
+        html: renderBrandedEmailHtml(content),
+      }).catch((err: unknown) => console.error(`New-product email to ${s.email} failed:`, err));
     }),
   );
 }
