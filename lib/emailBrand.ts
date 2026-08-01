@@ -25,8 +25,14 @@ const COLOR = {
   footerMuted: "rgba(255,248,240,.55)",
 };
 
-const FONT_DISPLAY = "Georgia,'Times New Roman',serif";
-const FONT_BODY = "Arial,Helvetica,sans-serif";
+// Brand fonts, loaded from Google Fonts where the email client supports it
+// (Apple/iOS Mail, Gmail's app, most webmail) and falling back to a close
+// system serif/sans where it doesn't (Outlook desktop strips <link>/
+// @font-face entirely and always uses the fallback stack -- this is normal
+// for email, not a bug).
+const FONT_DISPLAY = "'Cormorant Garamond',Georgia,'Times New Roman',serif";
+const FONT_BODY = "'Montserrat',Arial,Helvetica,sans-serif";
+const FONT_BODY_WEIGHT = "300"; // Montserrat Light
 
 export interface BrandedEmailContent {
   preheader: string;
@@ -56,6 +62,9 @@ export const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>{{headline}}</title>
+<!--[if !mso]><!-->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" type="text/css" />
+<!--<![endif]-->
 </head>
 <body style="margin:0;padding:0;background-color:#F4F2ED;">
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F4F2ED;">{{preheader}}</div>
@@ -66,25 +75,29 @@ export const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
 
 <tr>
 <td align="center" bgcolor="#000080" style="background-color:#000080;padding:40px 40px 34px;">
-<img src="${LOGO_URL}" width="${LOGO_WIDTH}" height="${LOGO_HEIGHT}" alt="Gentle Inspirer" style="display:block;margin:0 auto 18px;border:0;outline:none;text-decoration:none;color:#EBD9A0;font-family:Arial,Helvetica,sans-serif;font-size:12px;" />
-<p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#EBD9A0;font-size:15px;letter-spacing:.01em;">&ldquo;Clarity precedes movement.&rdquo;</p>
+<img src="${LOGO_URL}" width="${LOGO_WIDTH}" height="${LOGO_HEIGHT}" alt="Gentle Inspirer" style="display:block;margin:0 auto 18px;border:0;outline:none;text-decoration:none;color:#EBD9A0;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:12px;" />
+<p style="margin:0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-style:italic;color:#EBD9A0;font-size:15px;letter-spacing:.01em;">&ldquo;Clarity precedes movement.&rdquo;</p>
 </td>
 </tr>
 
 <tr>
 <td style="padding:44px 48px 8px 48px;">
-<p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C79532;font-weight:bold;">{{eyebrow}}</p>
-<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1.25;color:#1A1A1A;font-weight:normal;">{{headline}}</h1>
+<p style="margin:0 0 16px;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C79532;font-weight:600;">{{eyebrow}}</p>
+<h1 style="margin:0 0 18px;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:28px;line-height:1.25;color:#1A1A1A;font-weight:500;">{{headline}}</h1>
 <table role="presentation" width="56" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr><td height="2" bgcolor="#C79532" style="font-size:1px;line-height:2px;">&nbsp;</td></tr></table>
 {{bodyHtml}}
 {{ctaHtml}}
-<p style="margin:30px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;font-style:italic;color:#1A1A1A;">Gerald I. Egeonu / The Gentle Inspirer</p>
+<p style="margin:30px 0 0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:16px;line-height:1.5;color:#1A1A1A;">
+Always Yours,<br />
+Gerald I. Egeonu<br />
+The Gentle Inspirer
+</p>
 </td>
 </tr>
 
 <tr>
 <td bgcolor="#1A1A1A" style="background-color:#1A1A1A;padding:30px 48px;">
-<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.7;color:rgba(255,248,240,.55);text-align:center;">
+<p style="margin:0;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:300;font-size:11px;line-height:1.7;color:rgba(255,248,240,.55);text-align:center;">
 gentleinspirer.com - The Gentle Inspirer<br />
 {{footerNote}}
 </p>
@@ -101,7 +114,7 @@ gentleinspirer.com - The Gentle Inspirer<br />
 function buildParagraphsHtml(paragraphs: string[]): string {
   return paragraphs
     .filter((p) => p.trim())
-    .map((p) => `<p style="margin:0 0 18px;font-family:${FONT_BODY};font-size:15px;line-height:1.7;color:${COLOR.body};">${esc(p)}</p>`)
+    .map((p) => `<p style="margin:0 0 18px;font-family:${FONT_BODY};font-weight:${FONT_BODY_WEIGHT};font-size:15px;line-height:1.7;color:${COLOR.body};">${esc(p)}</p>`)
     .join("\n");
 }
 
@@ -109,7 +122,7 @@ function buildCtaHtml(ctaLabel: string | undefined, ctaUrl: string | undefined):
   if (!ctaLabel || !ctaUrl) return "";
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 8px;">
 <tr><td bgcolor="${COLOR.navy}" style="background-color:${COLOR.navy};border-radius:3px;">
-<a href="${esc(ctaUrl)}" target="_blank" style="display:inline-block;padding:15px 34px;font-family:${FONT_BODY};font-size:14px;font-weight:bold;color:${COLOR.cream};text-decoration:none;">${esc(ctaLabel)}</a>
+<a href="${esc(ctaUrl)}" target="_blank" style="display:inline-block;padding:15px 34px;font-family:${FONT_BODY};font-size:14px;font-weight:600;color:${COLOR.cream};text-decoration:none;">${esc(ctaLabel)}</a>
 </td></tr>
 </table>`;
 }
@@ -138,7 +151,7 @@ export function renderBrandedEmailText(c: BrandedEmailContent): string {
   if (c.ctaLabel && c.ctaUrl) {
     lines.push(`${c.ctaLabel}: ${c.ctaUrl}`, "");
   }
-  lines.push("Gerald I. Egeonu / The Gentle Inspirer", "");
+  lines.push("Always Yours,", "Gerald I. Egeonu", "The Gentle Inspirer", "");
   if (c.unsubscribeUrl) {
     lines.push(`Unsubscribe any time: ${c.unsubscribeUrl}`);
   }

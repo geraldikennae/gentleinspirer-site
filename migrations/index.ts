@@ -11,6 +11,7 @@ import * as migration_20260731_195438_add_why_clarity_sessions from './20260731_
 import * as migration_20260801_073305_remove_em_dashes_from_content from './20260801_073305_remove_em_dashes_from_content';
 import * as migration_20260801_134750_branded_email_templates from './20260801_134750_branded_email_templates';
 import * as migration_20260801_152431_add_email_html_template from './20260801_152431_add_email_html_template';
+import * as migration_20260801_155903_update_email_banner_and_signoff from './20260801_155903_update_email_banner_and_signoff';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20260801_152431_add_email_html_template.up,
     down: migration_20260801_152431_add_email_html_template.down,
-    name: '20260801_152431_add_email_html_template'
+    name: '20260801_152431_add_email_html_template',
+  },
+  {
+    up: migration_20260801_155903_update_email_banner_and_signoff.up,
+    down: migration_20260801_155903_update_email_banner_and_signoff.down,
+    name: '20260801_155903_update_email_banner_and_signoff'
   },
 ];
