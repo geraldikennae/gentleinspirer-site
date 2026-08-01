@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
 
 const FROM = process.env.EMAIL_FROM || "info@gentleinspirer.com";
 
@@ -17,18 +18,34 @@ export async function sendEmail(args: { to: string; subject: string; text: strin
 }
 
 export async function sendBookingConfirmation(args: { to: string; name: string; sessionLabel: string; whenLabel: string; minutes: number }) {
+  const content = {
+    preheader: `${args.sessionLabel} is held for ${args.whenLabel}.`,
+    eyebrow: "Booking Confirmed",
+    headline: `Hi ${args.name}, you're held.`,
+    paragraphs: [`${args.sessionLabel} · ${args.whenLabel} · ${args.minutes} minutes`, "A video link follows separately."],
+  };
   await sendEmail({
     to: args.to,
     subject: `Held: ${args.sessionLabel}`,
-    text: `Hi ${args.name},\n\nYour session is held.\n\n${args.sessionLabel} · ${args.whenLabel} · ${args.minutes} minutes\n\nA video link follows separately.\n\nGerald`,
+    text: renderBrandedEmailText(content),
+    html: renderBrandedEmailHtml(content),
   });
 }
 
 export async function sendProductDelivery(args: { to: string; title: string; downloadUrl: string }) {
+  const content = {
+    preheader: `Your copy of ${args.title} is ready.`,
+    eyebrow: "Order Confirmed",
+    headline: args.title,
+    paragraphs: ["Thanks for your purchase.", "If the link expires, reply to this email and we'll re-send it."],
+    ctaLabel: "Download your copy",
+    ctaUrl: args.downloadUrl,
+  };
   await sendEmail({
     to: args.to,
     subject: `Your copy: ${args.title}`,
-    text: `Thanks for your purchase.\n\n${args.title}\n\nDownload: ${args.downloadUrl}\n\nIf the link expires, reply to this email and we'll re-send it.\n\nGerald`,
+    text: renderBrandedEmailText(content),
+    html: renderBrandedEmailHtml(content),
   });
 }
 

@@ -34,8 +34,9 @@ export interface BrandedEmailContent {
   eyebrow: string;
   headline: string;
   paragraphs: string[];
-  ctaLabel: string;
-  ctaUrl: string;
+  /** Omit when there's nothing meaningful to link to (e.g. a booking confirmation). */
+  ctaLabel?: string;
+  ctaUrl?: string;
   /** Omit for transactional emails (booking/purchase) that aren't tied to the subscriber list. */
   unsubscribeUrl?: string;
 }
@@ -53,6 +54,15 @@ export function renderBrandedEmailHtml(c: BrandedEmailContent): string {
   const unsubscribeLine = c.unsubscribeUrl
     ? `<a href="${esc(c.unsubscribeUrl)}" style="color:${COLOR.goldPale};text-decoration:underline;" target="_blank">Unsubscribe</a> any time, no hard feelings.`
     : `You're receiving this because of a recent booking or purchase.`;
+
+  const ctaHtml =
+    c.ctaLabel && c.ctaUrl
+      ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 8px;">
+<tr><td bgcolor="${COLOR.navy}" style="background-color:${COLOR.navy};border-radius:3px;">
+<a href="${esc(c.ctaUrl)}" target="_blank" style="display:inline-block;padding:15px 34px;font-family:${FONT_BODY};font-size:14px;font-weight:bold;color:${COLOR.cream};text-decoration:none;">${esc(c.ctaLabel)}</a>
+</td></tr>
+</table>`
+      : "";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -81,11 +91,7 @@ export function renderBrandedEmailHtml(c: BrandedEmailContent): string {
 <h1 style="margin:0 0 18px;font-family:${FONT_DISPLAY};font-size:28px;line-height:1.25;color:${COLOR.ink};font-weight:normal;">${esc(c.headline)}</h1>
 <table role="presentation" width="56" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr><td height="2" bgcolor="${COLOR.gold}" style="font-size:1px;line-height:2px;">&nbsp;</td></tr></table>
 ${paragraphsHtml}
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 8px;">
-<tr><td bgcolor="${COLOR.navy}" style="background-color:${COLOR.navy};border-radius:3px;">
-<a href="${esc(c.ctaUrl)}" target="_blank" style="display:inline-block;padding:15px 34px;font-family:${FONT_BODY};font-size:14px;font-weight:bold;color:${COLOR.cream};text-decoration:none;">${esc(c.ctaLabel)}</a>
-</td></tr>
-</table>
+${ctaHtml}
 <p style="margin:30px 0 0;font-family:${FONT_DISPLAY};font-size:17px;font-style:italic;color:${COLOR.ink};">Gerald</p>
 </td>
 </tr>
@@ -109,7 +115,11 @@ ${unsubscribeLine}
 }
 
 export function renderBrandedEmailText(c: BrandedEmailContent): string {
-  const lines = [c.headline, "", ...c.paragraphs.filter((p) => p.trim()), "", `${c.ctaLabel}: ${c.ctaUrl}`, "", "Gerald", ""];
+  const lines = [c.headline, "", ...c.paragraphs.filter((p) => p.trim()), ""];
+  if (c.ctaLabel && c.ctaUrl) {
+    lines.push(`${c.ctaLabel}: ${c.ctaUrl}`, "");
+  }
+  lines.push("Gerald", "");
   if (c.unsubscribeUrl) {
     lines.push(`Unsubscribe any time: ${c.unsubscribeUrl}`);
   }
