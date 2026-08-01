@@ -37,7 +37,7 @@ export async function subscribe(email: string): Promise<void> {
     to: email,
     subject: renderTemplate(w.subject, vars),
     text: renderBrandedEmailText(content),
-    html: renderBrandedEmailHtml(content),
+    html: renderBrandedEmailHtml(content, templates.htmlTemplate),
   }).catch((err) => console.error("Welcome email failed:", err));
 
   await addResendContact(email).catch((err) => console.error("Resend contact sync failed:", err));

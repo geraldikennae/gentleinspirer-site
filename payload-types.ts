@@ -811,7 +811,7 @@ export interface BookingContent {
   createdAt?: string | null;
 }
 /**
- * Automated emails sent to subscribers, rendered inside the branded gentleinspirer email design (logo, gold rule, button, footer) -- these fields are just the words that drop into it. Use {{ }} placeholders -- each template lists which ones it supports. The sign-off, unsubscribe line and button styling are fixed and don't need to be typed here.
+ * Automated emails sent to every trigger below (subscriber sign-up, new letter, new product, booking confirmation, product delivery), rendered inside the branded gentleinspirer email design -- these per-template fields are just the words that drop into it. Use {{ }} placeholders -- each template lists which ones it supports. The shared HTML design itself (banner, colors, sign-off, layout) is edited once, at the bottom of this page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "email-templates".
@@ -857,6 +857,10 @@ export interface EmailTemplate {
     body: string;
     ctaLabel: string;
   };
+  /**
+   * The shared HTML shell every automated email (including booking and product-delivery emails) is rendered inside. Placeholders: {{preheader}}, {{eyebrow}}, {{headline}}, {{bodyHtml}}, {{ctaHtml}}, {{footerNote}} -- everything else (banner image, colors, sign-off text, layout) is plain HTML you can edit directly. Keep it table-based with inline styles if you change the structure; most email apps (Outlook especially) ignore modern CSS like flexbox or <style> blocks.
+   */
+  htmlTemplate: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1163,6 +1167,7 @@ export interface EmailTemplatesSelect<T extends boolean = true> {
         body?: T;
         ctaLabel?: T;
       };
+  htmlTemplate?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

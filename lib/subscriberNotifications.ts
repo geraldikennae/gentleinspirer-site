@@ -36,7 +36,7 @@ export async function notifyNewLetter(payload: Payload, args: { title: string; d
         to: s.email,
         subject: renderTemplate(t.subject, vars),
         text: renderBrandedEmailText(content),
-        html: renderBrandedEmailHtml(content),
+        html: renderBrandedEmailHtml(content, templates.htmlTemplate),
       }).catch((err: unknown) => console.error(`New-letter email to ${s.email} failed:`, err));
     }),
   );
@@ -62,7 +62,7 @@ export async function notifyNewProduct(payload: Payload, args: { title: string; 
         to: s.email,
         subject: renderTemplate(t.subject, vars),
         text: renderBrandedEmailText(content),
-        html: renderBrandedEmailHtml(content),
+        html: renderBrandedEmailHtml(content, templates.htmlTemplate),
       }).catch((err: unknown) => console.error(`New-product email to ${s.email} failed:`, err));
     }),
   );

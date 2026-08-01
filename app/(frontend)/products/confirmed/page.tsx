@@ -48,7 +48,8 @@ export default async function ProductConfirmed({ searchParams }: { searchParams:
 
   let emailSent = false;
   if (product && file?.url) {
-    emailSent = await sendProductDelivery({ to: email, title: product.title, downloadUrl: file.url })
+    const templates = await payload.findGlobal({ slug: "email-templates" });
+    emailSent = await sendProductDelivery({ to: email, title: product.title, downloadUrl: file.url, htmlTemplate: templates.htmlTemplate })
       .then(() => true)
       .catch((err) => {
         console.error("Product delivery email failed:", err);

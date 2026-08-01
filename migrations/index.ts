@@ -10,6 +10,7 @@ import * as migration_20260731_194209_add_calendar_venue_time from './20260731_1
 import * as migration_20260731_195438_add_why_clarity_sessions from './20260731_195438_add_why_clarity_sessions';
 import * as migration_20260801_073305_remove_em_dashes_from_content from './20260801_073305_remove_em_dashes_from_content';
 import * as migration_20260801_134750_branded_email_templates from './20260801_134750_branded_email_templates';
+import * as migration_20260801_152431_add_email_html_template from './20260801_152431_add_email_html_template';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20260801_134750_branded_email_templates.up,
     down: migration_20260801_134750_branded_email_templates.down,
-    name: '20260801_134750_branded_email_templates'
+    name: '20260801_134750_branded_email_templates',
+  },
+  {
+    up: migration_20260801_152431_add_email_html_template.up,
+    down: migration_20260801_152431_add_email_html_template.down,
+    name: '20260801_152431_add_email_html_template'
   },
 ];

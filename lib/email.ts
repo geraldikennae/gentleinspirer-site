@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
 
-const FROM = process.env.EMAIL_FROM || "info@gentleinspirer.com";
+const FROM = process.env.EMAIL_FROM || "The Gentle Inspirer <info@gentleinspirer.com>";
 
 export function emailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY);
@@ -17,7 +17,7 @@ export async function sendEmail(args: { to: string; subject: string; text: strin
   await resend.emails.send({ from: FROM, to: args.to, subject: args.subject, text: args.text, ...(args.html ? { html: args.html } : {}) });
 }
 
-export async function sendBookingConfirmation(args: { to: string; name: string; sessionLabel: string; whenLabel: string; minutes: number }) {
+export async function sendBookingConfirmation(args: { to: string; name: string; sessionLabel: string; whenLabel: string; minutes: number; htmlTemplate?: string }) {
   const content = {
     preheader: `${args.sessionLabel} is held for ${args.whenLabel}.`,
     eyebrow: "Booking Confirmed",
@@ -28,11 +28,11 @@ export async function sendBookingConfirmation(args: { to: string; name: string; 
     to: args.to,
     subject: `Held: ${args.sessionLabel}`,
     text: renderBrandedEmailText(content),
-    html: renderBrandedEmailHtml(content),
+    html: renderBrandedEmailHtml(content, args.htmlTemplate),
   });
 }
 
-export async function sendProductDelivery(args: { to: string; title: string; downloadUrl: string }) {
+export async function sendProductDelivery(args: { to: string; title: string; downloadUrl: string; htmlTemplate?: string }) {
   const content = {
     preheader: `Your copy of ${args.title} is ready.`,
     eyebrow: "Order Confirmed",
@@ -45,7 +45,7 @@ export async function sendProductDelivery(args: { to: string; title: string; dow
     to: args.to,
     subject: `Your copy: ${args.title}`,
     text: renderBrandedEmailText(content),
-    html: renderBrandedEmailHtml(content),
+    html: renderBrandedEmailHtml(content, args.htmlTemplate),
   });
 }
 

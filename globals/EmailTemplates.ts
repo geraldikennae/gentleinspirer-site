@@ -1,11 +1,12 @@
 import type { GlobalConfig } from "payload";
+import { DEFAULT_HTML_TEMPLATE } from "@/lib/emailBrand";
 
 export const EmailTemplates: GlobalConfig = {
   slug: "email-templates",
   label: "Email Templates",
   admin: {
     description:
-      "Automated emails sent to subscribers, rendered inside the branded gentleinspirer email design (logo, gold rule, button, footer) -- these fields are just the words that drop into it. Use {{ }} placeholders -- each template lists which ones it supports. The sign-off, unsubscribe line and button styling are fixed and don't need to be typed here.",
+      "Automated emails sent to every trigger below (subscriber sign-up, new letter, new product, booking confirmation, product delivery), rendered inside the branded gentleinspirer email design -- these per-template fields are just the words that drop into it. Use {{ }} placeholders -- each template lists which ones it supports. The shared HTML design itself (banner, colors, sign-off, layout) is edited once, at the bottom of this page.",
   },
   access: {
     // Not sensitive, but no reason to expose it on the public API either.
@@ -71,6 +72,18 @@ export const EmailTemplates: GlobalConfig = {
         },
         { name: "ctaLabel", label: "Button label", type: "text", required: true, defaultValue: "Take a look" },
       ],
+    },
+    {
+      name: "htmlTemplate",
+      label: "Email design (HTML)",
+      type: "code",
+      required: true,
+      defaultValue: DEFAULT_HTML_TEMPLATE,
+      admin: {
+        language: "html",
+        description:
+          "The shared HTML shell every automated email (including booking and product-delivery emails) is rendered inside. Placeholders: {{preheader}}, {{eyebrow}}, {{headline}}, {{bodyHtml}}, {{ctaHtml}}, {{footerNote}} -- everything else (banner image, colors, sign-off text, layout) is plain HTML you can edit directly. Keep it table-based with inline styles if you change the structure; most email apps (Outlook especially) ignore modern CSS like flexbox or <style> blocks.",
+      },
     },
   ],
 };
