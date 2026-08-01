@@ -20,7 +20,7 @@ export async function sendBookingConfirmation(args: { to: string; name: string; 
   await sendEmail({
     to: args.to,
     subject: `Held: ${args.sessionLabel}`,
-    text: `Hi ${args.name},\n\nYour session is held.\n\n${args.sessionLabel} — ${args.whenLabel} · ${args.minutes} minutes\n\nA video link follows separately.\n\n— Gerald`,
+    text: `Hi ${args.name},\n\nYour session is held.\n\n${args.sessionLabel} · ${args.whenLabel} · ${args.minutes} minutes\n\nA video link follows separately.\n\nGerald`,
   });
 }
 
@@ -28,7 +28,7 @@ export async function sendProductDelivery(args: { to: string; title: string; dow
   await sendEmail({
     to: args.to,
     subject: `Your copy: ${args.title}`,
-    text: `Thanks for your purchase.\n\n${args.title}\n\nDownload: ${args.downloadUrl}\n\nIf the link expires, reply to this email and we'll re-send it.\n\n— Gerald`,
+    text: `Thanks for your purchase.\n\n${args.title}\n\nDownload: ${args.downloadUrl}\n\nIf the link expires, reply to this email and we'll re-send it.\n\nGerald`,
   });
 }
 

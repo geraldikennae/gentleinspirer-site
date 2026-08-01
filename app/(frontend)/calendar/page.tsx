@@ -53,7 +53,7 @@ export default async function CalendarPage() {
         <h1 style={{ fontSize: "var(--size-display-3)", margin: "var(--space-3) 0 var(--space-4)" }}>What&rsquo;s coming</h1>
         <Rule length={64} />
         <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)" }}>
-          Free community Clarity Sessions — live, open Q&amp;A. No booking, no fee: just join at the time via the link for that date.{" "}
+          Free community Clarity Sessions: live, open Q&amp;A. No booking, no fee: just join at the time via the link for that date.{" "}
           <strong>Looking for a private 1:1 session instead?</strong> That&rsquo;s the paid Clarity Session, booked separately from the sessions page.
         </p>
         <div style={{ marginTop: "var(--space-6)" }}>
@@ -65,7 +65,7 @@ export default async function CalendarPage() {
 
       <Section tone="card" py="var(--space-8)">
         {byMonth.size === 0 ? (
-          <p style={{ color: "var(--text-muted)" }}>No dates published yet — join the WhatsApp community for the next one.</p>
+          <p style={{ color: "var(--text-muted)" }}>No dates published yet, join the WhatsApp community for the next one.</p>
         ) : (
           <div style={{ display: "grid", gap: "var(--space-7)" }}>
             {Array.from(byMonth.entries()).map(([month, dates]) => (
@@ -105,7 +105,7 @@ export default async function CalendarPage() {
         <Eyebrow>Not on the calendar yet?</Eyebrow>
         <h2 style={{ margin: "var(--space-3) 0 var(--space-4)", maxWidth: "24ch" }}>Suggest what you want clarity on</h2>
         <Rule length={64} />
-        <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)" }}>Tell us what you&rsquo;re stuck on — it shapes what gets covered in upcoming sessions and letters.</p>
+        <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)" }}>Tell us what you&rsquo;re stuck on: it shapes what gets covered in upcoming sessions and letters.</p>
         <div style={{ marginTop: "var(--space-6)", maxWidth: "560px" }}>
           <SuggestionForm />
         </div>

@@ -29,7 +29,7 @@ export function ProductsGrid({ products, content }: { products: ProductSummary[]
     // Checkout runs on Stripe, USD/GBP only (see .env.example) — NGN has no
     // price on any product and no payment method wired up for it.
     if (cur === "NGN") {
-      setError("NGN checkout isn't available yet — switch to USD or GBP to buy.");
+      setError("NGN checkout isn't available yet. Switch to USD or GBP to buy.");
       return;
     }
     setError(null);

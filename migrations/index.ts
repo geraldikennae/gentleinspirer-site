@@ -8,6 +8,7 @@ import * as migration_20260731_191727_add_content_globals_and_calendar_suggestio
 import * as migration_20260731_193518_add_suggestion_status from './20260731_193518_add_suggestion_status';
 import * as migration_20260731_194209_add_calendar_venue_time from './20260731_194209_add_calendar_venue_time';
 import * as migration_20260731_195438_add_why_clarity_sessions from './20260731_195438_add_why_clarity_sessions';
+import * as migration_20260801_073305_remove_em_dashes_from_content from './20260801_073305_remove_em_dashes_from_content';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260731_195438_add_why_clarity_sessions.up,
     down: migration_20260731_195438_add_why_clarity_sessions.down,
-    name: '20260731_195438_add_why_clarity_sessions'
+    name: '20260731_195438_add_why_clarity_sessions',
+  },
+  {
+    up: migration_20260801_073305_remove_em_dashes_from_content.up,
+    down: migration_20260801_073305_remove_em_dashes_from_content.down,
+    name: '20260801_073305_remove_em_dashes_from_content'
   },
 ];

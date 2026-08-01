@@ -51,10 +51,10 @@ export default async function BookingConfirmed({ searchParams }: { searchParams:
       <h1 style={{ fontSize: "var(--size-display-3)", margin: "var(--space-3) 0 var(--space-4)" }}>Held for you</h1>
       <Rule />
       <p style={{ marginTop: "var(--space-5)", maxWidth: "46ch" }}>
-        Clarity Session — {result.whenLabel} · {minutes} minutes. Payment received.{" "}
+        Clarity Session: {result.whenLabel} · {minutes} minutes. Payment received.{" "}
         {result.emailSent ? "A confirmation is in your inbox, with the pre-session brief." : "A confirmation will follow shortly."}
       </p>
-      {!result.calBooked && <p style={{ marginTop: "var(--space-3)", fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Calendar hold pending — if you don&rsquo;t hear from us within a day, email {settings.contactEmail}.</p>}
+      {!result.calBooked && <p style={{ marginTop: "var(--space-3)", fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Calendar hold pending. If you don&rsquo;t hear from us within a day, email {settings.contactEmail}.</p>}
       <div style={{ marginTop: "var(--space-6)" }}>
         <Button variant="secondary" href="/book">
           Book another

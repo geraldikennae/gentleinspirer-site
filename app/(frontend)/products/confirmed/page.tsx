@@ -64,7 +64,7 @@ export default async function ProductConfirmed({ searchParams }: { searchParams:
       {product && file?.url ? (
         <>
           <p style={{ marginTop: "var(--space-5)", maxWidth: "46ch" }}>
-            {product.title} — payment received. {emailSent ? "A download link is in your inbox." : "Your download is ready below."}
+            {product.title}: payment received. {emailSent ? "A download link is in your inbox." : "Your download is ready below."}
           </p>
           <div style={{ marginTop: "var(--space-6)" }}>
             <Button variant="primary" externalHref={file.url}>
@@ -74,7 +74,7 @@ export default async function ProductConfirmed({ searchParams }: { searchParams:
         </>
       ) : (
         <p style={{ marginTop: "var(--space-5)", maxWidth: "46ch" }}>
-          Payment received. The file isn&rsquo;t ready to send automatically yet — we&rsquo;ll email it to {email} shortly. If you don&rsquo;t hear from us within a day, contact {settings.contactEmail}.
+          Payment received. The file isn&rsquo;t ready to send automatically yet, we&rsquo;ll email it to {email} shortly. If you don&rsquo;t hear from us within a day, contact {settings.contactEmail}.
         </p>
       )}
       <div style={{ marginTop: "var(--space-6)" }}>

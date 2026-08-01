@@ -179,7 +179,7 @@ function Teachings({ content }: { content: HomeContentData }) {
           <VideoCard key={t.title} title={t.title} videoId={t.videoId || undefined} />
         ))}
       </div>
-      {hasMissingIds && <p style={{ margin: "var(--space-5) 0 0", fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Thumbnails appear once real video ids are supplied in /admin — these link to the channel until then.</p>}
+      {hasMissingIds && <p style={{ margin: "var(--space-5) 0 0", fontSize: "var(--size-caption)", color: "var(--text-muted)" }}>Thumbnails appear once real video ids are supplied in /admin; these link to the channel until then.</p>}
     </Section>
   );
 }

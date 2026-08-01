@@ -42,7 +42,7 @@ export function SuggestionForm() {
   };
 
   if (sent) {
-    return <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-2)", color: "var(--text-heading)" }}>Noted — thank you.</div>;
+    return <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-2)", color: "var(--text-heading)" }}>Noted, thank you.</div>;
   }
 
   return (

@@ -33,7 +33,7 @@ export const HomeContent: GlobalConfig = {
       name: "heroSubhead",
       label: "Hero subhead",
       type: "textarea",
-      defaultValue: "I help individuals and organisations move from ambition to structured progress — through systems, leadership development and disciplined execution.",
+      defaultValue: "I help individuals and organisations move from ambition to structured progress, through systems, leadership development and disciplined execution.",
     },
     {
       name: "model",
@@ -41,7 +41,7 @@ export const HomeContent: GlobalConfig = {
       type: "group",
       fields: [
         { name: "heading", type: "text", defaultValue: "Five stages, in order" },
-        { name: "intro", type: "textarea", defaultValue: "Clarity precedes movement. Every engagement — a session, a programme, an organisational review — runs on the same five stages." },
+        { name: "intro", type: "textarea", defaultValue: "Clarity precedes movement. Every engagement (a session, a programme, an organisational review) runs on the same five stages." },
         {
           name: "stages",
           type: "array",
@@ -99,7 +99,7 @@ export const HomeContent: GlobalConfig = {
       type: "group",
       fields: [
         { name: "paragraph1", type: "textarea", defaultValue: "A multidisciplinary growth strategist and founder of The Growth Circle, a platform developing individuals and organisations through structured growth systems, leadership development and purpose-driven execution." },
-        { name: "paragraph2", type: "textarea", defaultValue: "With a background spanning engineering, project management and business operations, I bring technical precision to the way growth is designed and delivered — helping people move from ambition to structured progress, and from progress to legacy." },
+        { name: "paragraph2", type: "textarea", defaultValue: "With a background spanning engineering, project management and business operations, I bring technical precision to the way growth is designed and delivered, helping people move from ambition to structured progress, and from progress to legacy." },
         {
           name: "photos",
           label: "Photos (slideshow)",
@@ -142,7 +142,7 @@ export const HomeContent: GlobalConfig = {
       type: "group",
       fields: [
         { name: "heading", type: "text", defaultValue: "Free community clarity sessions, every other week" },
-        { name: "text", type: "textarea", defaultValue: "Group clarity work, live. No booking, no fee — the WhatsApp community gets the schedule and the reminders." },
+        { name: "text", type: "textarea", defaultValue: "Group clarity work, live. No booking, no fee: the WhatsApp community gets the schedule and the reminders." },
       ],
     },
     {

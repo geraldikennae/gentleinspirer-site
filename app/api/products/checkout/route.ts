@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       status: "stub",
       checkoutUrl: null,
-      message: "Stripe isn't configured yet — set STRIPE_SECRET_KEY to enable real checkout.",
+      message: "Stripe isn't configured yet. Set STRIPE_SECRET_KEY to enable real checkout.",
     });
   }
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
   const amount = body.currency === "GBP" ? product.priceGBP : product.priceUSD;
   if (amount == null) {
-    return NextResponse.json({ error: "This product's price hasn't been set yet — add it in /admin." }, { status: 400 });
+    return NextResponse.json({ error: "This product's price hasn't been set yet. Add it in /admin." }, { status: 400 });
   }
 
   const origin = new URL(request.url).origin;

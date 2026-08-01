@@ -24,7 +24,7 @@ const montserrat = Montserrat({
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings().catch(() => null);
   return {
-    title: settings?.seo.title ?? "gentleinspirer.com — Clarity precedes movement",
+    title: settings?.seo.title ?? "gentleinspirer.com · Clarity precedes movement",
     description: settings?.seo.description ?? "Growth is designed, not desired. Structured growth systems, leadership development and disciplined execution with Gerald I. Egeonu, founder of The Growth Circle.",
     icons: {
       icon: [

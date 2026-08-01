@@ -268,11 +268,11 @@ export function BookingPageBody({ settings, content }: { settings: SiteSettingsD
             <div style={{ display: "grid", gap: "var(--space-6)" }}>
               {slotsLoading && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>Loading availability…</div>}
 
-              {!slotsLoading && !slotsConfigured && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>Live scheduling isn&rsquo;t connected yet — check back soon, or message via WhatsApp above.</div>}
+              {!slotsLoading && !slotsConfigured && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>Live scheduling isn&rsquo;t connected yet. Check back soon, or message via WhatsApp above.</div>}
 
               {!slotsLoading && slotsConfigured && slotsError && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--status-danger)" }}>{slotsError}</div>}
 
-              {!slotsLoading && slotsConfigured && !slotsError && availableDates.length === 0 && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>No openings in the next two weeks — check back soon.</div>}
+              {!slotsLoading && slotsConfigured && !slotsError && availableDates.length === 0 && <div style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)" }}>No openings in the next two weeks. Check back soon.</div>}
 
               {!slotsLoading && availableDates.length > 0 && (
                 <>
@@ -371,7 +371,7 @@ export function BookingPageBody({ settings, content }: { settings: SiteSettingsD
               <h2 style={{ margin: 0 }}>{content.held.heading}</h2>
               <Rule />
               <p style={{ maxWidth: "46ch", margin: 0 }}>
-                {type ? TYPES[type].label : ""} — {heldLabel} · {lengthMinutes} minutes. A confirmation is in your inbox, with the pre-session brief.
+                {type ? TYPES[type].label : ""}: {heldLabel} · {lengthMinutes} minutes. A confirmation is in your inbox, with the pre-session brief.
               </p>
               <Button
                 variant="secondary"
@@ -395,9 +395,9 @@ export function BookingPageBody({ settings, content }: { settings: SiteSettingsD
           <dl style={{ display: "grid", gap: "var(--space-3)", marginTop: "var(--space-5)", fontSize: "var(--size-body-sm)" }}>
             {(
               [
-                ["Type", type ? TYPES[type].eyebrow : "—"],
-                ["When", selectedSlot ? fullSlotLabel(selectedSlot) : "—"],
-                ["Length", lengthMinutes ? `${lengthMinutes} minutes` : "—"],
+                ["Type", type ? TYPES[type].eyebrow : "-"],
+                ["When", selectedSlot ? fullSlotLabel(selectedSlot) : "-"],
+                ["Length", lengthMinutes ? `${lengthMinutes} minutes` : "-"],
                 ["Where", "Video link by email"],
                 ["Stage", "01 · Clarity"],
                 ["Fee", feeSummary],
@@ -428,7 +428,7 @@ export function BookingPageBody({ settings, content }: { settings: SiteSettingsD
           </>
         }
       >
-        {type ? TYPES[type].label : ""} — {selectedSlot ? fullSlotLabel(selectedSlot) : ""} · {lengthMinutes} minutes, for {name || "you"}.{type === "paid" && " Payment follows via Stripe."}
+        {type ? TYPES[type].label : ""}: {selectedSlot ? fullSlotLabel(selectedSlot) : ""} · {lengthMinutes} minutes, for {name || "you"}.{type === "paid" && " Payment follows via Stripe."}
       </Dialog>
 
       {toast && (

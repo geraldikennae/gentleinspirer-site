@@ -31,7 +31,7 @@ export const getSiteSettings = cache(async function getSiteSettings(): Promise<S
     })),
     contactEmail: settings.contactEmail ?? "info@gentleinspirer.com",
     seo: {
-      title: settings.seo?.title ?? "gentleinspirer.com — Clarity precedes movement",
+      title: settings.seo?.title ?? "gentleinspirer.com · Clarity precedes movement",
       description: settings.seo?.description ?? "Growth is designed, not desired. Structured growth systems, leadership development and disciplined execution with Gerald I. Egeonu, founder of The Growth Circle.",
     },
   };

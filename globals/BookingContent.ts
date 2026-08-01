@@ -13,7 +13,7 @@ export const BookingContent: GlobalConfig = {
       label: "Community-session teaser (step 1)",
       type: "group",
       fields: [
-        { name: "text", type: "text", required: true, defaultValue: "Or join the free bi-weekly community session — no booking at all." },
+        { name: "text", type: "text", required: true, defaultValue: "Or join the free bi-weekly community session, no booking at all." },
         { name: "ctaLabel", type: "text", required: true, defaultValue: "Get the schedule" },
       ],
     },

@@ -11,7 +11,7 @@ export const SessionsContent: GlobalConfig = {
       name: "heroIntro",
       label: "Hero intro paragraph",
       type: "textarea",
-      defaultValue: "Clarity precedes movement. One hour to define the outcome, locate the constraint, and set the first increment — for a decision that has been running without structure.",
+      defaultValue: "Clarity precedes movement. One hour to define the outcome, locate the constraint, and set the first increment, for a decision that has been running without structure.",
     },
     {
       name: "whySection",
@@ -70,7 +70,7 @@ export const SessionsContent: GlobalConfig = {
       minRows: 1,
       defaultValue: [
         { title: "First ten minutes", description: "We name the outcome. Most people arrive with tactics and no defined outcome." },
-        { title: "The middle", description: "We find the constraint — usually structural, rarely motivational." },
+        { title: "The middle", description: "We find the constraint, usually structural, rarely motivational." },
         { title: "Last ten minutes", description: "One increment, defined tightly enough to be observable next week." },
       ],
       fields: [
@@ -86,7 +86,7 @@ export const SessionsContent: GlobalConfig = {
       defaultValue: [
         { title: "Same day", description: "The Clarity brief arrives: outcome, constraint, first increment." },
         { title: "Two weeks on", description: "One review question by email. Consistency over intensity." },
-        { title: "Stage two", description: "Move on to Structure when the increment is holding — not before." },
+        { title: "Stage two", description: "Move on to Structure when the increment is holding, not before." },
       ],
       fields: [
         { name: "title", type: "text", required: true },
@@ -126,7 +126,7 @@ export const SessionsContent: GlobalConfig = {
               name: "bullets",
               type: "array",
               minRows: 1,
-              defaultValue: [{ text: "Live on YouTube or Instagram" }, { text: "Group clarity work, open Q&A" }, { text: "No booking — just show up" }],
+              defaultValue: [{ text: "Live on YouTube or Instagram" }, { text: "Group clarity work, open Q&A" }, { text: "No booking, just show up" }],
               fields: [{ name: "text", type: "text", required: true }],
             },
             { name: "ctaLabel", type: "text", required: true, defaultValue: "Get the reminder" },

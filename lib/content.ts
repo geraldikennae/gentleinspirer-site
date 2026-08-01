@@ -81,7 +81,7 @@ export const getHomeContent = cache(async function getHomeContent(): Promise<Hom
 
 // Same backfill gap as FALLBACK_TEACHINGS above -- these three tier cards'
 // bullet arrays were added to the already-existing sessions-content global.
-const FALLBACK_COMMUNITY_BULLETS = ["Live on YouTube or Instagram", "Group clarity work, open Q&A", "No booking — just show up"];
+const FALLBACK_COMMUNITY_BULLETS = ["Live on YouTube or Instagram", "Group clarity work, open Q&A", "No booking, just show up"];
 const FALLBACK_INTRO_BULLETS = ["Define whether stage one fits", "No preparation needed"];
 const FALLBACK_PAID_BULLETS = ["Written Clarity brief the same day", "Two-week review question"];
 
@@ -209,7 +209,7 @@ export async function getProductsContent(): Promise<ProductsContentData> {
   const c = await payload.findGlobal({ slug: "products-content" });
   return {
     heading: c.heading ?? "Tools that hold structure when I'm not in the room",
-    subhead: c.subhead ?? "Ebooks, workbooks and courses built on the same five stages as the sessions. Pay in dollars or pounds — checkout runs on Stripe.",
+    subhead: c.subhead ?? "Ebooks, workbooks and courses built on the same five stages as the sessions. Pay in dollars or pounds; checkout runs on Stripe.",
     ctaLabel: c.ctaLabel ?? "Free teachings first",
     ctaCaption: c.ctaCaption ?? "Everything paid has a free counterpart on YouTube.",
   };
@@ -227,7 +227,7 @@ export async function getBookingContent(): Promise<BookingContentData> {
   return {
     heading: c.heading ?? "Book stage one",
     communityTeaser: {
-      text: c.communityTeaser?.text ?? "Or join the free bi-weekly community session — no booking at all.",
+      text: c.communityTeaser?.text ?? "Or join the free bi-weekly community session, no booking at all.",
       ctaLabel: c.communityTeaser?.ctaLabel ?? "Get the schedule",
     },
     held: {

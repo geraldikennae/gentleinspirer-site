@@ -21,7 +21,7 @@ export const SiteSettings: GlobalConfig = {
       label: "Browser tab / search preview",
       type: "group",
       fields: [
-        { name: "title", type: "text", required: true, defaultValue: "gentleinspirer.com — Clarity precedes movement" },
+        { name: "title", type: "text", required: true, defaultValue: "gentleinspirer.com · Clarity precedes movement" },
         { name: "description", type: "textarea", required: true, defaultValue: "Growth is designed, not desired. Structured growth systems, leadership development and disciplined execution with Gerald I. Egeonu, founder of The Growth Circle." },
       ],
     },
