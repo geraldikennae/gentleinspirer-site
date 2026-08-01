@@ -9,6 +9,11 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "overrides": {
+    "sharp": "^0.35.3",
+    "postcss": "^8.5.25",
+    "dompurify": "^3.4.12"
+  },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.86.0",
     "@payloadcms/next": "^3.86.0",
