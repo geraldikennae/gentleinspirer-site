@@ -42,6 +42,11 @@ export const BANDS: Band[] = [
   { name: "Compounding", min: 80, max: 100, line: "Protect the rhythm and lengthen your horizon." },
 ];
 
+/** "Your score reveals you are Holding. That means it works when you are watching..." -- shared by the result page and the result email so the phrasing never drifts apart. */
+export function bandExplanation(band: Band): string {
+  return `Your score reveals you are ${band.name}. That means ${band.line.charAt(0).toLowerCase()}${band.line.slice(1)}`;
+}
+
 export function bandFor(overallPercent: number): Band {
   return BANDS.find((b) => overallPercent >= b.min && overallPercent <= b.max) ?? BANDS[0];
 }

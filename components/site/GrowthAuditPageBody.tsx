@@ -7,7 +7,7 @@ import { Eyebrow } from "@/components/brand/Eyebrow";
 import { Rule } from "@/components/brand/Rule";
 import { Button } from "@/components/core/Button";
 import { Input } from "@/components/forms/Input";
-import { QUESTIONS, STAGES, computeScores, type ScoreResult, type Stage } from "@/lib/growthAudit";
+import { QUESTIONS, STAGES, bandExplanation, computeScores, type ScoreResult, type Stage } from "@/lib/growthAudit";
 import type { GrowthAuditContent } from "@/payload-types";
 
 const STORAGE_KEY = "gi-growth-audit-v1";
@@ -255,9 +255,8 @@ export function GrowthAuditPageBody({ advice }: { advice: Advice }) {
 
             <div style={{ marginTop: "var(--space-6)", display: "flex", gap: "var(--space-5)", alignItems: "baseline", flexWrap: "wrap" }}>
               <span style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-1)", color: "var(--text-heading)" }}>{scores.overallPercent}/100</span>
-              <span style={{ fontSize: "var(--size-caption)", fontWeight: "var(--weight-body-medium)", letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gi-gold-deep)" }}>{scores.band.name}</span>
             </div>
-            <p style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)", margin: "var(--space-2) 0 0", maxWidth: "50ch" }}>{scores.band.line}</p>
+            <p style={{ fontSize: "var(--size-body-sm)", color: "var(--text-muted)", margin: "var(--space-2) 0 0", maxWidth: "50ch" }}>{bandExplanation(scores.band)}</p>
 
             <div style={{ marginTop: "var(--space-7)", display: "grid", gap: "var(--space-4)" }}>
               {STAGES.map((stage) => (

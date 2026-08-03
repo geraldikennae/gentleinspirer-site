@@ -3,7 +3,7 @@ import { sendEmail } from "@/lib/email";
 import { renderTemplate } from "@/lib/templates";
 import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
 import { unsubscribeUrl } from "@/lib/urls";
-import { STAGES, type ScoreResult, type Stage } from "@/lib/growthAudit";
+import { STAGES, bandExplanation, type ScoreResult, type Stage } from "@/lib/growthAudit";
 
 const STAGE_KEY: Record<Stage, "clarity" | "structure" | "execution" | "discipline" | "evolution"> = {
   Clarity: "clarity",
@@ -25,7 +25,7 @@ export async function sendGrowthAuditResult(payload: Payload, args: { email: str
 
   const paragraphs = [
     renderTemplate(t.introLine, vars),
-    `Overall: ${args.scores.overallPercent} out of 100. ${args.scores.band.name}. ${args.scores.band.line}`,
+    `Overall: ${args.scores.overallPercent} out of 100. ${bandExplanation(args.scores.band)}`,
     "By stage:",
     ...stageLines,
     `Your weakest stage is ${args.scores.weakestStage}.`,
