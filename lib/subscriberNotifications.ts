@@ -1,7 +1,7 @@
 import type { Payload } from "payload";
 import { sendEmail } from "@/lib/email";
 import { renderTemplate, splitParagraphs } from "@/lib/templates";
-import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
+import { emailDesignFrom, renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
 import { siteUrl, unsubscribeUrl } from "@/lib/urls";
 
 // Called from Letters/Products collection hooks, which already have an
@@ -36,7 +36,7 @@ export async function notifyNewLetter(payload: Payload, args: { title: string; d
         to: s.email,
         subject: renderTemplate(t.subject, vars),
         text: renderBrandedEmailText(content),
-        html: renderBrandedEmailHtml(content, templates.htmlTemplate),
+        html: renderBrandedEmailHtml(content, emailDesignFrom(templates)),
       }).catch((err: unknown) => console.error(`New-letter email to ${s.email} failed:`, err));
     }),
   );
@@ -62,7 +62,7 @@ export async function notifyNewProduct(payload: Payload, args: { title: string; 
         to: s.email,
         subject: renderTemplate(t.subject, vars),
         text: renderBrandedEmailText(content),
-        html: renderBrandedEmailHtml(content, templates.htmlTemplate),
+        html: renderBrandedEmailHtml(content, emailDesignFrom(templates)),
       }).catch((err: unknown) => console.error(`New-product email to ${s.email} failed:`, err));
     }),
   );

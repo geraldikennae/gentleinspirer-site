@@ -909,6 +909,36 @@ export interface EmailTemplate {
     subscribedNote: string;
   };
   /**
+   * Styling for every automated email, without touching HTML. Colours take any CSS colour (#RRGGBB is safest in email). Fonts are applied with web-safe fallbacks, because most email apps -- Gmail especially -- refuse to load custom fonts; brand fonts show in the apps that allow them (Apple Mail, Outlook for Mac) and fall back gracefully everywhere else.
+   */
+  design?: {
+    /**
+     * The full-width image across the top of every email. Design it 600px wide (upload at 1200px so it stays sharp on phones); height is up to you. This is deliberately one flat image rather than a logo sitting on a coloured panel: dark mode in Gmail recolours backgrounds but never image pixels, so a single image is the only banner it cannot invert. Leave empty to use the built-in navy banner.
+     */
+    banner?: (number | null) | Media;
+    /**
+     * Used for headlines and the sign-off.
+     */
+    displayFont?: ('Cormorant Garamond' | 'Montserrat' | 'Georgia' | 'Arial') | null;
+    /**
+     * Used for body paragraphs, the eyebrow label, buttons and the footer.
+     */
+    bodyFont?: ('Cormorant Garamond' | 'Montserrat' | 'Georgia' | 'Arial') | null;
+    pageBg?: string | null;
+    bodyBg?: string | null;
+    /**
+     * Only visible if the banner image fails to load or is narrower than the email. Keep it close to the image's own background.
+     */
+    bannerBg?: string | null;
+    accent?: string | null;
+    headingColor?: string | null;
+    bodyColor?: string | null;
+    ctaBg?: string | null;
+    ctaColor?: string | null;
+    footerBg?: string | null;
+    footerColor?: string | null;
+  };
+  /**
    * The shared HTML shell every automated email (including booking and product-delivery emails) is rendered inside. Placeholders: {{preheader}}, {{eyebrow}}, {{headline}}, {{bodyHtml}}, {{ctaHtml}}, {{footerNote}} -- everything else (banner image, colors, sign-off text, layout) is plain HTML you can edit directly. Keep it table-based with inline styles if you change the structure; most email apps (Outlook especially) ignore modern CSS like flexbox or <style> blocks.
    */
   htmlTemplate: string;
@@ -1268,6 +1298,23 @@ export interface EmailTemplatesSelect<T extends boolean = true> {
         introLine?: T;
         closingNote?: T;
         subscribedNote?: T;
+      };
+  design?:
+    | T
+    | {
+        banner?: T;
+        displayFont?: T;
+        bodyFont?: T;
+        pageBg?: T;
+        bodyBg?: T;
+        bannerBg?: T;
+        accent?: T;
+        headingColor?: T;
+        bodyColor?: T;
+        ctaBg?: T;
+        ctaColor?: T;
+        footerBg?: T;
+        footerColor?: T;
       };
   htmlTemplate?: T;
   updatedAt?: T;

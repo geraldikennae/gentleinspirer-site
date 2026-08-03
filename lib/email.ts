@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
+import { renderBrandedEmailHtml, renderBrandedEmailText, type EmailDesign } from "@/lib/emailBrand";
 
 const FROM = process.env.EMAIL_FROM || "The Gentle Inspirer <info@gentleinspirer.com>";
 
@@ -17,7 +17,7 @@ export async function sendEmail(args: { to: string; subject: string; text: strin
   await resend.emails.send({ from: FROM, to: args.to, subject: args.subject, text: args.text, ...(args.html ? { html: args.html } : {}) });
 }
 
-export async function sendBookingConfirmation(args: { to: string; name: string; sessionLabel: string; whenLabel: string; minutes: number; htmlTemplate?: string }) {
+export async function sendBookingConfirmation(args: { to: string; name: string; sessionLabel: string; whenLabel: string; minutes: number; design?: EmailDesign }) {
   const content = {
     preheader: `${args.sessionLabel} is held for ${args.whenLabel}.`,
     eyebrow: "Booking Confirmed",
@@ -28,11 +28,11 @@ export async function sendBookingConfirmation(args: { to: string; name: string; 
     to: args.to,
     subject: `Held: ${args.sessionLabel}`,
     text: renderBrandedEmailText(content),
-    html: renderBrandedEmailHtml(content, args.htmlTemplate),
+    html: renderBrandedEmailHtml(content, args.design),
   });
 }
 
-export async function sendProductDelivery(args: { to: string; title: string; downloadUrl: string; htmlTemplate?: string }) {
+export async function sendProductDelivery(args: { to: string; title: string; downloadUrl: string; design?: EmailDesign }) {
   const content = {
     preheader: `Your copy of ${args.title} is ready.`,
     eyebrow: "Order Confirmed",
@@ -45,7 +45,7 @@ export async function sendProductDelivery(args: { to: string; title: string; dow
     to: args.to,
     subject: `Your copy: ${args.title}`,
     text: renderBrandedEmailText(content),
-    html: renderBrandedEmailHtml(content, args.htmlTemplate),
+    html: renderBrandedEmailHtml(content, args.design),
   });
 }
 

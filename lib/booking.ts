@@ -1,5 +1,6 @@
 import { CAL_SLUGS, calConfigured, createCalBooking, getEventTypeId, type CalSessionType } from "@/lib/cal";
 import { sendBookingConfirmation } from "@/lib/email";
+import { emailDesignFrom } from "@/lib/emailBrand";
 import { getPayloadClient } from "@/lib/payload";
 
 export interface BookingArgs {
@@ -46,7 +47,7 @@ export async function completeBooking(args: BookingArgs): Promise<BookingResult>
   try {
     const payload = await getPayloadClient();
     const templates = await payload.findGlobal({ slug: "email-templates" });
-    await sendBookingConfirmation({ to: args.email, name: args.name, sessionLabel: args.sessionLabel, whenLabel, minutes: args.minutes, htmlTemplate: templates.htmlTemplate });
+    await sendBookingConfirmation({ to: args.email, name: args.name, sessionLabel: args.sessionLabel, whenLabel, minutes: args.minutes, design: emailDesignFrom(templates) });
     emailSent = true;
   } catch (err) {
     console.error("Booking confirmation email failed:", err);

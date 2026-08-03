@@ -105,6 +105,53 @@ export const EmailTemplates: GlobalConfig = {
       ],
     },
     {
+      name: "design",
+      label: "Email design",
+      type: "group",
+      admin: {
+        description:
+          "Styling for every automated email, without touching HTML. Colours take any CSS colour (#RRGGBB is safest in email). Fonts are applied with web-safe fallbacks, because most email apps -- Gmail especially -- refuse to load custom fonts; brand fonts show in the apps that allow them (Apple Mail, Outlook for Mac) and fall back gracefully everywhere else.",
+      },
+      fields: [
+        {
+          name: "banner",
+          label: "Banner image",
+          type: "upload",
+          relationTo: "media",
+          admin: {
+            description:
+              "The full-width image across the top of every email. Design it 600px wide (upload at 1200px so it stays sharp on phones); height is up to you. This is deliberately one flat image rather than a logo sitting on a coloured panel: dark mode in Gmail recolours backgrounds but never image pixels, so a single image is the only banner it cannot invert. Leave empty to use the built-in navy banner.",
+          },
+        },
+        {
+          name: "displayFont",
+          label: "Heading font",
+          type: "select",
+          defaultValue: "Cormorant Garamond",
+          options: ["Cormorant Garamond", "Montserrat", "Georgia", "Arial"],
+          admin: { description: "Used for headlines and the sign-off." },
+        },
+        {
+          name: "bodyFont",
+          label: "Body font",
+          type: "select",
+          defaultValue: "Montserrat",
+          options: ["Cormorant Garamond", "Montserrat", "Georgia", "Arial"],
+          admin: { description: "Used for body paragraphs, the eyebrow label, buttons and the footer." },
+        },
+        { name: "pageBg", label: "Page background", type: "text", defaultValue: "#F4F2ED" },
+        { name: "bodyBg", label: "Card background", type: "text", defaultValue: "#FFF8F0" },
+        { name: "bannerBg", label: "Banner background (behind the image)", type: "text", defaultValue: "#000080", admin: { description: "Only visible if the banner image fails to load or is narrower than the email. Keep it close to the image's own background." } },
+        { name: "accent", label: "Accent (eyebrow, rules)", type: "text", defaultValue: "#C79532" },
+        { name: "headingColor", label: "Heading text", type: "text", defaultValue: "#1A1A1A" },
+        { name: "bodyColor", label: "Body text", type: "text", defaultValue: "#3A3A3C" },
+        { name: "ctaBg", label: "Button background", type: "text", defaultValue: "#000080" },
+        { name: "ctaColor", label: "Button text", type: "text", defaultValue: "#FFF8F0" },
+        { name: "footerBg", label: "Footer background", type: "text", defaultValue: "#1A1A1A" },
+        { name: "footerColor", label: "Footer text", type: "text", defaultValue: "#EBD9A0" },
+      ],
+    },
+    {
       name: "htmlTemplate",
       label: "Email design (HTML)",
       type: "code",

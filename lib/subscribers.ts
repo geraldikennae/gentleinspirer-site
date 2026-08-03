@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { getPayloadClient } from "@/lib/payload";
 import { addResendContact, sendEmail, setResendContactUnsubscribed } from "@/lib/email";
 import { renderTemplate, splitParagraphs } from "@/lib/templates";
-import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
+import { emailDesignFrom, renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
 import { siteUrl, unsubscribeUrl } from "@/lib/urls";
 
 /** Adds a new active subscriber (or re-activates one who'd unsubscribed), sends the welcome email, and syncs the contact to Resend's Audience (if configured) so it can be targeted by a Broadcast sent from Resend's own dashboard. Idempotent -- safe to call for an email that's already subscribed. */
@@ -37,7 +37,7 @@ export async function subscribe(email: string): Promise<void> {
     to: email,
     subject: renderTemplate(w.subject, vars),
     text: renderBrandedEmailText(content),
-    html: renderBrandedEmailHtml(content, templates.htmlTemplate),
+    html: renderBrandedEmailHtml(content, emailDesignFrom(templates)),
   }).catch((err) => console.error("Welcome email failed:", err));
 
   await addResendContact(email).catch((err) => console.error("Resend contact sync failed:", err));

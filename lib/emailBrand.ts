@@ -26,9 +26,84 @@ import { renderTemplate } from "@/lib/templates";
 // behind it. Worst case the panel shifts and the logo reads as a navy block
 // on a lighter field -- off, but never the invisible white-on-white or
 // inverted mess the transparent version produced.
-const LOGO_URL = `${siteUrl()}/email/banner-logo.png`;
-const LOGO_WIDTH = 200;
-const LOGO_HEIGHT = 122;
+const DEFAULT_BANNER_URL = `${siteUrl()}/email/banner.png`;
+const BANNER_WIDTH = 600;
+
+/** Font choices offered in Admin -> Email Templates -> Email design, mapped to
+ *  the full stack sent in the email. Custom fonts only load in a minority of
+ *  clients (Apple Mail, Outlook for Mac); Gmail ignores the webfont link
+ *  entirely, so each stack ends in something installed everywhere. */
+export const EMAIL_FONT_STACKS: Record<string, string> = {
+  "Cormorant Garamond": "'Cormorant Garamond',Georgia,'Times New Roman',serif",
+  Montserrat: "'Montserrat',Arial,Helvetica,sans-serif",
+  Georgia: "Georgia,'Times New Roman',serif",
+  Arial: "Arial,Helvetica,sans-serif",
+};
+
+/** Styling from the Email Templates global, all optional -- anything unset
+ *  falls back to the brand defaults below. */
+export interface EmailDesign {
+  htmlTemplate?: string;
+  bannerUrl?: string;
+  displayFont?: string;
+  bodyFont?: string;
+  pageBg?: string;
+  bodyBg?: string;
+  bannerBg?: string;
+  accent?: string;
+  headingColor?: string;
+  bodyColor?: string;
+  ctaBg?: string;
+  ctaColor?: string;
+  footerBg?: string;
+  footerColor?: string;
+}
+
+type ResolvedDesign = Required<Omit<EmailDesign, "htmlTemplate">>;
+
+function resolveDesign(d?: EmailDesign): ResolvedDesign {
+  return {
+    bannerUrl: d?.bannerUrl || DEFAULT_BANNER_URL,
+    displayFont: d?.displayFont || EMAIL_FONT_STACKS["Cormorant Garamond"],
+    bodyFont: d?.bodyFont || EMAIL_FONT_STACKS.Montserrat,
+    pageBg: d?.pageBg || "#F4F2ED",
+    bodyBg: d?.bodyBg || COLOR.cream,
+    bannerBg: d?.bannerBg || COLOR.navy,
+    accent: d?.accent || COLOR.gold,
+    headingColor: d?.headingColor || COLOR.ink,
+    bodyColor: d?.bodyColor || COLOR.body,
+    ctaBg: d?.ctaBg || COLOR.navy,
+    ctaColor: d?.ctaColor || COLOR.cream,
+    footerBg: d?.footerBg || COLOR.ink,
+    footerColor: d?.footerColor || COLOR.goldPale,
+  };
+}
+
+/** Builds the design from the Email Templates global: maps the admin's font
+ *  choice to a full stack and an uploaded banner to an absolute URL (emails
+ *  can't resolve site-relative paths). */
+export function emailDesignFrom(templates: { htmlTemplate?: string | null; design?: unknown }): EmailDesign {
+  const d = (templates.design ?? {}) as Record<string, unknown>;
+  const banner = d.banner as { url?: string | null } | string | number | null | undefined;
+  const bannerPath = banner && typeof banner === "object" ? banner.url : undefined;
+  const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : undefined);
+  return {
+    htmlTemplate: templates.htmlTemplate ?? undefined,
+    bannerUrl: bannerPath ? (bannerPath.startsWith("http") ? bannerPath : `${siteUrl()}${bannerPath}`) : undefined,
+    displayFont: EMAIL_FONT_STACKS[str(d.displayFont) ?? ""],
+    bodyFont: EMAIL_FONT_STACKS[str(d.bodyFont) ?? ""],
+    pageBg: str(d.pageBg),
+    bodyBg: str(d.bodyBg),
+    bannerBg: str(d.bannerBg),
+    accent: str(d.accent),
+    headingColor: str(d.headingColor),
+    bodyColor: str(d.bodyColor),
+    ctaBg: str(d.ctaBg),
+    ctaColor: str(d.ctaColor),
+    footerBg: str(d.footerBg),
+    footerColor: str(d.footerColor),
+  };
+}
 
 const COLOR = {
   navy: "#000080",
@@ -92,37 +167,35 @@ export const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
    Gmail is handled structurally instead: a dark banner it has no
    reason to darken, and a logo whose background is baked into the
    image so no CSS rule is needed to protect it. */
-[data-ogsc] .gi-banner-bg{background-color:#000080 !important;}
-[data-ogsc] .gi-body-bg{background-color:#FFF8F0 !important;}
-[data-ogsc] .gi-footer-bg{background-color:#1A1A1A !important;}
-[data-ogsc] .gi-cta-bg{background-color:#000080 !important;}
-[data-ogsc] .gi-heading,[data-ogsc] .gi-signoff{color:#1A1A1A !important;}
-[data-ogsc] .gi-quote,[data-ogsc] .gi-footer-text{color:#FFFFFF !important;}
-[data-ogsc] .gi-logo{filter:none !important;}
+[data-ogsc] .gi-banner-bg{background-color:{{bannerBg}} !important;}
+[data-ogsc] .gi-body-bg{background-color:{{bodyBg}} !important;}
+[data-ogsc] .gi-footer-bg{background-color:{{footerBg}} !important;}
+[data-ogsc] .gi-cta-bg{background-color:{{ctaBg}} !important;}
+[data-ogsc] .gi-heading,[data-ogsc] .gi-signoff{color:{{headingColor}} !important;}
+[data-ogsc] .gi-footer-text{color:{{footerColor}} !important;}
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#F4F2ED;">
-<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F4F2ED;">{{preheader}}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F4F2ED;">
+<body style="margin:0;padding:0;background-color:{{pageBg}};">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:{{pageBg}};">{{preheader}}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:{{pageBg}};">
 <tr>
 <td align="center" style="padding:32px 16px;">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#FFF8F0;">
+<table role="presentation" width="${BANNER_WIDTH}" cellpadding="0" cellspacing="0" border="0" style="width:${BANNER_WIDTH}px;max-width:${BANNER_WIDTH}px;background-color:{{bodyBg}};">
 
 <tr>
-<td align="center" bgcolor="#000080" class="gi-banner-bg" style="background-color:#000080;padding:40px 40px 30px;border-bottom:2px solid #C79532;">
-<img src="${LOGO_URL}" width="${LOGO_WIDTH}" height="${LOGO_HEIGHT}" alt="Gentle Inspirer" class="gi-logo" style="display:block;margin:0 auto 16px;border:0;outline:none;text-decoration:none;color:#FFFFFF;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:12px;" />
-<p class="gi-quote" style="margin:0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-style:italic;color:#FFFFFF;font-size:15px;letter-spacing:.01em;">&ldquo;Clarity precedes movement.&rdquo;</p>
+<td align="center" bgcolor="{{bannerBg}}" class="gi-banner-bg" style="background-color:{{bannerBg}};font-size:0;line-height:0;">
+<img src="{{bannerUrl}}" width="${BANNER_WIDTH}" alt="Gentle Inspirer -- Clarity precedes movement." class="gi-logo" style="display:block;width:100%;max-width:${BANNER_WIDTH}px;height:auto;border:0;outline:none;text-decoration:none;color:#FFFFFF;font-family:{{bodyFont}};font-size:13px;line-height:1.5;" />
 </td>
 </tr>
 
 <tr>
-<td class="gi-body-bg" style="background-color:#FFF8F0;padding:44px 48px 8px 48px;">
-<p style="margin:0 0 16px;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C79532;font-weight:600;">{{eyebrow}}</p>
-<h1 class="gi-heading" style="margin:0 0 18px;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:28px;line-height:1.25;color:#1A1A1A;font-weight:500;">{{headline}}</h1>
-<table role="presentation" width="56" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr><td height="2" bgcolor="#C79532" style="font-size:1px;line-height:2px;">&nbsp;</td></tr></table>
+<td class="gi-body-bg" style="background-color:{{bodyBg}};padding:44px 48px 8px 48px;">
+<p style="margin:0 0 16px;font-family:{{bodyFont}};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:{{accent}};font-weight:600;">{{eyebrow}}</p>
+<h1 class="gi-heading" style="margin:0 0 18px;font-family:{{displayFont}};font-size:28px;line-height:1.25;color:{{headingColor}};font-weight:500;">{{headline}}</h1>
+<table role="presentation" width="56" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr><td height="2" bgcolor="{{accent}}" style="font-size:1px;line-height:2px;">&nbsp;</td></tr></table>
 {{bodyHtml}}
 {{ctaHtml}}
-<p class="gi-signoff" style="margin:30px 0 0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:16px;line-height:1.5;color:#1A1A1A;">
+<p class="gi-signoff" style="margin:30px 0 0;font-family:{{displayFont}};font-size:16px;line-height:1.5;color:{{headingColor}};">
 Always Yours,<br />
 Gerald I. Egeonu<br />
 The Gentle Inspirer
@@ -131,8 +204,8 @@ The Gentle Inspirer
 </tr>
 
 <tr>
-<td bgcolor="#1A1A1A" class="gi-footer-bg" style="background-color:#1A1A1A;padding:30px 48px;">
-<p class="gi-footer-text" style="margin:0;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:300;font-size:11px;line-height:1.7;color:rgba(255,248,240,.55);text-align:center;">
+<td bgcolor="{{footerBg}}" class="gi-footer-bg" style="background-color:{{footerBg}};padding:30px 48px;">
+<p class="gi-footer-text" style="margin:0;font-family:{{bodyFont}};font-weight:300;font-size:11px;line-height:1.7;color:{{footerColor}};text-align:center;">
 gentleinspirer.com - The Gentle Inspirer<br />
 {{footerNote}}
 </p>
@@ -146,38 +219,43 @@ gentleinspirer.com - The Gentle Inspirer<br />
 </body>
 </html>`;
 
-function buildParagraphsHtml(paragraphs: string[]): string {
+function buildParagraphsHtml(paragraphs: string[], d: ResolvedDesign): string {
   return paragraphs
     .filter((p) => p.trim())
-    .map((p) => `<p style="margin:0 0 18px;font-family:${FONT_BODY};font-weight:${FONT_BODY_WEIGHT};font-size:15px;line-height:1.7;color:${COLOR.body};">${esc(p)}</p>`)
+    .map((p) => `<p style="margin:0 0 18px;font-family:${d.bodyFont};font-weight:${FONT_BODY_WEIGHT};font-size:15px;line-height:1.7;color:${d.bodyColor};">${esc(p)}</p>`)
     .join("\n");
 }
 
-function buildCtaHtml(ctaLabel: string | undefined, ctaUrl: string | undefined): string {
+function buildCtaHtml(ctaLabel: string | undefined, ctaUrl: string | undefined, d: ResolvedDesign): string {
   if (!ctaLabel || !ctaUrl) return "";
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 8px;">
-<tr><td bgcolor="${COLOR.navy}" class="gi-cta-bg" style="background-color:${COLOR.navy};border-radius:3px;">
-<a href="${esc(ctaUrl)}" target="_blank" style="display:inline-block;padding:15px 34px;font-family:${FONT_BODY};font-size:14px;font-weight:600;color:${COLOR.cream};text-decoration:none;">${esc(ctaLabel)}</a>
+<tr><td bgcolor="${d.ctaBg}" class="gi-cta-bg" style="background-color:${d.ctaBg};border-radius:3px;">
+<a href="${esc(ctaUrl)}" target="_blank" style="display:inline-block;padding:15px 34px;font-family:${d.bodyFont};font-size:14px;font-weight:600;color:${d.ctaColor};text-decoration:none;">${esc(ctaLabel)}</a>
 </td></tr>
 </table>`;
 }
 
-function buildFooterNote(unsubscribeUrl: string | undefined): string {
+function buildFooterNote(unsubscribeUrl: string | undefined, d: ResolvedDesign): string {
   return unsubscribeUrl
-    ? `<a href="${esc(unsubscribeUrl)}" style="color:${COLOR.goldPale};text-decoration:underline;" target="_blank">Unsubscribe</a> any time, no hard feelings.`
+    ? `<a href="${esc(unsubscribeUrl)}" style="color:${d.footerColor};text-decoration:underline;" target="_blank">Unsubscribe</a> any time, no hard feelings.`
     : `You're receiving this because of a recent booking or purchase.`;
 }
 
-/** `htmlTemplate` lets admin fully override the shell (Admin -> Email Templates -> "Email design"); falls back to DEFAULT_HTML_TEMPLATE when empty. */
-export function renderBrandedEmailHtml(c: BrandedEmailContent, htmlTemplate?: string): string {
-  const template = htmlTemplate?.trim() || DEFAULT_HTML_TEMPLATE;
+/** Renders the shell. `design.htmlTemplate` lets admin fully override the
+ *  markup (Admin -> Email Templates -> "Email design (HTML)"); everything else
+ *  in `design` fills the {{ }} style placeholders, so colours, fonts and the
+ *  banner can be changed from the admin fields without editing HTML. */
+export function renderBrandedEmailHtml(c: BrandedEmailContent, design?: EmailDesign): string {
+  const d = resolveDesign(design);
+  const template = design?.htmlTemplate?.trim() || DEFAULT_HTML_TEMPLATE;
   return renderTemplate(template, {
+    ...d,
     preheader: esc(c.preheader),
     eyebrow: esc(c.eyebrow),
     headline: esc(c.headline),
-    bodyHtml: buildParagraphsHtml(c.paragraphs),
-    ctaHtml: buildCtaHtml(c.ctaLabel, c.ctaUrl),
-    footerNote: buildFooterNote(c.unsubscribeUrl),
+    bodyHtml: buildParagraphsHtml(c.paragraphs, d),
+    ctaHtml: buildCtaHtml(c.ctaLabel, c.ctaUrl, d),
+    footerNote: buildFooterNote(c.unsubscribeUrl, d),
   });
 }
 

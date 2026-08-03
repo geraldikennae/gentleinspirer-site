@@ -1,7 +1,7 @@
 import type { Payload } from "payload";
 import { sendEmail } from "@/lib/email";
 import { renderTemplate } from "@/lib/templates";
-import { renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
+import { emailDesignFrom, renderBrandedEmailHtml, renderBrandedEmailText } from "@/lib/emailBrand";
 import { unsubscribeUrl } from "@/lib/urls";
 import { STAGES, bandExplanation, type ScoreResult, type Stage } from "@/lib/growthAudit";
 
@@ -48,6 +48,6 @@ export async function sendGrowthAuditResult(payload: Payload, args: { email: str
     to: args.email,
     subject: renderTemplate(t.subject, vars),
     text: renderBrandedEmailText(content),
-    html: renderBrandedEmailHtml(content, templates.htmlTemplate),
+    html: renderBrandedEmailHtml(content, emailDesignFrom(templates)),
   });
 }
