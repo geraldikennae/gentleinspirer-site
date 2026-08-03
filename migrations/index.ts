@@ -15,6 +15,7 @@ import * as migration_20260801_155903_update_email_banner_and_signoff from './20
 import * as migration_20260803_115638_add_growth_audit from './20260803_115638_add_growth_audit';
 import * as migration_20260803_132123_fix_email_dark_mode from './20260803_132123_fix_email_dark_mode';
 import * as migration_20260803_134420_cream_black_email_banner from './20260803_134420_cream_black_email_banner';
+import * as migration_20260803_145600_navy_white_email_banner from './20260803_145600_navy_white_email_banner';
 
 export const migrations = [
   {
@@ -100,6 +101,11 @@ export const migrations = [
   {
     up: migration_20260803_134420_cream_black_email_banner.up,
     down: migration_20260803_134420_cream_black_email_banner.down,
-    name: '20260803_134420_cream_black_email_banner'
+    name: '20260803_134420_cream_black_email_banner',
+  },
+  {
+    up: migration_20260803_145600_navy_white_email_banner.up,
+    down: migration_20260803_145600_navy_white_email_banner.down,
+    name: '20260803_145600_navy_white_email_banner'
   },
 ];

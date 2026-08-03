@@ -6,14 +6,26 @@ import { renderTemplate } from "@/lib/templates";
 // and Gmail strips <style> blocks in some contexts. This is the bulletproof
 // subset that behaves the same across clients.
 //
-// The banner logo is a small (~12KB), pre-cropped black-on-transparent asset
-// at /public/email/banner-logo.png, served from the site itself -- reliable
-// as long as gentleinspirer.com is up, which every link in the email already
-// depends on. Black-on-cream rather than the earlier gold-on-navy so it
-// can't be auto-remapped by email dark-mode heuristics: a light background
-// with dark text isn't something those heuristics flip. width/height are
-// set explicitly so the header still reserves its space and the alt text
-// stays legible even with images blocked.
+// The banner logo is a small (~8KB) asset at /public/email/banner-logo.png,
+// served from the site itself -- reliable as long as gentleinspirer.com is
+// up, which every link in the email already depends on. width/height are set
+// explicitly so the header still reserves its space and the alt text stays
+// legible even with images blocked.
+//
+// Dark-mode note, learned the hard way twice: mobile Gmail's dark mode
+// darkens *light* backgrounds. It leaves already-dark ones alone, because
+// there is nothing to darken. So the cream banner was the worst case -- a
+// light panel is precisely what gets remapped -- and the navy one before it
+// failed for a different reason: a transparent logo gets its colors flipped
+// along with the surrounding panel.
+//
+// Hence the current shape: a dark navy banner (nothing to darken) carrying a
+// logo whose navy background is baked into the PNG as opaque pixels. Clients
+// recolor CSS backgrounds, never image pixels, so the lockup keeps its navy
+// and its white mark no matter what any client decides to do to the cell
+// behind it. Worst case the panel shifts and the logo reads as a navy block
+// on a lighter field -- off, but never the invisible white-on-white or
+// inverted mess the transparent version produced.
 const LOGO_URL = `${siteUrl()}/email/banner-logo.png`;
 const LOGO_WIDTH = 200;
 const LOGO_HEIGHT = 122;
@@ -71,21 +83,21 @@ export const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
 <style>
-/* Gmail (and some other clients) auto-remap colors and invert small
-   transparent images when an email doesn't declare itself light-only.
-   The meta tags above stop most clients; [data-ogsc] is Gmail's own
-   dark-mode hook for the ones that ignore the meta tags, so these
-   redeclare the real brand colors and un-invert the logo explicitly.
-   The banner itself is cream with a black logo/text -- a light
-   background with dark text is not something dark-mode remapping
-   flips, so there's little left here to override, but the hook stays
-   in place in case a client still tries. */
-[data-ogsc] .gi-banner-bg{background-color:#FFF8F0 !important;}
+/* Dark-mode defenses, in order of how much they can be trusted.
+   The meta tags above are the only ones that stop a client outright,
+   and plenty ignore them. [data-ogsc] is Outlook.com's hook (Original
+   Get Safe Color) -- despite an earlier comment here calling it
+   Gmail's, Gmail has no such selector and cannot be targeted this way,
+   which is why two rounds of tuning these rules never fixed Gmail.
+   Gmail is handled structurally instead: a dark banner it has no
+   reason to darken, and a logo whose background is baked into the
+   image so no CSS rule is needed to protect it. */
+[data-ogsc] .gi-banner-bg{background-color:#000080 !important;}
 [data-ogsc] .gi-body-bg{background-color:#FFF8F0 !important;}
 [data-ogsc] .gi-footer-bg{background-color:#1A1A1A !important;}
 [data-ogsc] .gi-cta-bg{background-color:#000080 !important;}
-[data-ogsc] .gi-heading,[data-ogsc] .gi-signoff,[data-ogsc] .gi-quote{color:#1A1A1A !important;}
-[data-ogsc] .gi-footer-text{color:#EBD9A0 !important;}
+[data-ogsc] .gi-heading,[data-ogsc] .gi-signoff{color:#1A1A1A !important;}
+[data-ogsc] .gi-quote,[data-ogsc] .gi-footer-text{color:#FFFFFF !important;}
 [data-ogsc] .gi-logo{filter:none !important;}
 </style>
 </head>
@@ -97,9 +109,9 @@ export const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#FFF8F0;">
 
 <tr>
-<td align="center" bgcolor="#FFF8F0" class="gi-banner-bg" style="background-color:#FFF8F0;padding:40px 40px 30px;border-bottom:2px solid #C79532;">
-<img src="${LOGO_URL}" width="${LOGO_WIDTH}" height="${LOGO_HEIGHT}" alt="Gentle Inspirer" class="gi-logo" style="display:block;margin:0 auto 16px;border:0;outline:none;text-decoration:none;color:#1A1A1A;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:12px;" />
-<p class="gi-quote" style="margin:0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-style:italic;color:#1A1A1A;font-size:15px;letter-spacing:.01em;">&ldquo;Clarity precedes movement.&rdquo;</p>
+<td align="center" bgcolor="#000080" class="gi-banner-bg" style="background-color:#000080;padding:40px 40px 30px;border-bottom:2px solid #C79532;">
+<img src="${LOGO_URL}" width="${LOGO_WIDTH}" height="${LOGO_HEIGHT}" alt="Gentle Inspirer" class="gi-logo" style="display:block;margin:0 auto 16px;border:0;outline:none;text-decoration:none;color:#FFFFFF;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:12px;" />
+<p class="gi-quote" style="margin:0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-style:italic;color:#FFFFFF;font-size:15px;letter-spacing:.01em;">&ldquo;Clarity precedes movement.&rdquo;</p>
 </td>
 </tr>
 
