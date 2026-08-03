@@ -39,5 +39,33 @@ export const Subscribers: CollectionConfig = {
       unique: true,
       admin: { position: "sidebar", readOnly: true },
     },
+    {
+      name: "source",
+      type: "select",
+      options: ["letters", "growth-audit"],
+      defaultValue: "letters",
+      required: true,
+      admin: { position: "sidebar", description: "Where this signup came from." },
+    },
+    {
+      name: "growthAuditOverall",
+      label: "Growth Audit: overall score",
+      type: "number",
+      min: 0,
+      max: 100,
+      admin: { position: "sidebar", condition: (data) => data.source === "growth-audit" },
+    },
+    {
+      name: "growthAuditBand",
+      label: "Growth Audit: band",
+      type: "text",
+      admin: { position: "sidebar", condition: (data) => data.source === "growth-audit" },
+    },
+    {
+      name: "growthAuditWeakest",
+      label: "Growth Audit: weakest stage",
+      type: "text",
+      admin: { position: "sidebar", condition: (data) => data.source === "growth-audit" },
+    },
   ],
 };

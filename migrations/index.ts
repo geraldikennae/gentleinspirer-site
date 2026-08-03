@@ -12,6 +12,7 @@ import * as migration_20260801_073305_remove_em_dashes_from_content from './2026
 import * as migration_20260801_134750_branded_email_templates from './20260801_134750_branded_email_templates';
 import * as migration_20260801_152431_add_email_html_template from './20260801_152431_add_email_html_template';
 import * as migration_20260801_155903_update_email_banner_and_signoff from './20260801_155903_update_email_banner_and_signoff';
+import * as migration_20260803_115638_add_growth_audit from './20260803_115638_add_growth_audit';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20260801_155903_update_email_banner_and_signoff.up,
     down: migration_20260801_155903_update_email_banner_and_signoff.down,
-    name: '20260801_155903_update_email_banner_and_signoff'
+    name: '20260801_155903_update_email_banner_and_signoff',
+  },
+  {
+    up: migration_20260803_115638_add_growth_audit.up,
+    down: migration_20260803_115638_add_growth_audit.down,
+    name: '20260803_115638_add_growth_audit'
   },
 ];

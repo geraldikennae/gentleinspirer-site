@@ -74,6 +74,37 @@ export const EmailTemplates: GlobalConfig = {
       ],
     },
     {
+      name: "growthAudit",
+      label: "Growth Audit result email",
+      type: "group",
+      admin: { description: "Sent once, right after someone submits their email on /growth-audit. Placeholders: {{band}}, {{overall}}, {{unsubscribeUrl}}. The rest of the result (stage scores, weakest stage, its advice) is assembled automatically from live data and the Growth Audit content page." },
+      fields: [
+        { name: "subject", type: "text", required: true, defaultValue: "Your growth audit: {{band}}" },
+        {
+          name: "introLine",
+          label: "Opening line",
+          type: "text",
+          required: true,
+          defaultValue: "Here is your result.",
+        },
+        {
+          name: "closingNote",
+          label: "Closing note (before the letters mention)",
+          type: "textarea",
+          required: true,
+          defaultValue:
+            "One thing before you go looking for a plan: work on the weakest stage, not the most interesting one. The stages run in order for a reason. A gap in Clarity makes everything after it look broken, and no amount of discipline fixes an outcome you have not named.",
+        },
+        {
+          name: "subscribedNote",
+          label: "\"You're on the letters now\" note",
+          type: "textarea",
+          required: true,
+          defaultValue: "You are also on the letters now. One idea and one question, roughly weekly, around three hundred words. If it is not useful, unsubscribe and nothing is held against you.",
+        },
+      ],
+    },
+    {
       name: "htmlTemplate",
       label: "Email design (HTML)",
       type: "code",

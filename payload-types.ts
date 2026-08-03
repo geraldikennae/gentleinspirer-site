@@ -74,6 +74,7 @@ export interface Config {
     subscribers: Subscriber;
     'upcoming-sessions': UpcomingSession;
     'topic-suggestions': TopicSuggestion;
+    'growth-audit-submissions': GrowthAuditSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +89,7 @@ export interface Config {
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     'upcoming-sessions': UpcomingSessionsSelect<false> | UpcomingSessionsSelect<true>;
     'topic-suggestions': TopicSuggestionsSelect<false> | TopicSuggestionsSelect<true>;
+    'growth-audit-submissions': GrowthAuditSubmissionsSelect<false> | GrowthAuditSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -105,6 +107,7 @@ export interface Config {
     'products-content': ProductsContent;
     'booking-content': BookingContent;
     'email-templates': EmailTemplate;
+    'growth-audit-content': GrowthAuditContent;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -114,6 +117,7 @@ export interface Config {
     'products-content': ProductsContentSelect<false> | ProductsContentSelect<true>;
     'booking-content': BookingContentSelect<false> | BookingContentSelect<true>;
     'email-templates': EmailTemplatesSelect<false> | EmailTemplatesSelect<true>;
+    'growth-audit-content': GrowthAuditContentSelect<false> | GrowthAuditContentSelect<true>;
   };
   locale: null;
   widgets: {
@@ -256,6 +260,13 @@ export interface Subscriber {
   email: string;
   status: 'active' | 'unsubscribed';
   unsubscribeToken: string;
+  /**
+   * Where this signup came from.
+   */
+  source: 'letters' | 'growth-audit';
+  growthAuditOverall?: number | null;
+  growthAuditBand?: string | null;
+  growthAuditWeakest?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -299,6 +310,19 @@ export interface TopicSuggestion {
    * Not shown publicly -- your own notes on this suggestion.
    */
   adminNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * One row per growth-audit result send -- used only to rate-limit submissions by IP (five per hour). Not meant for browsing; safe to ignore.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "growth-audit-submissions".
+ */
+export interface GrowthAuditSubmission {
+  id: number;
+  email: string;
+  ip: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -353,6 +377,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'topic-suggestions';
         value: number | TopicSuggestion;
+      } | null)
+    | ({
+        relationTo: 'growth-audit-submissions';
+        value: number | GrowthAuditSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -474,6 +502,10 @@ export interface SubscribersSelect<T extends boolean = true> {
   email?: T;
   status?: T;
   unsubscribeToken?: T;
+  source?: T;
+  growthAuditOverall?: T;
+  growthAuditBand?: T;
+  growthAuditWeakest?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -499,6 +531,16 @@ export interface TopicSuggestionsSelect<T extends boolean = true> {
   email?: T;
   status?: T;
   adminNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "growth-audit-submissions_select".
+ */
+export interface GrowthAuditSubmissionsSelect<T extends boolean = true> {
+  email?: T;
+  ip?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -858,9 +900,61 @@ export interface EmailTemplate {
     ctaLabel: string;
   };
   /**
+   * Sent once, right after someone submits their email on /growth-audit. Placeholders: {{band}}, {{overall}}, {{unsubscribeUrl}}. The rest of the result (stage scores, weakest stage, its advice) is assembled automatically from live data and the Growth Audit content page.
+   */
+  growthAudit: {
+    subject: string;
+    introLine: string;
+    closingNote: string;
+    subscribedNote: string;
+  };
+  /**
    * The shared HTML shell every automated email (including booking and product-delivery emails) is rendered inside. Placeholders: {{preheader}}, {{eyebrow}}, {{headline}}, {{bodyHtml}}, {{ctaHtml}}, {{footerNote}} -- everything else (banner image, colors, sign-off text, layout) is plain HTML you can edit directly. Keep it table-based with inline styles if you change the structure; most email apps (Outlook especially) ignore modern CSS like flexbox or <style> blocks.
    */
   htmlTemplate: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The advice shown for whichever stage comes out weakest on /growth-audit, and reused in the result email. The twelve statements themselves aren't editable here -- they're fixed, since the scoring depends on their exact order and count.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "growth-audit-content".
+ */
+export interface GrowthAuditContent {
+  id: number;
+  advice: {
+    clarity: {
+      line: string;
+      means: string;
+      unlock: string;
+      step: string;
+    };
+    structure: {
+      line: string;
+      means: string;
+      unlock: string;
+      step: string;
+    };
+    execution: {
+      line: string;
+      means: string;
+      unlock: string;
+      step: string;
+    };
+    discipline: {
+      line: string;
+      means: string;
+      unlock: string;
+      step: string;
+    };
+    evolution: {
+      line: string;
+      means: string;
+      unlock: string;
+      step: string;
+    };
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1167,7 +1261,68 @@ export interface EmailTemplatesSelect<T extends boolean = true> {
         body?: T;
         ctaLabel?: T;
       };
+  growthAudit?:
+    | T
+    | {
+        subject?: T;
+        introLine?: T;
+        closingNote?: T;
+        subscribedNote?: T;
+      };
   htmlTemplate?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "growth-audit-content_select".
+ */
+export interface GrowthAuditContentSelect<T extends boolean = true> {
+  advice?:
+    | T
+    | {
+        clarity?:
+          | T
+          | {
+              line?: T;
+              means?: T;
+              unlock?: T;
+              step?: T;
+            };
+        structure?:
+          | T
+          | {
+              line?: T;
+              means?: T;
+              unlock?: T;
+              step?: T;
+            };
+        execution?:
+          | T
+          | {
+              line?: T;
+              means?: T;
+              unlock?: T;
+              step?: T;
+            };
+        discipline?:
+          | T
+          | {
+              line?: T;
+              means?: T;
+              unlock?: T;
+              step?: T;
+            };
+        evolution?:
+          | T
+          | {
+              line?: T;
+              means?: T;
+              unlock?: T;
+              step?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

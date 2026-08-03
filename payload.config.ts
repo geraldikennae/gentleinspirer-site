@@ -13,6 +13,7 @@ import { Products } from "./collections/Products";
 import { Subscribers } from "./collections/Subscribers";
 import { UpcomingSessions } from "./collections/UpcomingSessions";
 import { TopicSuggestions } from "./collections/TopicSuggestions";
+import { GrowthAuditSubmissions } from "./collections/GrowthAuditSubmissions";
 import { SiteSettings } from "./globals/SiteSettings";
 import { HomeContent } from "./globals/HomeContent";
 import { SessionsContent } from "./globals/SessionsContent";
@@ -20,6 +21,7 @@ import { LettersContent } from "./globals/LettersContent";
 import { ProductsContent } from "./globals/ProductsContent";
 import { BookingContent } from "./globals/BookingContent";
 import { EmailTemplates } from "./globals/EmailTemplates";
+import { GrowthAuditContent } from "./globals/GrowthAuditContent";
 import { migrations } from "./migrations";
 
 const filename = fileURLToPath(import.meta.url);
@@ -50,8 +52,8 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Users, Media, Letters, Products, Subscribers, UpcomingSessions, TopicSuggestions],
-  globals: [SiteSettings, HomeContent, SessionsContent, LettersContent, ProductsContent, BookingContent, EmailTemplates],
+  collections: [Users, Media, Letters, Products, Subscribers, UpcomingSessions, TopicSuggestions, GrowthAuditSubmissions],
+  globals: [SiteSettings, HomeContent, SessionsContent, LettersContent, ProductsContent, BookingContent, EmailTemplates, GrowthAuditContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {

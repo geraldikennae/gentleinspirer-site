@@ -161,3 +161,10 @@
 @media (max-width:640px){
   .rg-book-fields{grid-template-columns:1fr}
 }
+
+/* ---------- growth audit ---------- */
+
+.rg-audit-stage-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border-hairline)}
+@media (max-width:640px){
+  .rg-audit-stage-grid{grid-template-columns:repeat(2,1fr)}
+}

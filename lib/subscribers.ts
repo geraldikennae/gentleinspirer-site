@@ -18,7 +18,7 @@ export async function subscribe(email: string): Promise<void> {
     }
   } else {
     token = crypto.randomBytes(16).toString("hex");
-    await payload.create({ collection: "subscribers", data: { email, status: "active", unsubscribeToken: token } });
+    await payload.create({ collection: "subscribers", data: { email, status: "active", unsubscribeToken: token, source: "letters" } });
   }
 
   const templates = await payload.findGlobal({ slug: "email-templates" });
@@ -41,6 +41,36 @@ export async function subscribe(email: string): Promise<void> {
   }).catch((err) => console.error("Welcome email failed:", err));
 
   await addResendContact(email).catch((err) => console.error("Resend contact sync failed:", err));
+}
+
+export interface GrowthAuditSubscribeArgs {
+  email: string;
+  overall: number;
+  band: string;
+  weakest: string;
+}
+
+/** Upserts a subscriber from the growth-audit flow: sets source=growth-audit (new signups only) plus the score fields, and syncs to Resend -- but does NOT send the generic welcome email, since the growth-audit result email (sent separately by the caller) already serves that role. Returns the subscriber's unsubscribe token. */
+export async function subscribeFromGrowthAudit(args: GrowthAuditSubscribeArgs): Promise<string> {
+  const payload = await getPayloadClient();
+  const existing = await payload.find({ collection: "subscribers", where: { email: { equals: args.email } }, limit: 1 });
+  const scoreFields = { growthAuditOverall: args.overall, growthAuditBand: args.band, growthAuditWeakest: args.weakest };
+
+  let token: string;
+  if (existing.docs[0]) {
+    token = existing.docs[0].unsubscribeToken;
+    await payload.update({
+      collection: "subscribers",
+      id: existing.docs[0].id,
+      data: { ...scoreFields, ...(existing.docs[0].status !== "active" ? { status: "active" as const } : {}) },
+    });
+  } else {
+    token = crypto.randomBytes(16).toString("hex");
+    await payload.create({ collection: "subscribers", data: { email: args.email, status: "active", unsubscribeToken: token, source: "growth-audit", ...scoreFields } });
+  }
+
+  await addResendContact(args.email).catch((err) => console.error("Resend contact sync failed:", err));
+  return token;
 }
 
 export async function unsubscribeByToken(token: string): Promise<boolean> {
