@@ -35,11 +35,15 @@ export interface Band {
   line: string;
 }
 
+// Every line has to open with a declarative clause, because bandExplanation
+// reads it back as "That means <line>". Advice belongs in a second sentence --
+// a line that opens on an imperative ("Protect the rhythm...") comes out
+// ungrammatical there.
 export const BANDS: Band[] = [
   { name: "Reacting", min: 0, max: 39, line: "Effort is going sideways. Start at Clarity." },
   { name: "Building", min: 40, max: 59, line: "The intent is there. The structure is not yet." },
   { name: "Holding", min: 60, max: 79, line: "It works when you are watching. Test what happens when you are not." },
-  { name: "Compounding", min: 80, max: 100, line: "Protect the rhythm and lengthen your horizon." },
+  { name: "Compounding", min: 80, max: 100, line: "The rhythm is working. Protect it and lengthen your horizon." },
 ];
 
 /** "Your score reveals you are Holding. That means it works when you are watching..." -- shared by the result page and the result email so the phrasing never drifts apart. */
