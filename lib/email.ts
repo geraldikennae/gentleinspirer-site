@@ -3,6 +3,15 @@ import { renderBrandedEmailHtml, renderBrandedEmailText, type EmailDesign } from
 
 const FROM = process.env.EMAIL_FROM || "The Gentle Inspirer <info@gentleinspirer.com>";
 
+// Where replies land. Resend sends mail but does not receive it, so a reply
+// to EMAIL_FROM only arrives if that address is a real mailbox with an MX
+// record behind it. Several of these emails invite a reply, so this should
+// point at an inbox that is actually read until info@gentleinspirer.com can
+// receive mail. Deliberately env-only and not defaulted to a personal
+// address: this repo is public, and addresses in public source get harvested.
+// Unset = replies fall back to EMAIL_FROM.
+const REPLY_TO = process.env.EMAIL_REPLY_TO?.trim() || undefined;
+
 export function emailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY);
 }
@@ -14,7 +23,14 @@ function getResend(): Resend {
 export async function sendEmail(args: { to: string; subject: string; text: string; html?: string }) {
   if (!emailConfigured()) return;
   const resend = getResend();
-  await resend.emails.send({ from: FROM, to: args.to, subject: args.subject, text: args.text, ...(args.html ? { html: args.html } : {}) });
+  await resend.emails.send({
+    from: FROM,
+    to: args.to,
+    subject: args.subject,
+    text: args.text,
+    ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
+    ...(args.html ? { html: args.html } : {}),
+  });
 }
 
 export async function sendBookingConfirmation(args: { to: string; name: string; sessionLabel: string; whenLabel: string; minutes: number; design?: EmailDesign }) {
