@@ -6,14 +6,17 @@ import { renderTemplate } from "@/lib/templates";
 // and Gmail strips <style> blocks in some contexts. This is the bulletproof
 // subset that behaves the same across clients.
 //
-// The banner logo is a small (~25KB), pre-cropped asset at
-// /public/email/banner-logo.png, served from the site itself -- reliable as
-// long as gentleinspirer.com is up, which every link in the email already
-// depends on. width/height are set explicitly so the header still reserves
-// its space and the alt text stays legible even with images blocked.
+// The banner logo is a small (~12KB), pre-cropped black-on-transparent asset
+// at /public/email/banner-logo.png, served from the site itself -- reliable
+// as long as gentleinspirer.com is up, which every link in the email already
+// depends on. Black-on-cream rather than the earlier gold-on-navy so it
+// can't be auto-remapped by email dark-mode heuristics: a light background
+// with dark text isn't something those heuristics flip. width/height are
+// set explicitly so the header still reserves its space and the alt text
+// stays legible even with images blocked.
 const LOGO_URL = `${siteUrl()}/email/banner-logo.png`;
-const LOGO_WIDTH = 150;
-const LOGO_HEIGHT = 197;
+const LOGO_WIDTH = 200;
+const LOGO_HEIGHT = 122;
 
 const COLOR = {
   navy: "#000080",
@@ -72,13 +75,17 @@ export const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
    transparent images when an email doesn't declare itself light-only.
    The meta tags above stop most clients; [data-ogsc] is Gmail's own
    dark-mode hook for the ones that ignore the meta tags, so these
-   redeclare the real brand colors and un-invert the logo explicitly. */
-[data-ogsc] .gi-banner-bg{background-color:#000080 !important;}
+   redeclare the real brand colors and un-invert the logo explicitly.
+   The banner itself is cream with a black logo/text -- a light
+   background with dark text is not something dark-mode remapping
+   flips, so there's little left here to override, but the hook stays
+   in place in case a client still tries. */
+[data-ogsc] .gi-banner-bg{background-color:#FFF8F0 !important;}
 [data-ogsc] .gi-body-bg{background-color:#FFF8F0 !important;}
 [data-ogsc] .gi-footer-bg{background-color:#1A1A1A !important;}
 [data-ogsc] .gi-cta-bg{background-color:#000080 !important;}
-[data-ogsc] .gi-heading,[data-ogsc] .gi-signoff{color:#1A1A1A !important;}
-[data-ogsc] .gi-quote,[data-ogsc] .gi-footer-text{color:#EBD9A0 !important;}
+[data-ogsc] .gi-heading,[data-ogsc] .gi-signoff,[data-ogsc] .gi-quote{color:#1A1A1A !important;}
+[data-ogsc] .gi-footer-text{color:#EBD9A0 !important;}
 [data-ogsc] .gi-logo{filter:none !important;}
 </style>
 </head>
@@ -90,9 +97,9 @@ export const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#FFF8F0;">
 
 <tr>
-<td align="center" bgcolor="#000080" class="gi-banner-bg" style="background-color:#000080;padding:40px 40px 34px;">
-<img src="${LOGO_URL}" width="${LOGO_WIDTH}" height="${LOGO_HEIGHT}" alt="Gentle Inspirer" class="gi-logo" style="display:block;margin:0 auto 18px;border:0;outline:none;text-decoration:none;color:#EBD9A0;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:12px;" />
-<p class="gi-quote" style="margin:0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-style:italic;color:#EBD9A0;font-size:15px;letter-spacing:.01em;">&ldquo;Clarity precedes movement.&rdquo;</p>
+<td align="center" bgcolor="#FFF8F0" class="gi-banner-bg" style="background-color:#FFF8F0;padding:40px 40px 30px;border-bottom:2px solid #C79532;">
+<img src="${LOGO_URL}" width="${LOGO_WIDTH}" height="${LOGO_HEIGHT}" alt="Gentle Inspirer" class="gi-logo" style="display:block;margin:0 auto 16px;border:0;outline:none;text-decoration:none;color:#1A1A1A;font-family:'Montserrat',Arial,Helvetica,sans-serif;font-size:12px;" />
+<p class="gi-quote" style="margin:0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-style:italic;color:#1A1A1A;font-size:15px;letter-spacing:.01em;">&ldquo;Clarity precedes movement.&rdquo;</p>
 </td>
 </tr>
 
