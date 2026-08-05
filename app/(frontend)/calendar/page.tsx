@@ -65,7 +65,8 @@ export default async function CalendarPage() {
         <Rule length={64} />
         <p style={{ marginTop: "var(--space-5)", maxWidth: "var(--measure-prose)" }}>
           Free community Clarity Sessions: live, open Q&amp;A. No booking, no fee: just join at the time via the link for that date.{" "}
-          <strong>Looking for a private 1:1 session instead?</strong> That&rsquo;s the paid Clarity Session, booked separately from the sessions page.
+          <strong>Looking for a private 1:1 session instead?</strong>{" "}
+          That&rsquo;s the paid Clarity Session, booked separately from the sessions page.
         </p>
         <div style={{ marginTop: "var(--space-6)" }}>
           <Button variant="secondary" href="/sessions">

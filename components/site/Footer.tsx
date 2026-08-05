@@ -48,7 +48,7 @@ export function Footer({ quotes, contactEmail = "info@gentleinspirer.com" }: { q
           color: "rgba(255,248,240,.5)",
         }}
       >
-        <span>gentleinspirer - Gerald I. Egeonu</span>
+        <span>&copy; {new Date().getFullYear()} Gentle Inspirer &middot; Gerald I. Egeonu</span>
         <FooterQuoteRotator quotes={quotes} />
       </div>
     </footer>

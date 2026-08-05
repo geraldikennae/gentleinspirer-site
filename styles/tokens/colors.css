@@ -30,15 +30,32 @@
 --text-link:var(--gi-blue);
 --text-link-hover:var(--gi-gold-deep);
 
-/* --- semantic: surfaces --- */
---surface-page:var(--gi-cream);
---surface-card:var(--gi-white);
---surface-sunken:var(--gi-neutral-50);
---surface-brand:var(--gi-blue);
---surface-brand-deep:var(--gi-ink-deep);
---surface-accent:var(--gi-gold);
---surface-ink:var(--gi-ink);
+/* --- semantic: surfaces ---
+   Every surface is a gradient between shades already in the palette above --
+   no new hues, only luminance, so a field reads as lit rather than as flat
+   fill. These are consumed with `background:` everywhere (never
+   `background-color:`, which would reject a gradient); the *-flat tokens
+   below hold the solid equivalent for anywhere that needs a plain colour,
+   such as a border or an SVG fill. */
+--surface-page:linear-gradient(180deg,#FFFCF7 0%,var(--gi-cream) 55%,#FDF4EA 100%);
+--surface-card:linear-gradient(180deg,var(--gi-white) 0%,#FDFAF6 100%);
+--surface-sunken:linear-gradient(180deg,var(--gi-neutral-50) 0%,var(--gi-neutral-100) 100%);
+/* Royal blue lit from above: brighter crown, deep navy falling to the edges. */
+--surface-brand:radial-gradient(130% 115% at 50% -12%,#0D0DA6 0%,var(--gi-blue) 44%,var(--gi-blue-deep) 100%);
+--surface-brand-deep:linear-gradient(180deg,#151515 0%,var(--gi-ink-deep) 62%,#070707 100%);
+/* Gold as brushed metal rather than flat paint -- flat gold reads as mustard. */
+--surface-accent:linear-gradient(135deg,#E6C963 0%,var(--gi-gold) 36%,var(--gi-gold-deep) 70%,#B8862A 100%);
+/* Ink with a raised top edge, so the band reads as a mass, not a hole. */
+--surface-ink:linear-gradient(165deg,#262626 0%,var(--gi-ink) 46%,var(--gi-ink-deep) 100%);
 --surface-overlay:rgba(13,13,13,.62);
+
+/* Solid equivalents -- use where a single colour is required. */
+--surface-page-flat:var(--gi-cream);
+--surface-card-flat:var(--gi-white);
+--surface-brand-flat:var(--gi-blue);
+--surface-brand-deep-flat:var(--gi-ink-deep);
+--surface-accent-flat:var(--gi-gold);
+--surface-ink-flat:var(--gi-ink);
 
 /* --- semantic: lines --- */
 --border-hairline:rgba(26,26,26,.14);
