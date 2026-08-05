@@ -291,6 +291,10 @@ export interface UpcomingSession {
    * Optional note, e.g. this session's topic. Leave blank for a plain date.
    */
   label?: string | null;
+  /**
+   * Optional poster for this session, shown on /calendar. Portrait artwork works best (it's displayed as a tall thumbnail). Visitors can click it to see the full-size image. The alt text you set on the upload is what screen readers and blocked-image views announce, so describe the session rather than writing "flier".
+   */
+  flier?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -518,6 +522,7 @@ export interface UpcomingSessionsSelect<T extends boolean = true> {
   venue?: T;
   venueLink?: T;
   label?: T;
+  flier?: T;
   updatedAt?: T;
   createdAt?: T;
 }

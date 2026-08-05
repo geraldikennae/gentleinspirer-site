@@ -14,6 +14,17 @@ interface CalendarEntry {
   venue: string;
   venueLink?: string | null;
   label?: string | null;
+  flier?: { url: string; alt: string; width?: number | null; height?: number | null } | null;
+}
+
+/** An upload field is a full Media doc at the default query depth, but a bare
+ *  id if depth is ever lowered -- and a doc whose file is still uploading has
+ *  no url. Anything without a usable url is treated as "no flier". */
+function flierFrom(value: unknown): CalendarEntry["flier"] {
+  if (!value || typeof value !== "object") return null;
+  const m = value as { url?: string | null; alt?: string | null; width?: number | null; height?: number | null };
+  if (!m.url) return null;
+  return { url: m.url, alt: m.alt?.trim() || "Session flier", width: m.width, height: m.height };
 }
 
 function monthHeading(iso: string): string {
@@ -43,7 +54,7 @@ export default async function CalendarPage() {
     const iso = new Date(doc.date).toISOString();
     const key = monthHeading(iso);
     if (!byMonth.has(key)) byMonth.set(key, []);
-    byMonth.get(key)!.push({ iso, venue: doc.venue, venueLink: doc.venueLink, label: doc.label });
+    byMonth.get(key)!.push({ iso, venue: doc.venue, venueLink: doc.venueLink, label: doc.label, flier: flierFrom(doc.flier) });
   }
 
   return (
@@ -76,7 +87,13 @@ export default async function CalendarPage() {
                     const { weekday, day, time } = dayLabel(d.iso);
                     return (
                       <Card key={d.iso} variant="flat" padding="var(--space-5)" style={{ background: "var(--surface-card)" }}>
-                        <div className="rg-calendar-row">
+                        <div className={d.flier ? "rg-calendar-row rg-calendar-row--flier" : "rg-calendar-row"}>
+                          {d.flier && (
+                            <a href={d.flier.url} target="_blank" rel="noopener noreferrer" className="rg-calendar-flier" aria-label={`${d.flier.alt} (opens full size)`}>
+                              {/* eslint-disable-next-line @next/next/no-img-element -- Media lives on Vercel Blob at an arbitrary host; next/image would need each one allowlisted in next.config. */}
+                              <img src={d.flier.url} alt={d.flier.alt} loading="lazy" width={d.flier.width ?? undefined} height={d.flier.height ?? undefined} />
+                            </a>
+                          )}
                           <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-1)", color: "var(--gi-gold-deep)" }}>{day}</div>
                           <div>
                             <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--size-heading-3)", color: "var(--text-heading)", letterSpacing: ".03em" }}>{weekday}</div>

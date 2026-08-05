@@ -17,6 +17,7 @@ import * as migration_20260803_132123_fix_email_dark_mode from './20260803_13212
 import * as migration_20260803_134420_cream_black_email_banner from './20260803_134420_cream_black_email_banner';
 import * as migration_20260803_145600_navy_white_email_banner from './20260803_145600_navy_white_email_banner';
 import * as migration_20260803_151728_navy_banner_and_email_design from './20260803_151728_navy_banner_and_email_design';
+import * as migration_20260805_130615_add_session_flier from './20260805_130615_add_session_flier';
 
 export const migrations = [
   {
@@ -112,6 +113,11 @@ export const migrations = [
   {
     up: migration_20260803_151728_navy_banner_and_email_design.up,
     down: migration_20260803_151728_navy_banner_and_email_design.down,
-    name: '20260803_151728_navy_banner_and_email_design'
+    name: '20260803_151728_navy_banner_and_email_design',
+  },
+  {
+    up: migration_20260805_130615_add_session_flier.up,
+    down: migration_20260805_130615_add_session_flier.down,
+    name: '20260805_130615_add_session_flier'
   },
 ];

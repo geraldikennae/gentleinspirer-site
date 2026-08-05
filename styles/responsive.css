@@ -141,8 +141,16 @@
 /* ---------- calendar ---------- */
 
 .rg-calendar-row{display:grid;grid-template-columns:48px 1fr auto;gap:var(--space-5);align-items:center}
+/* With a flier, a fixed-width poster column leads the row. */
+.rg-calendar-row--flier{grid-template-columns:150px 48px 1fr auto}
+.rg-calendar-flier{display:block;line-height:0;border-radius:2px;overflow:hidden;background:var(--surface-page)}
+.rg-calendar-flier img{display:block;width:100%;height:auto}
 @media (max-width:640px){
   .rg-calendar-row{grid-template-columns:1fr;row-gap:var(--space-3)}
+  /* Single column on mobile: the poster spans the full width above the date
+     rather than being squeezed into a thumbnail. */
+  .rg-calendar-row--flier{grid-template-columns:1fr}
+  .rg-calendar-flier{max-width:280px}
 }
 
 /* ---------- booking ---------- */

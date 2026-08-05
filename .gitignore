@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# payload media uploads -- production stores these in Vercel Blob, but local
+# dev falls back to writing them here, and they should not end up in the repo
+/media

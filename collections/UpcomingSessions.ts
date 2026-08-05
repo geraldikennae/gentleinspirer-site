@@ -37,5 +37,15 @@ export const UpcomingSessions: CollectionConfig = {
       type: "text",
       admin: { description: "Optional note, e.g. this session's topic. Leave blank for a plain date." },
     },
+    {
+      name: "flier",
+      label: "Flier",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        description:
+          "Optional poster for this session, shown on /calendar. Portrait artwork works best (it's displayed as a tall thumbnail). Visitors can click it to see the full-size image. The alt text you set on the upload is what screen readers and blocked-image views announce, so describe the session rather than writing \"flier\".",
+      },
+    },
   ],
 };
