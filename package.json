@@ -12,7 +12,7 @@
   "overrides": {
     "sharp": "^0.35.3",
     "postcss": "^8.5.25",
-    "dompurify": "^3.4.12"
+    "dompurify": "^3.4.13"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.86.0",
